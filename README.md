@@ -96,6 +96,7 @@ AQA Computer Science ([PDF](https://ashwin-ahuja.com/static/COMP-Notes.pdf))
 
 ### GCSEs
 AQA Geography ([PDF](https://ashwin-ahuja.com/static/GeographyGCSE.pdf))
+
 OCR History ([PDF](https://ashwin-ahuja.com/static/HistoryGCSE.pdf))
 
 
