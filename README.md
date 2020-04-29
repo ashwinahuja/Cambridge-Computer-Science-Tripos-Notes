@@ -8,7 +8,7 @@ Numerical Methods ([Word](https://ashwin-ahuja.com/static/NumericalMethods.docx)
 
 Algorithms ([Word](https://ashwin-ahuja.com/static/Algorithms.docx), [PDF](https://ashwin-ahuja.com/static/Algorithms.pdf))
 
-### Paper 2 ([PDF](https://ashwin-ahuja.com/static/Paper2.pdf))
+### Paper 2 ([PDF](https://ashwin-ahuja.com/static/PaperTwo.pdf))
 Digital Electronics ([Word](https://ashwin-ahuja.com/static/DigitalElectronics.docx), [PDF](https://ashwin-ahuja.com/static/DigitalElectronics.pdf))
 
 Operating Systems ([Word](https://ashwin-ahuja.com/static/OperatingSystems.docx), [PDF](https://ashwin-ahuja.com/static/OperatingSystems.pdf))
@@ -17,7 +17,7 @@ Software and Security Engineering ([Word](https://ashwin-ahuja.com/static/Securi
 
 Discrete Mathematics ([PDF](https://ashwin-ahuja.com/static/DiscreteMaths.pdf))
 
-### Paper 3 ([PDF](https://ashwin-ahuja.com/static/Paper3.pdf))
+### Paper 3 ([PDF](https://ashwin-ahuja.com/static/PaperThree.pdf))
 Databases ([Word](https://ashwin-ahuja.com/static/Databases.docx), [PDF](https://ashwin-ahuja.com/static/Databases.pdf))
 
 Introduction to Graphics ([Word](https://ashwin-ahuja.com/static/IntroductionToGraphics.docx), [PDF](https://ashwin-ahuja.com/static/IntroductionToGraphics.pdf))
