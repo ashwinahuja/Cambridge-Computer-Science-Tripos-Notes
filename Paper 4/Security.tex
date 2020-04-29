@@ -1,0 +1,1442 @@
+\documentclass{article}
+\title{Security}
+\author{Ashwin Ahuja}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tabto}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{longtable}
+\usepackage{verbatimbox}
+\newcommand\Includegraphics[2][]{\addvbuffer[3pt 0pt]{\includegraphics[#1]{#2}}}
+
+\providecommand{\dotdiv}{% Don't redefine it if available
+  \mathbin{% We want a binary operation
+    \vphantom{+}% The same height as a plus or minus
+    \text{% Change size in sub/superscripts
+      \mathsurround=0pt % To be on the safe side
+      \ooalign{% Superimpose the two symbols
+        \noalign{\kern-.35ex}% but the dot is raised a bit
+        \hidewidth$\smash{\cdot}$\hidewidth\cr % Dot
+        \noalign{\kern.35ex}% Backup for vertical alignment
+        $-$\cr % Minus
+      }%
+    }%
+  }%
+}
+
+\usepackage[T1]{fontenc}
+\newenvironment{definition}{\par\color{blue}}{\par}
+\newenvironment{pros}{\par\color[rgb]{0.066, 0.4, 0.129}}{\par}
+\newenvironment{cons}{\par\color{red}}{\par}
+\newenvironment{example}{\par\color{brown}}{\par}
+\usepackage{fancyhdr}
+%% Margins
+\usepackage{geometry}
+\geometry{a4paper, hmargin={2cm,2cm},vmargin={2cm,2cm}}
+
+%% Header/Footer
+\pagestyle{fancy} 
+\lhead{Ashwin Ahuja}
+\chead{Security}
+\rhead{Part IB, Paper 4}
+\lfoot{}
+\cfoot{\thepage}
+\rfoot{}
+\renewcommand{\headrulewidth}{1.0pt}
+\renewcommand{\footrulewidth}{1.0pt}
+
+\usepackage[export]{adjustbox}
+\usepackage{caption}
+\captionsetup{justification   = raggedright,
+	singlelinecheck = false}
+
+\lstset{
+	basicstyle=\ttfamily,
+	columns=fullflexible,
+	breaklines=true,
+	postbreak=\raisebox{0ex}[0ex][0ex]{\color{red}$\hookrightarrow$\space}
+}
+\usepackage{listings}
+\lstset{
+	escapeinside={(*}{*)}
+}
+
+
+
+\begin{document}
+
+\makeatletter
+\renewcommand{\l@subsection}{\@dottedtocline{2}{1.6em}{2.6em}}
+\makeatother
+
+\begin{titlepage}
+\begin{center}
+			\vspace*{1cm}
+			
+			\Huge
+			\textbf{Security}
+			
+			\vspace{0.5cm}
+			\LARGE
+			University of Cambridge
+			
+			\vspace{1.5cm}
+			
+			\textbf{Ashwin Ahuja}
+			
+			\vfill
+			
+			Computer Science Tripos Part IB\\
+			Paper 4
+			
+			\vspace{5cm}
+			
+			May 2019
+			
+\end{center}
+\end{titlepage}
+
+\tableofcontents
+\pagebreak
+\section{Introduction}
+\begin{definition}
+	\textbf{Computer Security}: discipline of managing malicious intent and behaviour involving information and communications technology
+	
+	\noindent
+	\textbf{Security Engineering} focuses on intentional rather than accidental behaviour (as in \textbf{Safety Engineering}) with the presence of an intelligent adversary
+\end{definition}
+
+\bigskip
+\noindent
+\textbf{Malicious Behaviour examples:}
+\begin{enumerate}
+	\item \textbf{Fraud}: unauthorised access to money, goods or services
+	\item \textbf{Vandalism}: causing damage for personal reasons - frustration, envy, revenge, curiosity, self esteem, peer recognition
+	\item \textbf{Terrorism}: causing damage, disruption and fear to intimidate
+	\item \textbf{Warfare}: damaging military assets to overthrow a government
+	\item \textbf{Espionage}: stealing information to gain competitive advantage
+	\item \textbf{Sabotage}: causing damage to gain competitive advantage - DOS attack and bot services
+	\item \textbf{Spam}: unsolicited marketing wasting time / resources
+	\item \textbf{Illegal Content}: child sexual abuse images, copyright infringement, etc
+\end{enumerate}
+
+\noindent
+\textbf{Examples of where Information Security is a specific concern}:
+\begin{enumerate}
+	\item Business environment
+	\item Military environment
+	\item Medical environment
+	\item Households
+	\item Society at large - utility services, communications
+\end{enumerate}
+
+\noindent
+\textbf{Security Threats $\rightarrow$ Security Policies $\rightarrow$ Security Controls}
+
+\bigskip
+\noindent
+\textbf{Information Security Targets}
+\begin{enumerate}
+	\item \textbf{Confidentiality}: ensuring that information is only accessible to authorised people
+	
+	Comes in a number of variants:
+	\begin{enumerate}
+		\item Data protection / personal data privacy - fair collection and use of personal data in Europe
+		\item Anonymity / traceability - ability to use a resource without disclosing identity / location - Tor
+		\item Unlinkability - ability to use  resource multiple times without others being able to link these uses together - cookies in HTTP for example
+		\item Pseudonymity - anonymity with accountability for actions
+		\item Unobservability - ability to use a resource without revealing this activity to third parties - information hiding for example - example given in lecture notes is bank notes
+		\item Copy protection, information flow control - ability to control the use and flow of information
+	\end{enumerate}
+	
+	\item \textbf{Integrity}: safeguarding the accuracy and completeness of information and processing methods
+	
+	\item \textbf{Availability}: ensuring that authorised users have access to information and associated assets when required
+	
+	\bigskip
+	Integrity and Availability Protection
+	\begin{itemize}
+		\item Rollback: ability to return to a well-defined valid earlier state ($\rightarrow$ backup, revision control, undo function)
+		\item Authenticity: verification of the claimed identity of a communication partner
+		\item Non-repudiation: origin and / or reception of message cannot be denied in front of a third party
+		\item Audit: monitoring and recording of user-initiated events to detect and deter security violations
+		\item Intrusion detection: automatically notifying unusual events
+	\end{itemize}
+
+	\begin{definition}
+		\textbf{Optimistic Security}: Temporary violations of security policy may be tolerable where correcting the situation is easy and the violator is accountable - generally applied to integrity and availability. An example of using this is Wikipedia.
+	\end{definition}
+\end{enumerate}
+
+\noindent
+\textbf{Threat Scenarios}
+\begin{enumerate}
+	\item \textbf{Data in Transit}: there is an eavesdropper (Eve) (passive) or someone in the middle (Mallory) (middle person attack) - allows them to both read from and write to the line.
+	
+	\item \textbf{Data at Rest}: attacks a storage device - can be with just read access (Eve) or write access to the data as well (Mallory)
+	
+	\item \textbf{Data in Use}: utilises side channels or fault injections to work out what is happening. For example, heat production or power usage of systems.
+\end{enumerate}
+
+Questions of security mechanism:
+\begin{enumerate}
+	\item What does security mechanism achieve
+	\item Do we need confidentiality, integrity, availability and of what?
+	\item Who will generate / store / have access to keys? Can we lose keys?
+	\item Will it interfere with other security measures - for example Encryption would be unhelpful for backups
+	\item Will it introduce new vulnerabilities or can it be used against it?
+	\item New incentives?
+	\item What if it breaks
+\end{enumerate}
+
+\subsection{Security Policy Development in Organisations}
+\begin{enumerate}
+	\item \textbf{Security Requirements Analysis}: (1) identify assets and their value, (2) identify vulnerabilities, threats and risk priorities, (3) identify legal and contractual requirements
+	
+	\item \textbf{Work out suitable security policy}: 
+	\begin{definition}
+		\textbf{Security Policy}: Abstraction of the security requirements - a set of rules that clarifies which are not authorised, required and prohibited activities, states and information flows. \textbf{Security Policy Models} are techniques for the precise and formal definition of the protection goals - describe both (1) automatically enforced policies (in an OS for example), (2) a procedure for employees
+	\end{definition}
+	
+	\item \textbf{Security Policy Document}: High level security policy documented as a reference for anyone involved in implementing controls when a good understanding exists of what exactly security means for organisation that needs to be protected or enforced. Lay out (1) overall objectives, (2) principles and (3) underlying threat model to guide choice of mechanisms.
+	
+	\item \textbf{Selection and implementation of controls}: addressing issues in a typical low-level organisational security policies
+	\begin{itemize}
+		\item General and specific responsibilities for security
+		\item Names manager (owns overall policy) and is in charge of (1) continued enforcement, (2) maintenance, (3) review and (4) evaluation of effectiveness
+		\item Names individual managers who own individual information assets and are responsible for day-to-day security
+		\item Reporting responsibilities for incidents, vulnerabilities, software malfunctions
+		\item Mechanisms for learning from incidents
+	\end{itemize}
+\end{enumerate}
+
+\subsubsection{Human Factors in Security Management}
+\textbf{Security with respect to dealing with people}:
+\begin{enumerate}
+	\item Incentives, discipline
+	\item Training and documentation
+	\item Background checks
+	\item Regulation of third-party (suppliers, for example) access - for example, in a satellite hacking system, the people who have the computers (pass non-working computers to nearby random reseller) which have the software to decrypt on them, have the power to reveal all the information. 
+	\item Physical security in office buildings
+	\item Segregation of duties - reduce effect if people going rogue
+	\item Audit trails
+	\item Separation of development and operational facilities
+	\item Protection against unauthorised and malicious software
+	\item Document access control, including sensitivity labelling of documents and media
+	\item Disposal of media 
+	\item Network and software configuration management
+	\item Duress alarms, terminal timeouts, clock synchronisation
+	\item Line and file encryption
+\end{enumerate}
+
+In general, human users have become the largest security vulnerability as the technical security improves - important to be aware that ancient fraud techniques still work well - the Monty where you are misled that the game is fair by the use of an accomplice who over-bets if you get the correct answer
+\begin{itemize}
+	\item Workers are goal oriented - will intuitively take the minimal action required to complete a task - need to be aware of these trusted paths. For example, Ctrl-Alt-Del hands control back to the OS to ensure it is the real login system not a fraudulent application
+	\item Users assess cost / benefit of security measures - for example if the password screen is already open, then they won't bother pressing Ctrl-Alt-Del - need to carefully manage the Compliance Budget
+	\item Must also communicate with users in order to produce usable systems
+\end{itemize}
+
+\section{Access Control}
+\subsection{Access Control Matrix}
+$$M = (M_{so})_{s \in S, o \in O} \; \; with \; \; M_{so} \subset A$$
+and
+\begin{itemize}
+	\item S = set of subjects
+	\item O = set of objects
+	\item A = set of access privileges
+\end{itemize}
+
+Columns are stored with objects(\textbf{access control list}) and rows are stored with subjects (\textbf{capabilities}). It is rarely implemented in practise for a number of reasons: (1) scalability, (2) redundancy - many subjects share same capabilities and many objects share the same Access Control Lists, (3) usability - difficult to review and maintain by humans.
+
+Can group equivalent subjects into domains and objects into types - leading to \textbf{type enforcement matrices}. Can also distinguish between users (grouped into groups or roles and assigns capabilities to roles) and processes.
+
+\bigskip
+\noindent
+Can also utilise existing hierarchical structures - to make grouping subjects or objects more conveniently:
+\begin{itemize}
+	\item \textbf{Hierarchical File System} - subdirectory paths
+	\item \textbf{Process Ancestry Trees} - parent-process relation
+\end{itemize}
+
+\subsection{Discretionary Access Control}
+Access to objects is permitted based on user identity where each object is owned by a user. Owners can specify freely how they want to share their objects with other users, specifying which other users can have which form of access to their objects - implemented in multi-user OSs.
+
+\subsection{Mandatory Access Control}
+Access to objects controlled by a system-wide policy, for example to prevent certain flows of information. System maintains security labels for both objects and subjects based on which access is granted or denied. Labels can change as the result of an access. Security policies enforced without cooperation of users or application programs. Originated in special OS versions for military users - now used widely on mobile devices to sandbox apps. 
+
+\subsection{Unix / POSIX Access Control}
+\begin{itemize}
+	\begin{pros}
+	\item Small state space -> very easy to display, read and query
+	\end{pros}
+	\begin{cons}
+	\item No standardised access-control list  - access only restricted to single groups - may need to create a large number of groups
+	\item Small number of user / group identifiers (originally 16-bit integers) -> renumbering is needed when organisations merge
+	\end{cons}
+\end{itemize}
+
+\subsubsection{User / Group IDs}
+\begin{figure}[H] \includegraphics[width=0.5\textwidth, left] {./images/1.png} \end{figure}
+\begin{itemize}
+	\item User identified by a 32-bit integer value
+	\item User belongs to at least one primary group (defined via passwd database) and an optional set of supplementary groups (defined via group database), each of which is identified by a 32-bit integer value
+	\item Kernel only deals with integer user IDs and group IDs
+	\item C library provides support for human-readable names via (1) passwd database query interface that maps between user IDs and user names: getpwnam(3) and getpwuid(3) and (2) a group database query interface that maps between integer group IDs and group names: getgrnam(3), getgrgid(3). \textit{The config file (/etc/nsswitch.conf) defines where these databases reside (/etc/passwd and /etc/group)}
+	\item User and group names occupy separate name spaces, user and group IDs occupy seperate number spaces - same name or ID number can refer to both a user and a group
+\end{itemize}
+
+\subsubsection{Process Membership}
+\begin{itemize}
+	\item \textbf{Login}: During login process, look up in passwd and group databases the uid, primary gid and supplementary gid associated with login name and inherits these to the shell process.
+	\item Process started by a user inherits the user and group IDs from the shell process
+	\item Processes store three variants of user ID and group ID: \textbf{effective - identity that determines the access rights}, \textbf{real - identity of the calling user} and \textbf{saved - effective identity when the program was started} - only effective ones are consulted during the file access period
+	\item Root has user id 0 - having full access - and can change its own user IDs and group IDs
+\end{itemize}
+
+\subsubsection{File and Directory Permissions}
+\textbf{File Permissions}: Each file (\textbf{inode}) carries three integers: (1) user ID - file owner, (2) group ID, (3) 16 mode bits that define access permissions - contains nine permission bits, which are interpreted in groups of 3:
+\begin{lstlisting}
+S_IRUSR 	 00400 	owner has read permission
+S_IWUSR 	00200 	   owner has write permission
+S_IXUSR 	 00100 	owner has execute permission
+
+S_IRGRP 	 00040 	group has read permission
+S_IWGRP 	00020 	   group has write permission
+S_IXGRP 	 00010 	group has execute permission
+
+S_IROTH 	 00004 	    others have read permission
+S_IWOTH 	00002 	   others have write permission
+S_IXOTH		 00001 	others have execute permission
+
+\end{lstlisting}
+
+When a process attempts to access a file, the kernel first decides which of the user class the accessing process falls into - for each class, there are three mode bits, controlling read, write and execute access by that class.
+
+Peripheral devices (and interprocess-communication endpoints - Unix domain sockets, names pipes) are represented by special files with similar access control
+
+\bigskip
+\noindent
+\textbf{Directory Permissions}: r - required for reading the names of files contained, w - required to change the list of filenames in the directory (create, delete, rename or move file in it), x - required to access contents or attributes of a file in it (directory traversal), sticky bit (added by Berkeley Unix)
+\begin{itemize}
+	\item If set for a writable directory D, then file F in D can be removed or renamed only by the owner of F or the owner of D
+\end{itemize}
+
+\bigskip
+\noindent
+\textbf{Changing Permissions}: Only owner of file or directory can change its permission bits - can only change gid to group of which the owner is a member. In order to change the owner of a file or directory, only the root can do this.
+
+\bigskip
+\noindent
+\textbf{New Files}: Newly created file has permissions 0666 (rw-rw-rw-) and $\neg$umask where umask is a field in the process descriptor table that cn be used to disable default permissions of newly created files. The file inherits the \textbf{group of the creating process} - if setgid bit is set to directory then (1) any file or directory created in it inherits the group of that directory and (2) any directory created in it inherits the setgid bit
+
+\subsubsection{Controlled Invocation / Elevated Rights}
+Many programs need access rights to files beyond those of the user:
+\begin{itemize}
+	\begin{example}
+	\item passwd program allows user to change password and therefore needs write access to /etc/passwd
+	\end{example}
+	\item Additional permission bits
+	\begin{enumerate}
+		\item \textbf{set-user-ID}: file owner ID determines process permissions
+		\item \textbf{set-group-ID}: file group ID determines process permissions
+	\end{enumerate}
+
+	\item Normal process started by user U will have the same value U stored as the effective, real and saved user ID and cannot change any of them
+	
+	\item When program file owned by user O and with the set-user-ID bit set is started by user U, then both the effective and the saved user ID of the process will be set to O, whereas real user ID will be set to U. The program can now switch the effective user ID between U (copied from the real user id) and O (copied from the saved user id)
+	
+	\item Set-group-ID bit on program file causes effective and saved group ID of the process to be the group ID of the file and real group ID remains that of the calling user. Effective group ID can then as well be set by the process of any of the values stored in the other two.
+	
+	\begin{cons}
+		\item \textbf{Proliferation of Root Privileges}: in order to complete any actions for which root is required for, access is needed to be granted which would allow it to do any other action.
+	\end{cons}
+\end{itemize} 
+
+\subsection{Linux Capabilities}
+This fixed the proliferations of root privileges by offering more methods of doing 'root' actions outside of the root. Each process is labelled with a set of privileges (under capabilities) implemented as a 64-bit bit mask, which defines which particular privileged operation the process is allowed to execute. Therefore, instead of checking if you are the root user, you check this bit mask. By default, root user has all the actions set to true.
+
+\subsubsection{Examples}
+\begin{enumerate}
+	\item \textbf{CAP$\_$CHOWN}: Make arbitrary changes to file UIDs and GIDs
+	\item \textbf{CAP$\_$DAC$\_$OVERRIDE}: Bypass file read, write and execute permission checks
+	\item \textbf{CAP$\_$DAC$\_$READ$\_$SEARCH}: Bypass file read permission checks and directory read and execute permission checks
+	\item \textbf{CAP$\_$FOWNER}: Bypass permission checks on operations that normally require the filesystem UID of the process to match the UID of the file
+	\item \textbf{CAP$\_$KILL}: Bypass permission checks for sending signals
+	\item \textbf{CAP$\_$NET$\_$BIND$\_$SERVICE}: Bind a socket to internet domain privileged ports (with port numbers less than 1024)
+\end{enumerate}
+
+\textbf{Mechanism}: Each Linux process p has several capability sets:
+\begin{enumerate}
+	\item Permitted P$_{p}$ - limiting superset of the effective capabilities that the process may assume
+	\item Effective E$_{p}$ - used by the kernel to perform permission checks
+	\item Inheritable I$_{p}$ - set of capabilities preserved across invocation of another program (with execve)
+	\item Bounding set X$_{p}$ - upper limit, inherited, can only ever shrink - can just turn on and off capabilities
+\end{enumerate}
+
+Similarly, each executed file f has:
+\begin{enumerate}
+	\item Permitted P$_{f}$ - capabilities automatically permitted when the program is executed
+	\item Effective E$_{f}$ - determines if a newly permitted capability from $P_{f}$ is also added to the effective set
+	\item Inheritable I$_{f}$ - inherited capabilities that the program can receive
+\end{enumerate} 
+
+Therefore, when a process p starts another process p' by executing file f:
+\begin{enumerate}
+	\item $P_{p^{\prime}} :=\left(X_{p} \cap P_{f}\right) \cup\left(I_{p} \cap I_{f}\right)$
+	\item $E_{p^{\prime}} :=E_{f} \cap P_{p^{\prime}}$
+	\item $I_{p^{\prime}} :=I_{p}$
+\end{enumerate}
+
+In general, things don't really work this way - it is much more complicated
+
+\subsection{POSIX.1e Access Control Lists}
+Consists of a set of entries, of which there are six types:
+\begin{enumerate}
+	\item Each file has one (1) owner, (2) owning group and (3) named user entry, which together carry the old nine old mode bits
+	\item Multiple (4) named group entries can be added to grant access to additional users and groups
+	\item A single (5) mask entry then limits the permissions that can be granted by the named and owning group entries. If there are named entries, the mask takes over the role of the owning group entry for the old chmod / stat / ls interfaces
+	\item Is also an (6) others field
+\end{enumerate}
+
+\subsubsection{Compatibility Mapping}
+There is a mapping between ACL entries and permission bits:
+\begin{figure}[H] \includegraphics[width=0.4\textwidth, left] {./images/2.png} \end{figure}
+
+\subsubsection{Design}
+\begin{enumerate}
+	\item Remain as largely backwards compatible with applications that only understand the nine mode bits
+	\item \textbf{Inheritance}: In addition to access ACL used for access check, directories also have default ACL. It determines the access ACL that a file-system object inherits from its parent directory when it is created. 
+\end{enumerate}
+
+\subsubsection{Access Check Algorithm}
+\begin{lstlisting}[escapeinside={(*}{*)}]
+if 		proc.euid = file.owner (*$\implies$*) owner entry determines access
+else if		 proc.euid matches one of the named user entries (*$\implies$*) matching named user entry determines access
+else if		one of the group ids of the process matches the owning group entry and that entry contains the requested permission (*$\implies$*) that entry determines access
+else if 	one of the group ids of the process matches one of the named group entries and that entry contains the requested permissions (*$\implies$*) that entry determines access
+else if 	one of the group ids of the process matches the owning group entry or any of the named group, but neither the owning group entry nor any of the matching named group entries contains the requested permissions (*$\implies$*) access is denied
+else 	the others entry determines access
+
+
+if 	the entry determined above is the owner or other entry, and it contains the requested permissions (*$\implies$*) access is granted
+else if 		the entry determined above is a named user, owning group or named group entry and it contains the requested permissions and the mask also contains the requested permissions (or there is no mask entry) (*$\implies$*) access is granted
+else 		access is denied
+\end{lstlisting}
+
+\subsection{Windows Access Control}
+Access is controlled by a Security Reference Monitor - applied to many different object types, where each object type has its own list of permissions. Very fine grained controls, with actions being separated such that we can have different permissions for each of the actions - actions arranged for POSIX compatibility. 
+
+Things are separated into easy to use subsets (can have fully grained control over which actions are allowed as well): (1) Full control, (2) Modify, (3) Read and Execute, (4) Read, (5) Write, with the actions being:
+\begin{figure}[H] \includegraphics[width=0.65\textwidth, left] {./images/3.png} \end{figure}
+
+\noindent
+\textbf{Security Identifier (SID)}: identifier for every use or group - Windows equivalent of the Unix user ID and group ID. Internally a variable-length string of integer values
+
+\bigskip
+\noindent
+\subsubsection{Security Descriptor}
+Equivalent of access control information in inode with:
+\begin{enumerate}
+	\item SID of object's owner
+	\item SID of object's primary group
+	\item Discretionary Access Control List
+	\item System Access Control List
+\end{enumerate}
+where each Access Control Entry has:
+\begin{enumerate}
+	\item type (AccessDenied, AccessAllowed)
+	\item SID (representing a user or group)
+	\item Access Permission Mask (read, write, etc)
+	\item Five bits to control ACL inheritance
+\end{enumerate}
+
+\noindent
+\textbf{Security Descriptor String Format}: for storing or transporting information in a security descriptor. 
+
+\bigskip
+\noindent
+\textbf{Displaying Access Control Entries}: (1) All non-inherited ACEs appear before all inherited ones, (2) within these categories, GUI interfaces with allow / deny buttons also usually place all AccessDenied ACEs before all AccessAllowed ACEs in the ACL, hence giving them priority.
+
+\subsubsection{Algorithm}
+\begin{enumerate}
+	\item Requesting processes provide a desired access mask - with no DACL present, any requested access is granted. With empty DACL, no access granted
+	\item All ACEs with matching SID checked in sequence until either all requested types of access have been granted by AccessAllowed entries or one has been denied in an AccessDenied entry
+	
+	\begin{lstlisting}[escapeinside={(*}{*)}]
+	foreach Ace in Acl:
+		if Ace.SID (*$\in$*) PrincipalSids and not Ace.inheritonly:
+			if Ace.type = AccessAllowed:
+				Granted := Granted (*$\cup$*) (Ace.AccessMark - Denied);
+			else if Ace.type = AccessDenied
+				Denied := Denied (*$\cup$*) (Ace.AccessMask - Granted)
+			if DesiredAccess (*$\subseteq$*) Granted
+				return SUCCESS
+		return FAILURE
+	\end{lstlisting}
+\end{enumerate}
+
+\subsubsection{Inheritance}
+Windows implements static inheritance for DACLs - only the DACL of the file being accessed is checked during access. 
+
+\begin{cons}
+	Alternative, dynamic inheritance, also consults that the ACL of ancestor directories along the path to the root, where necessary
+\end{cons}
+
+New files and directories inherit their ACL from their parent directory when they are created. But, security descriptor can carry a protected-DACL flag that prevents its DACL from inheriting any ACEs. Each ACE has the following five bits:
+\begin{enumerate}
+	\item Container inherit - will be inherited by subdirectories
+	\item Object inherit - will be inherited by files
+	\item No-propagate - inherits to children but not grandchildren
+	\item Inherit only
+	\item Inherited - was inherited from the parent - ensures that all inherited ACEs can be updated without affecting non-inherited ACEs that were explicitly set for that file or directory
+\end{enumerate}
+
+Hence, when ACE inherited:
+\begin{enumerate}
+	\item inherited is set
+	\item if container inherit is inherited to a subdirectory, then inherit only cleared
+	\item if object inherit is inherited to a subdirectory, inherit only is set
+	\item If no-propagate flag is set, then container inherit and object inherit is cleared
+	\item If the ACL of a directory changes, it is up to the application making the change to traverse the affected subtree below and update all affected inherited ACEs there
+\end{enumerate}
+
+\subsubsection{Auditing}
+SystemAudit ACEs can be added to an object's security descriptor to specify which access requests are audited. Users can also have capabilities that are not tied to a specific object.
+
+\subsubsection{Defaults}
+Default installations of old Windows used no ACLs for application software and every user and any application could modify most programs and operating system components (leads to a virus risk). This was changed in later versions, where users work without administrator rights. 
+
+Important to note that Windows has no support for giving elevated privileges to application programs - no equivalent to set-user-ID
+
+\subsubsection{Service}
+Windows program that normally runs (1) continuously from when the machine is booted to its shutdown and (2) independent of any user and has its own SID.
+
+Client programs started by a user can contact a service via a communication pipe - can receive not only commands and data but can also use it to acquire the client's access permissions temporarily.
+
+\subsubsection{LDAP}
+Lightweight Directory Access Protocol is a data model and protocol used for remotely accessing admin information about users, groups and computers - has multiple implementations.
+
+An LDAP server stored a tree of LDAP objects, each of which may be used to represent a user, group, computer, organisational unit, etc. Each LDAP object is a set of attribute, value pairs. 
+\begin{itemize}
+	\item Each non-root object has a parent and has one attribute (Relative Distinguished Name of the object). The RDNs along the path to the room form the Distinguished Name of the object. 
+	\item Each object belongs to an object class, which defines what attributes the object must have
+\end{itemize}
+
+\textbf{Active Directory Domain Service}
+Service offered by Windows Server - offering LDAP, Kerberos, DNS, DHCP, SMB / DFS and other protocol services. Most admin state can be accessed with LDAP. Uses the same discretionary ACL implementation, security descriptors and SIDs for LDAP objects as Windows uses for NTFS files and directories - enables fine-grained delegation of administrative access, with a few extensions:
+\begin{enumerate}
+	\item Access-right bits are different: (1) create child, (2) delete child, (3) delete, (4) delete tree, (5) list contents, (6) list object, (7) read property, (8) write property, (9) write property extended, (10) control access, (11) write owner
+	\item Order of ACEs is sorted by the server (deny before allow, explicit before inherited)
+	\item \textbf{Object Type}: ACEs can contain an ObjectType field that identifies an attribute name or property set - hence ACE with property-related right only applies to attributes identified by that set not to the entire object
+	\item \textbf{Write property extended} right grants only write access after validation of rules identified by GUID in ObjectType field. 
+\end{enumerate}
+
+\textbf{Principle of Least Privilege}: Applications should only have access to exactly the objects and resources they need to perform their operation. 
+
+\bigskip
+\noindent
+\textbf{Transferable Capabilities}: Some operating systems combine notion of object's name that is given to the subject and the access rights that the subject obtains to this object into a single entity:
+$$capability=(object-reference, rights)$$
+Capabilities can therefore be implemented efficiently as an integer that points to an entry in a tamper-resistant capability table associated with each process. In distributed systems, capabilities can be implemented as cryptographic tokens. Can also have the right to be passed to other subjects.
+
+\subsection{Mandatory Access Control}
+Restrictions to allowed information flows not decided at the user's discretion, but instead enforced by system policies. Aimed in particular at preventing policy violations by untrusted application software, which typically has at least the same access privileges as the invoking user
+
+\begin{example}
+	\noindent
+	\textbf{Air Gap Security}: Use completely separate network and computer hardware for different application classes. No communications are allowed between an air-gap security system and the rest of the world. The exchange of storage media must be carefully controlled - must be zeroised before they can be reused on the respective other system.
+	
+	\bigskip
+	\noindent
+	\textbf{Data Pump / Data Diode}: Like air gap security with a one-way communication link that allows users to transfer data from the low-confidentiality to the high-confidentiality environment (not in the opposite direction)
+\end{example}
+
+\subsubsection{Bell-LaPadula Model}
+Mandatory Access-Control for military multi-level security environments. Every subject (process) S and every object O is labelled with a confidentiality level L:
+$$UNCLASSIFIED < CONFIDENTIAL < SECRET < TOP \; SECRET$$
+
+Each user has a range of allowed confidentiality levels and can chose at which level L(S) in that range to start a process. That process then cannot read data from above that level and cannot write data into files below that level. 
+
+\noindent
+\textbf{Rules}
+\begin{enumerate}
+	\item S can only write to O if $L(S) \leq L(O)$
+	\item S can only read O if $L(O) \leq L(S)$
+	\item $S_{1}$ can only execute $S_{2}$ if $L(S_{1}) \leq L(S_{2})$
+\end{enumerate}
+
+A selected set of trusted users and processes is allowed to bypass the restrictions, in order to permit the declassification of information
+
+\bigskip
+\noindent
+\textbf{In Practice}:
+\begin{enumerate}
+	\item Kernel reference-monitor enforces security properties - no read up (ss-property), no write down (*-property)
+	\item Operating-system components, such as scheduler and memory manage
+	ment must be exempt - \textbf{trusted computing base}
+	\item \textbf{Goals}
+	\begin{enumerate}
+		\item Protection against malicious software exfiltrating confidential classified data
+		\item Reducing risk of users accidentally transferring classified data to inappropriate hardware, channels or other users
+	\end{enumerate}
+\end{enumerate}
+
+\begin{cons}
+	\textbf{Issues}
+	\begin{enumerate}
+		\item Information only flows up -> files end up TOP SECRET
+		\item Applications need to exchange information bidirectionally across security levels
+		\item Not suited for commercial applications where data integrity (prevention of mistakes and fraud) are the main concern, rather than confidentiality
+	\end{enumerate}
+\end{cons}
+
+\subsubsection{Lattice Model}
+Intelligence agencies label each document X with both a security level and a set of categories:
+$$label(X) = (level(X), \{ category_{1}, ..., category_{n} \} )$$
+
+This partial order allows information flows from Y to X:
+$$	X \geq Y : \Leftrightarrow \text { level }(X) \geq \text { level }(Y) \wedge \operatorname{cat}(X) \supseteq \operatorname{cat}(Y)$$
+
+\begin{figure}[H] \includegraphics[width=0.5\textwidth, left] {./images/4.png} \end{figure}
+
+\subsubsection{Covert Channel Problem}
+Reference monitors see only intentional communications channels - there are also covert channels which are not intended to transfer information. Malicious high-level data can use these to transmit high-level data to a low-level receiving process, who can then leak it to the outside world.
+
+\begin{example}
+	\begin{itemize}
+		\item \textbf{Resource Conflicts}: if high-level process has created file F, low-level process will fail when creating file of same name - this is 1 bit information
+		
+		\item \textbf{Timing Channels}: processes can use system clock to monitor their own progress and infer the current load, into which other processes can modulate information
+		
+		\item \textbf{Resource State}: High-level processes can leave shared resources (disk head position, cache memory content) in states that influence the service response times for the next process
+		
+		\item \textbf{Hidden information in downgraded documents}: Can use steganographic techniques
+		
+		\item \textbf{Cache-Based Covert Channel}: CPUs obtain performance from on-chip caches with differing time between accesses of different caches.
+	\end{itemize}
+\end{example}
+
+
+\subsubsection{Integrity Models}
+Each subject S and object O is labelled with integrity level I
+
+\begin{enumerate}
+	\item \textbf{Low-water-mark policy}
+	\begin{enumerate}
+		\item S can only write to O if I(O) $\leq$ I(S)
+		\item After S has read from O: I(S) := min$\{ I(S), I(O) \}$
+		\item $S_{1}$ can only execute S$_{2}$ if $I(S_{2}) \leq I(S_{1})$
+		\item Implemented on FreeBSD in mac-low policy
+	\end{enumerate}
+	\item \textbf{Biba's Model}
+	\begin{enumerate}
+		\item S can only write to O if I(O) $\leq$ I(S)
+		\item S can only read O if I(S) $\leq$ I(O)
+		\item $S_{1}$ can only execute $S_{2}$ if $I(S_{2}) \leq I(S_{1})$
+		\item Implemented on FreeBSD in mac-biba policy
+	\end{enumerate}
+\end{enumerate}
+
+\subsection{Commercial Systems}
+Commercial Systems have to maintain both internal consistency (that which can be checked automatically) and external consistency (data accurately describes the real world)
+
+Achieve this with \textbf{well-formed transactions} - access to these must be audited and controlled by separation of duty.
+
+\subsubsection{Clark / Wilson Framework}
+\begin{itemize}
+	\item Formalises this idea
+	\item Integrity protected data is referred to as \textbf{Constrained Data Items (CDIs)} which can only be accessed via Transformation Procedures
+	\item Also exist \textbf{Integrity Verification Procedures} - check validity of CDIs and special \textbf{Transformation Procedures} that transform \textbf{Unconstrained Data Items} into CDIs
+\end{itemize}
+
+\textbf{Requires}:
+\begin{enumerate}
+	\item $\forall CDIs \; \exists \; an \; Integrity \; Verification \; Procedure$
+	\item All TPs must be certified to maintain the integrity of any CDI
+	\item All CDI can only be changed by a TP
+	\item A list of (subject, TP, CDI) triplets restricts execution of TPs
+	\subitem This access control list must enforce a suitable separation of duty among subjects and only special subjects can change it
+	
+	\item Special TPs can convert Unconstrained Data Items into CDIs
+	\item Subjects must be identified and authenticated before they can invoke TPs
+	\item A TP must log enough audit information into an append-only CDI to allow later reconstruction of what happened
+	\item Correct implementation of the entire system must be certified
+\end{enumerate}
+
+\subsection{Operating System Extensibility for Access Control}
+\textbf{Mandatory Access Control}: proposed in literature but not used - no agreement as to why they are useful
+
+\bigskip
+\noindent
+\textbf{System-Call Interposition}: not effective at user level because of time-of-check-to-time-of-use (TOCTTOUT) problems: security extensions need to operate within kernel-lock regions
+
+\bigskip
+\noindent
+Both Linux and FreeBSD implemented kernel hooks that allow the addition of different security policies as loadable kernel modules - instead of hard-wiring one mandatory-access-control policy. These can be used to isolate mobile-device applications
+
+\subsection{Linux Security Modules}
+\begin{itemize}
+	\item Adds an opaque security field (void * pointer) to many kernel data structures: \textit{(1) task, (2) superblock, (3) inode, (4) open file, (5) network buffer / packet, () device, (7) IPC objects} - security modules can add arbitrary metadata (ACLs, labels, names) 
+	\item Adds global security-ops table of function pointers, called by kernel functions that access kernel objects
+	\begin{example}
+	\item vfs-mkdir() calls \textit{security-ops -> inode-ops -> mkdir(dir, dentry, mode)} before a new directory entry dentry is added to a parent directory dir with permissions mode (a non-zero return value denies the operation) and it also calls:
+
+	\textit{security-ops -> inode-ops -> post-mkdir(dir, dentry, mode)} after the directory as been created, to allow the security module to add its metadata.
+	
+	\end{example}
+
+	\item Called after built-in discretionary access control is granted
+	
+	\item Security modules are stackable if supported by the modules loaded earlier, which provide another LSM interface to the next module
+\end{itemize}
+
+
+\subsubsection{AppArmor}
+LSM designed to protect system by confining the access of potentially insecure processes - used to protect systems against server processes exposed to a network
+\begin{enumerate}
+	\item \textbf{Profile}: plain-text file that lists all the resources and privileges that a particular program is allowed to access - can be switched into enforce or complain (logs which system calls would have been blocked in enforce) mode
+	
+	\item Affects only executable files for which a profile was loaded
+	
+	\item Enforced restrictions are independent of user identity, group membership or object ownership, and even apply to root
+\end{enumerate}
+
+\begin{example}
+\begin{itemize}
+	\item Executable file /usr/sbin/ntpd is an NTP daemon to synchronise system clocks over the internet - this profile limits the resources and capabilities accessible to this program to those listed, even if /usr/sbin/ntpd is started by root
+	
+	\item Permits (1) read/write access to pulse-per-second (PPS) clock hardware, (2) read access to all standard public OS files, (3) read access to its own config file, (4) read, executable mmap and inherit execute to its own binary, (5) permits access to privileged UDP ports, (6) ability to set system time, (7) include base access rights by most Linux programs	
+	\begin{lstlisting}
+	/etc/apparmor.d/usr.sbin.ntpd
+	
+	/usr/sbin/ntpd {
+		#include <abstractions/base>
+		
+		capability net_bind_service,
+		capability sys_time,
+		network dgram,
+		/dev/pps[0-9]* rw,
+		/{,s}bin/      r,
+		/usr/{,s}bin/  r,
+		/usr/sbin/ntpd rmix,
+		/etc/ntp.conf  r,
+	}
+	\end{lstlisting}
+\end{itemize}
+\end{example}
+
+
+\subsubsection{SELinux}
+NSA's original LSM for mandatory access control - where each process and object is labelled with a security context: \textit{user:role:type(domain (in the case of processes)):range} - user and role are independent of POSIX user and group identifiers
+
+\bigskip
+Supports two independent MAC mechanisms:
+\begin{enumerate}
+	\item \textbf{Domain / type enforcement}: Policy language for rules to allow operations based on the the user/role/type/domain assigned to each process and object in its security-context label
+	
+	\item \textbf{Multi-level / multi-category security}: BLP lattice information-flow control policy based on the range field in the security context - contains the security levels and security categories that domains are allowed to access
+\end{enumerate}
+
+Policy rules define:
+\begin{enumerate}
+	\item Which processes and which objects are labelled with which domain / type
+	\item Processes in which domains are allowed which access to objects of some type
+	\item How domains can interact with each other
+	\item How processes are allowed to transition from one domain to another - \textbf{elevated privileges}
+\end{enumerate}
+Domains and types define equivalence classes (form a layer of abstraction between processes (and objects) and access-control policy on the other): processes in the same domain have the same access rights AND objects of same type can be accessed in the same way by processes in some domain
+
+\subsubsection{Android Access Control}
+\begin{itemize}
+	\item Separate POSIX user identifier allocated for each installed application
+	\item Discretionary access (POSIX) separates applications which are structured into components that interacts via Android-specific message objects (intents) that are passed to a kernel IPC mechanism that mediates all inter-component interactions
+	\item \textbf{Application Packages} come with \textbf{XML manifest} that requests permissions to access certain system facilities
+	
+\end{itemize}
+
+
+\subsubsection{chroot jails}
+BSD and Linux, root can call chroot(path) to change location of the root directory of the filesystem for the current process - can be used to constrain files visible to a process in the \textbf{following way}:
+\begin{enumerate}
+	\item Make list of all files required by an application
+	\item Create new jail directory
+	\item Copy all required files into the jail directory, under relative paths from root
+	\item Call chroot() to change root directory to the jail directory and start application from inside the jail directory
+\end{enumerate} 
+
+
+\textbf{Containers}: take chroot jail further and provide support for system wide namespaces: (1) user and group id number spaces, (2) network devices, (3) mount tables. 
+
+Can be combined with process-tree resource control to allow applications to be executed in a container environment using their own shared libraries and config files 
+
+
+\section{Operating-System Security}
+\begin{definition}
+\textbf{Trusted Computing Base: parts of the system that enforce a security policy} - a good security design attempts to make TCB as small as possible to minimise the chance for errors in its implementation and to simplify careful verification
+\end{definition}
+
+\bigskip
+\noindent
+\textbf{Basic OS Security Functions}
+\begin{enumerate}
+	\item \textbf{Domain Separation}: TCB must be protected from external interference and tampering by untrusted subjects
+	\item \textbf{Reference Mediation}: All accessed by untrusted subjects must be validated by TCB before succeeding
+	\item \textbf{Residual Information Protection}: OS must erase any storage resources before they are allocated to a new subject to avoid information leaking from one subject to the next - \textbf{object reuse / storage sanitation}
+	
+	Residual information can be erased when resource is (1) allocated to subject - \textit{residual information can sometimes be recovered after user believes it has been deleted} or (2) deallocated from subject. 
+	
+\end{enumerate}
+
+\subsection{Classification}
+Defined by US DoD 1983:
+\begin{enumerate}
+	\item \textbf{Class D}: \textbf{minimal protection} - no authentication, access control or object reuse - \textit{MS-DOS, Windows 98}
+	
+	\item \textbf{Class C1}: \textbf{discretionary security protection} with support for (1) discretionary access control, (2) user identification and authentication, (3) tamper resistant kernel, (4) security tested and documented - \textit{classic Unix}
+	
+	\item \textbf{Class C2}: \textbf{controlled access protection} - adds (1) object reuse, (2) audit trail of object access, (3) ACLs with user granularity - \textit{Windows NT}
+	
+	\item \textbf{Class B1}: \textbf{labelled security protection}, adds (1) confidentiality labels for objects, (2) mandatory access control policy, (3) thorough security testing
+	
+	\item \textbf{Class B2}: \textbf{Structured protection}, adds (1) trusted path from user to TCB, (2) formal security policy model, (3) minimum / maximum security levels for devices, (4) well-structured TCB and user interface, (5) accurate high-level description, (6) identifies covert storage channels, (7) estimates bandwidth, (8) system administration functions, (9) penetration testing, (10) TCB source code revision control and auditing
+	
+	\item \textbf{Class B3}: \textbf{Security domains}, adds (1) security alarm mechanisms, (2) minimal TCB, (3) covert channel analysis, (4) separation of system admin and security admin
+	
+	\item \textbf{Class A1}: \textbf{Verified Design}, adds (1) formal model for security policy, (2) formal description of TCB must be proved to match the implementation, strict protection of source code against unauthorised modification
+\end{enumerate}
+
+\noindent
+\textbf{Common Criteria for Information Technology Security Evaluation}: Created in 1999 by TCSEC and ITSEC  - provides a framework for defining new product and application specific sets of security requirements (protection profiles). Notably, it separates functional and security requirements from the intensity of required testing - measured by the \textbf{evaluation assurance level}
+\begin{itemize}
+	\item \textit{EAL1: (1) tester reads documentation, (2) performs some functionality tests}
+	\item \textit{EAL2: developer (1) provides test documentation and (2) vulnerability analysis for review}
+	\item \textit{EAL3: developer (1) uses RCS, (2) provides more test and design documentation}
+	\item \textit{EAL4: (1) low-level design docs, (2) some TCB source code, (3) secure delivery, (4)  independent vulnerability analysis (highest level considered economically feasible)}
+	\item \textit{EAL5: (1) Formal security policy, (2) semi-formal high-level design, (3) full TCB source code and independent testing}
+	\item \textit{EAL6: (1) Well-structured source code, (2) reference monitor for access control, (3) intensive pen testing}
+	\item \textit{EAL7: (1) Formal high-level design and (2) proof of correctness of implementation}
+
+\end{itemize}
+
+\section{Software Security}
+\subsection{Malicious Software}
+\begin{enumerate}
+	\item \textbf{Trojan Horse}: software with hidden malicious side effects
+	\item \textbf{Randomware}: trojan that blackmails users
+	\item \textbf{Backdoor}: function in a trojan that enables unauthorised access
+	\item \textbf{Logic bomb}: trojan that executes malicious function only when specific trigger condition is met
+	\item \textbf{Virus}: self-replicating program that can infect other programs by modifying them to include a version of themselves, often carrying a logic bomb as a payload.
+	
+	\bigskip
+	They can only spread in environments where (1) access control policy allows application programs to modify the code of other programs, (2) programs are frequently exchanged in executable form and copied from one machine to another
+	
+	Was very widespread in MS-DOS but largely disappeared post Vista due to (1) User Account Control and (2) Windows Integrity Mechanism. Also, (3) software generally installed from online software repos - therefore no direct copying and (4) effective malware scanners.
+	
+	\bigskip
+	\noindent
+	\textbf{Malware Scanners}: use databases with characteristic code fragments of most known viruses and Trojans (3 million) as well as behavioural patterns and monitoring changes in files using cryptographic checksums.
+	
+	\item \textbf{Worm}: self-replicating program that spreads onto other computers by breaking into them via network connections and (unlike a virus) starts itself on the remote machine without infecting other programs
+	\item \textbf{Root kit}: OS modification to hide intrusion
+	\item \textbf{Man-in-the-browser}: Web plugin that intercepts and manipulates traffic
+	\item \textbf{Spyware}: trojan that gathers and sends back information about users without consent
+	\item \textbf{Keylogger}: spyware recording keyboard input
+	\item \textbf{Scareware}: software or web page that pretends to be a diagnostic tool to buy software
+	\item \textbf{Adware}: software that displays unwanted marketing messages
+	\item \textbf{Grayware - potentially unwanted software}: adware that users are tricked into installing which they are unlikely to have installed deliberately despite being legitimate applications
+\end{enumerate}
+\subsection{Common Vulnerabilities}
+\begin{enumerate}
+	\item Missing checks for \textbf{data size}
+	\item Missing checks for \textbf{data content}
+	\item Missing checks for \textbf{boundary conditions}
+	\item Missing checks for \textbf{success / failure of operations}
+	\item Missing \textbf{locks - insufficient serialisation}
+	\item \textbf{Race conditions} - time of check to time of use
+	
+	\bigskip
+	Developers often forget that they work on preemptive multitasking system.
+	\begin{example}
+	xterm program is setuid root and allows users to open a log file to record what is being typed. Log file opened by xterm by (1) change subprocess to real uid/gid to test with access(logfilename, W-OK) whether the writable file exists. If not, creates the file owned by the user. (2) Call open(logfilename, O-WRONLY | O-APPEND) to open the existing file for writing
+	
+	\bigskip
+	Exploit provides as logfilename the name of the symbolic link that switches between a file owned by the user and a target file. If access() is called while the symlink points to the user's file and open() is called while it points to the target file, the attacker gains via xterm's log function write access to the target file
+	\end{example}
+	
+	\item Incomplete \textbf{checking of environment}
+	\begin{itemize}
+		\item Semantics of some library functions depends on state of execution environment - for example the PATH environment variable
+		
+		\item Can fix a number of vulnerabilities by using an absolute path and by using \textbf{responsible disclosure}
+	\end{itemize}
+	\item \textbf{ Unexpected side channels}
+	\item \textbf{Lack of authentication}
+	\item \textbf{Integer overflow}: Can lead to buffer overflows and similar exploits caused by integer overflows
+	\item \textbf{Subtle syntax incompatibilities}: For example, overlong UTF-8 sequences - where first 7 bits are all compatible with ASCII characters - all ASCII characters (U0000-U007F) are represented by ASCII bytes (0x00-0x7f), whereas all non-ASCII characters are represented by sequences of non-ASCII bytes (0x80-0xf7). Only shortest possible UTF-8 sequence is valid for any unicode character, but many UTF-8 decoders accept also the longer variants. Many security applications test strings for absence of certain characters (in ASCII), therefore by using overlong versions, can slip characters past. This led to an IIS vulnerability.
+	
+	\item \textbf{Insufficient Parameter Checking}: example is a read buffer overflow in a smartcard where exchanges include a number of bytes expected - can literally just give a higher value and then receive RAM content beyond the buffer.
+	
+
+\end{enumerate}
+
+\subsection{Buffer Overflows}
+Buffer overflow if you continue to read from after the length of the buffer. In order to exploit a buffer overflow, the attacker typically prepares a byte sequence that consists of:
+\begin{enumerate}
+	\item \textbf{Landing pad or NOP-sled} - initial series of no-operation (NOP) instructions that allow for some tolerance in the entry jump address
+	\item Machine instructions that modify a security-critical data structure or that hand control to another application to gain more access
+	\item Some space for function-call parameters or stack operations
+	\item Estimated start address of the buffer (landing pad) in the form used for return addresses on the stack
+\end{enumerate}
+
+\textbf{Stopping buffer overflows}
+\begin{itemize}
+	\item Use programming languages with array bounds checking
+	\item Compiler adds check values between buffers and return addresses on stack
+	\item Shadow stacks
+	\item Let memory-management unit disable code execution on the stack
+	\item Address space layout randomisation
+\end{itemize}
+
+\textbf{Return-Oriented Programming}: If stack execution disabled, exploit existing instructions elsewhere, changing values of the executable where there are useful sequences, overwriting the stack. Therefore, the attacker can still write programs on the stack that load registers and invoke system calls, without executing any machine instructions on the stack.
+
+\bigskip
+Can also target other values than return addresses on the stack including: (1) security critical variables, (2) function pointers that called later and (3) frame pointers
+
+\bigskip
+\textbf{Heap Exploits}
+Overflowing buffer - \textit{obtained by malloc() and free()}- sits in a chunk (unit of allocation used by the heap management library, next to other such chunks). The buffer overflows on heap can be exploited by overwriting pointers in the metadata (containing chunk-size information and two pointers, forward and backward - allows us keep deallocated chunks in a doubly-linked list) associated with the next chunk. free() operation will manipulate these value to return a chunk into a doubly-linked list, then after careful manipulation on chunk's metadata, call of free() on a neighbour chunk will perform any desired write operation into memory.
+
+
+\subsection{Missing check of input data - shell meta-characters}
+\begin{example}
+Web server allows users to provide email address in form field to receive a file. Address received by a Perl CGI script and stored in \textdollar email. Script then attempts to send out the email with the command:
+
+$system("mail  \text{\textdollar}email <message");$
+
+Attacker provides a carefully selected pathological address such as: trustno1@hotmail.com < /var/db/creditcards.log ; echo
+
+and can execute arbitrary commands
+\end{example}
+
+\begin{pros}
+\bigskip
+\noindent
+\textbf{Solutions}:
+\begin{itemize}
+	\item use safe API function instead of constructing shell commands
+	\item Prefix / quote each meta-character handed over to another software with a suitable escape character
+\end{itemize}
+\end{pros}
+
+\noindent
+\textbf{SQL Injection}: checks for meta characters often forgotten for text strings passed to SQL engines
+
+\noindent
+\bigskip
+\textbf{HTML Cross-Site Scripting}: Receive text strings from users that are embedded into HTML code pages served to other users. Therefore must check for meta-characters or users can inject into your web pages code that is executed by other's web browsers
+
+\subsection{Sourcing Secure Randoms}
+Can combine a number of 'sources' of randomness into a has function to condense the accumulated entropy into a smaller number of good randoms where none of the sources alone provides unbiased random bits
+\begin{enumerate}
+	\item Dedicated hardware - thermal noise from reverse-biased diode, unstable oscillators, Geiger counters
+	\item High-resolution timing of user behaviour - key strokes, mouse movement
+	\item High-resolution timing of peripheral hardware response times - hard drives
+	\item Noise from ADC
+	\item Network packet timing and content
+	\item High resolution time
+\end{enumerate}
+
+Provision of secure source of random bits generally an essential OS service
+
+\subsection{Security Testing}
+\subsubsection{Penetration Testing / Flaw Hypothesis Method}
+\begin{enumerate}
+	\item Put together team of software developers with experience on tested platform and in computer security
+	\item Study user manuals, design documentation and source code of the target
+	\item Prepare list of potential flaws (allow users to violate security policy), considering: (1) System control structure (user system interactions), (2) Common programming pitfalls, (3) Historic vulnerabilities and attack strategies, (4) Gaps in documented functionality, (5) Rarely used and recently added functions
+	
+	\item Sort list of flaws by estimated likelihood AND ease of testing
+	\item Test until time / budget is exhausted adding new flaw hypotheses as test results provide clues
+\end{enumerate}
+
+
+\subsubsection{Fuzz Testing}
+\begin{enumerate}
+	\item Generate random, invalid and unexpected program inputs until one found that crashes software
+	\item Then investigate the cause
+\end{enumerate}
+
+\noindent 
+Aim is to maximise the code coverage in the following ways:
+\begin{enumerate}
+	\item \textbf{Mutation Fuzzing}: randomly modify existing valid test examples
+	
+	\item \textbf{Structure-Aware Fuzzing}: test generator has syntax description of file formats or network packets and generates tests that contain a mixture of valid and invalid fields
+	
+	\item \textbf{GUI Fuzzing}: send random keyboard and mouse-click events
+	
+	\item \textbf{White-box Fuzzing}: use static program analysis, constraint solving to generate test examples
+	
+	\item \textbf{Gray-box Fuzzing}: use code instrumentation instead of program analysis
+	
+	\item \textbf{Evolutionary Fuzzing}: mutation fuzzing with feedback from execution traces
+\end{enumerate}
+
+\section{Cryptography}
+\subsection{Basic Primitives}
+\textbf{Hash Function h:} $\{0, 1\} ^{*} \rightarrow \{0, 1\}^{n}$ maps variable-length bit strings tp short, fixed-length bit strings using an efficient deterministic algorithm st the probability of a collision h(X) = h(Y) for inputs $X \neq Y$ is minimized. A secure hash function is collision resistant - computationally infeasible for anyone to find any pair of input strings X and Y st h(X) = h(Y) with X $\neq$ Y. 
+
+Collisions for any function with 2$^{n}$ possible outputs can be found in 2$^{n/2}$ steps
+
+\subsubsection{Standards}
+\begin{enumerate}
+	\item \textbf{SHA-2} where n = 224, 256 (- for 32-bit CPUs) and 384, 512 (- for 64-bit CPUs). On 32-bit CPUs, it takes about 20 cycles to generate a byte and on 64-bit, takes around 10 cycles / byte
+	\item \textbf{SHA-3}: has an arbitrary output length
+\end{enumerate}
+
+\subsection{Message Authentication Code}
+Maps a k-bit private key K (uniformly picked at random out of $\{0, 1\}^{k}$) and variable length message M to an n-bit tag st any opponent that does not know key K cannot guess the tag correctly with probability better than 2$^{-n}$ - \textit{existential unforgeability}. Can use a block-cipher based approach or a hash based one.
+
+\subsection{Private-Key Encryption Scheme}
+Pair of functions:
+$$\begin{array}{l}{\mathrm{Enc} :\{0,1\}^{k} \times\{0,1\}^{*} \rightarrow\{0,1\}^{*+v}} \\ {\mathrm{Dec} :\{0,1\}^{k} \times\{0,1\}^{*+v} \rightarrow\{0,1\}^{*}}\end{array}$$
+where Enc is an efficient, non-deterministic function that maps a k-bit private key K (picked uniformly at random out of $\{0, 1\}^{K}$) and a variable-length plaintext message to a v bits longer ciphertext message such that the message = Dec$_{K}(Enc_{K}(M))$ where Dec is an efficient deterministic and st an opponent who does not know K must not be able to learn anything new about M (other than the length of M) from being able to observe C = Enc$_{K}(M)$
+
+\bigskip
+\noindent
+\textbf{Assumptions for both Message Authentication Code and Private-Key Encryption Scheme}
+\begin{enumerate}
+	\item Opponent can query for many differeent plain text messages
+	\item Opponent knows all the definitions for Enc and Dec except for key K - \textbf{Kerckhoffs' Principle}
+	\item Key picked randomly
+\end{enumerate}
+
+\subsection{Authenticated Encryption Scheme}
+Private key encryption scheme that also provides ciphertext integrity, i.e. decryption will reject as invalid any ciphertext message that was not generated by the encryption function using the same private key. An opponent will not be able to forge a valid new ciphertext that the decryption function will then accept. 
+
+\bigskip
+\textit{Can be implemented using key-derivation funtion to derive from a private key, two different new keys for use with an encryption function and a message authentication function. Authenticated encryption function first encrypts the plain-text message and then appends the authentication code of the ciphertext.}
+
+\bigskip
+There are a number of AESD schemes which can be used including AES-GCM, AES-CCM, AES-EAX, AES-OCB
+
+\subsection{Summary}
+\textit{N.B. $\leftarrow$ assigns output of probabilistic algorithm, $:=$ of a deterministic algorithm}
+\subsubsection{Key Exchange}
+\begin{enumerate}
+	\item $(PK_{A}, SK_{A}) \leftarrow Gen$ - public/secret key-pair generation by Alice
+	\item $(PK_{B}, SK_{B}) \leftarrow Gen$ - public/secret key-pair generation by Bob 
+	\item $K := DH(SK_{A}, PK_{B}) = DH(PK_{A}, SK_{B})$ - key derivation from exchanged public keys
+\end{enumerate}
+
+\subsubsection{Digital Signature}
+\begin{enumerate}
+	\item $(PK, SK) \leftarrow Gen$ - public/secret key-pair generation
+	\item $S \leftarrow Sign_{SK}(M)$ - signature generation using secret key
+	\item $\text{Vrfy}_{PK}(M, S) = 1, M^{\prime} \neq M \stackrel{?}{\Rightarrow} \text{Vrfy}_{PK}(M', S) = 0$ - signature verification using public key
+\end{enumerate}
+
+\section{Entity Authentication}
+\subsection{Passwords}
+\textbf{How to identify humans}: should combine a few of these
+\begin{enumerate}
+	\item Something they are: \textbf{biometric identification}
+	\item Something they do: signature, keystroke dynamics, voice
+	\item Access tokens
+	\item Something they know - passwords, PIN. Unfortunately, hard to create passwords as randomnly picked single words (most common passwords) have low entropy. Requirements:
+	\begin{enumerate}
+		\item Reject delay
+		\item Trusted path (control+alt+delete)
+		\item Confidentiality of password database - store hash rather than plaintext password - use nonce concatenated with passwords to prevent comparison with precalculated hashed dictionary in case of stolen password database
+		
+		\item Monitor failed logins
+		\item Minimum length, inclusion of digits, punctuation and mixed case letters
+		\item Suggest phrases
+		\item Compare passwords to common passwords
+		\item Issue randomly generated PINs and passwords
+		\item Password manager
+		\item One time passwords
+		\item Single sign-on
+	\end{enumerate}
+	\item Location
+\end{enumerate}
+
+
+\subsection{Authentication Protocols}
+Allow claimant to prove their identity to a verifier by showing knowledge of a secret key - stops masquerade attacks:
+\begin{enumerate}
+	\item Replay attacks - using previously transmitted message
+	\item Reflection attacks - returning previous message to originator
+	\item Interleaving attack - using information from one or more ongoing or previous authentication exchanges
+\end{enumerate}
+
+Perform challenge-response exchanges of tokens that include an unforgeable cryptographic check values including: (1) message authentication codes and (2) time variant parameters (nonces) including timestamp.
+
+\subsubsection{Properties to consider}
+\begin{enumerate}
+	\item Number of message roundtrips rqd
+	\item Whether provide unilateral or mutual authentication
+	\item Key infrastructure that needs to be set up in advance
+	\item Whether they involve a trusted third party
+	\item What key entropy is required, whether keys can be revoked
+	\item Required computational effort
+	\item Scalability
+	\item Number of bits exchanged
+	\item Security properties offered, and challenge in proving these
+	\item Privacy protections
+\end{enumerate}
+
+\subsubsection{Notation}
+\begin{itemize}
+	\item A, B, C, S - Protocol participants (principals)
+	\item $T_{X}$ - Timestamp generated by participant X
+	\item $N_{X}$ - Sequence number generated by participant X
+	\item $R_{X}$ - Random number generated by participant X
+	\item $K_{XY}$ - Symmetric key shared by participants X and Y
+ 	\item $PK_{X}, SK_{X}$ - Public / secret key pair
+	\item M - optional message field
+	\item , - unambiguous concatenation of protocol fields
+	\item [X]$_{K}$ = (X, Mac$_{K}$(X)) \textit{protect integrity of message X by appending a MAC}
+	\item $\{X\}_{K}$ - apply authenticated encryption to message X
+	\item [Y]$\{X\}_{K}$ - apply authenticated encryption to message X, with additional plaintext data Y included for integrity protection
+\end{itemize}
+
+\subsubsection{One-pass Authentication}
+\begin{figure}[H] \includegraphics[width=0.7\textwidth, left] {./images/5.png} \end{figure}
+
+\begin{cons}
+\begin{itemize}
+	\item Verifier B has to keep state (last seen timestamp from A) to detect replay attacks. If multiple instances of verifier B, this state must be synchronised between them
+	\item Messages may have been sent long before verifier sees them
+\end{itemize}
+\end{cons}
+\subsubsection{Two-pass Authentication}
+Issues can be avoided using challenge-response protocols
+\begin{figure}[H] \includegraphics[width=0.5\textwidth, left] {./images/6.png} \end{figure}
+
+
+\subsubsection{Mutual Authentication}
+Allow A to gain assurance of identity of B as well
+\begin{figure}[H] \includegraphics[width=0.5\textwidth, left] {./images/7.png} \end{figure}
+
+\begin{cons}
+\textbf{Reflection Attack}: Principals can act as both claimants and verifiers and support concurrent protocol sessions. Allows attacker A' to masquerade as A by returning challenge to B in second session. Fix this by avoiding using same key for multiple purposes.
+\end{cons}
+
+\subsection{Kerberos}
+\textbf{Needham Schroeder}: User A and server B does not share a secret key initially but server shares key with everyone. A requests session with B from S. S generates session key $K_{A, B}$ and encrypts it separately for A and B - tickets contain timestamp and lifetime
+$$\begin{array}{ll}{A \rightarrow S :} & {A, B} \\ {S \rightarrow A :} & {\left\{T_{S}, L, K_{A B}, B,\left\{T_{S}, L, K_{A B}, A\right\}_{K_{B S}}\right\}_{K_{A S}}} \\ {A \rightarrow B :} & {\left\{T_{S}, L, K_{A B}, A\right\} K_{B S},\left\{A, T_{A}\right\}_{K_{A B}}} \\ {B \rightarrow A :} & {\left\{T_{A}+1\right\}_{K_{A B}}}\end{array}$$
+
+Kerberos serves the purposes of identifying users, computers and services on computers with a principal name of form (1) user or service/computer@REALM where realm identifies a set of key distribution centers that can authenticate the principal.
+
+\begin{itemize}
+	\item Initial $K_{AS}$ from A's password hashed
+	\item Instead of caching password in memory:
+	\begin{itemize}
+		\item \textbf{kinit} requests a ticket granting ticket which it decrypts using password hash - then discards password and long term TGT decryption key and stores the short-term session key for future communications with the TGT service kerberostgt/REALM@REALM
+		\item Then use that cached session each time it needs to request a session ticket for a different server. When key expires - can be auto-renewed or made renewable for longer than the default 10 hours, user must reenter the password
+	\end{itemize}
+
+	\item Pre-authorisation step ensures that key distribution center S does not reply with any TGT encrypted under K$_{AS}$ unless sender has demonstrated knowledge of K$_{AS}$ to hinder offline password guessing
+	
+	\item Mechanism for forwarding tickets allows server to impersonate remote user - access other services on their behalf
+	
+	\item There is also support for a federation of realms
+	
+\end{itemize}
+
+
+
+\section{Network Security}
+\begin{cons}
+\textbf{Problems}
+\begin{enumerate}
+	\item WAN allows attacks from anywhere often via compromised intermediary machines given international law enforcement is rather difficult
+	\item Commonly used protocols are not designed for a hostile environment in one of a couple ways: (1) authentication missing or based on source address, cleartext password, or integrity of remote host, (2) missing protection against DOS attacks
+	\item Use of bus and broadcast technologies, promiscuous mode attack interfaces
+	\item Vulnerable protocol implementations
+	\item DDOS attacks
+\end{enumerate}
+\end{cons}
+\subsection{TCP/IP Security}
+Transport connections characterised by (1) source IP address, (2) destination IP address, (3) source port, (4) destination port - port numbers < 1024 are privileged, under Unix only root can open them - this is used by some Unix network services to authenticate peer system processes
+
+\begin{cons}
+\subsubsection{Address Spoofing}
+IP source address provided by originating host which can provide wrong information which is verified during the TCP 3-way handshake:
+$$\begin{array}{ll}{S \rightarrow D :} & {\text { SYN }_{x}} \\ {D \rightarrow S :} & {\operatorname{SYN}_{y}, A C K_{x+1}} \\ {S \rightarrow D :} & {A C K_{y+1}}\end{array}$$
+
+Only third message starts data delivery, therefore data communications will only proceed after claimed originator has confirmed reception of a TCP sequence number in ACK message. From then on, TCP ignore messages with sequence numbers outside confirmation window - can act like an authentication nonce
+
+
+\subsubsection{Vulnerabilities}
+\begin{enumerate}
+	\item IP loose source route option allows S to dictate an explicit path to the destination and old specifications require destination machines to use the inverse path for the reply, ensures no need of 3-way TCP handshake
+	
+	\item UDP is more vulnerable to address spoofing - no sequence numbers
+	
+	\item TCP implementations \textit{today} randomise start sequence numbers - with predictable start sequence numbers, attacker could without having access to reply packets sent from destination to source: (1) impersonate source without receiving second message - \textbf{sequence number attack} and (2) disrupt ongoing communication - \textbf{session hijacking}
+	
+	\item In older TCP implementations, destination allocates a temporary data record for every half-open connection in a small buffer - can flood this - \textbf{SYN flooding}
+	
+	\item DNS issues
+	\begin{enumerate}
+		\item DNS caching issues related issues
+		\item DNS resolvers configured to complete name prefixes automatically
+	\end{enumerate}
+\end{enumerate}
+
+\end{cons}
+
+
+\subsection{Firewalls}
+Dedicated gateways between LANs and WAN - all traffic between LAN and WAN must pass through the firewall and there checked for compliance with local security policy. Work in the following ways:
+
+\begin{enumerate}
+	\item \textbf{Port Blocks}: drops or passes packets based on matches with configured sets of IP addresses and / or port numbers. Allows sysadmins to control at a single configuration point which network services are reachable at which host
+	
+	\item \textbf{SYN Blocks}: basic packet filter can distinguish TCP traffic (in both directions) because opening packet lacks ACK bit
+	
+	\item \textbf{Stateful TCP/UDP filters}: require implementation of TCP state machine or track state of UDP-based protocols - this is beyond capabilities of most router hardware
+	
+	
+	\item \textbf{Ingress Filtering}: performs plausibility checks on source IP addresses. Possible iff firewall has interfaces $\{I_{1}, ..., I_{n}\}$ and is positioned in the network st all hosts reachable via interface $I_{k}$ have an IP address from a set S$_{k}$, while none of the hosts reachable via another interface I$_{l}$ have an address in $S_{k}$. Firewall can then drop all packets arriving on $I_{k}$ that does not have source address in S$_{k}$ and can also drop packets arriving on interface I$_{l}$ that do have a source address in S$_{k}$
+	
+	\item \textbf{Application gateway}: firewalls check for protocol violations above the transport layer and above to protect implementations on the intranet. Some implement entire application protocol stacks in order to sanitise syntax of protocol data units and suppress unwanted content
+	
+	\item \textbf{Logging and Auditing}: record suspicious activity and generate alarms, eg. port scans where single outside host sends packets to all hosts of subnet
+\end{enumerate}
+
+\begin{cons}
+\textbf{Limits of Firewalls}:
+\begin{enumerate}
+	\item Once host behind firewall has been compromised, attacker can communicate over open protocol
+	
+	\item Little protection against insider attacks
+	
+	\item Rigid firewall policies severely disrupt deployment of new systems. 
+	\begin{pros}
+		Newer protocols designed to resemble HTTP
+	\end{pros}
+\end{enumerate}
+\end{cons}
+
+\subsection{Virtual Private Networks}
+Setups apply authenticated encryption to IP packets to achieve security properties similar to those offered by a private direct physical connection
+
+\subsubsection{Site-to-Site VPN}
+Each router at boundary between participating site and rest of internet seperates data packets travelling between participating sites and then applies authenticated encryption to such traffic, along with ingress filtering such as: (1) external eavesdroppers cannot read intra-site traffic, (2) packets with source addresses from one of participating sites are allowed to enter other sites if they have arrived there protected by correct authenticated encryption key for traffic from that site
+
+\bigskip
+Hence, source address can be used in packet filters to decide whether data packet originated from one of organisation's sites and network access control applied accordingly
+
+\subsubsection{Remote Access VPN}
+Also activated in a mobile device to route traffic from that device to an organisational intranet. Gives device a tunneled interface with an address on the intranet as if it were located on the inside
+
+\subsection{Distributed Denial of Service Attack}
+\textbf{Aim}: overload internet servers or their connection infrastructure using traffic from a wide range of source addresses
+
+\bigskip
+\textbf{Bot-net Based Attacks}: Compromise many computers to run a remote-controlled software that generates high network traffic to a target server that is difficult to distinguish from legitimate traffic
+
+\bigskip
+\textbf{UDP based Amplification Attacks}: protocols respond to incoming unauthenticated request packets with significantly longer response packets and send these to the source address found in the request packets
+
+\subsection{Hyper Text Transfer Protocol}
+\subsubsection{Version 0.9}
+Client contacts a server on TCP port 80 sends a request line and received a response file - can be demonstrated via any generic TCP tools
+
+\bigskip
+\noindent
+\textbf{Uniform Resource Locator syntax}: scheme:[//[user[:password]@]host[:port]][/path][?query][$\#$fragment]
+
+\bigskip
+\noindent
+\textbf{HTTPS}: uses TCP port 443 and TLS protocol to authenticate the server and encrypt the HTTP connection
+
+\subsubsection{Version 1.0}
+More flexible and verbose: (1) Header starts with status-code line, (2) headers can carry additional fields, (3) request and response headers each finish with an empty line
+
+\subsubsection{Version 1.1}
+Request header can also have fields and even a message body. Also, requires that the client identifies the server name in a 'Host:' field (for servers with multiple hostnames on the same IP address)
+
+\subsubsection{Request Headers}
+In each request header, web browsers offer information about their software version, capabilities and preferences, eg:
+\begin{lstlisting}
+Host: localhost:8080
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:58.0) Gecko/20100101 Firefox/58.0
+Accept: text/html,application/xhtml+xml,application/xml; q=0.9,*/*;q=0.8
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Connection: keep-alive
+Upgrade-Insecure-Requests: 1
+\end{lstlisting}
+
+\subsubsection{State and Session Context}
+\begin{itemize}
+	\item HTTP stateless protocol - TCP connection can terminate after each request / response
+	
+	\item Therefore, have a number of ways of adding context:
+	
+	\begin{enumerate}
+		\item \textbf{Cookie}: server maintained state indicators in headers
+		
+		
+		\item \textbf{Referer}: where did URL come from
+		
+		\item \textbf{Authorisation}: basic password authentication
+		
+	\end{enumerate}
+\end{itemize}
+
+
+\subsection{Redirects}
+HTTP server can respond with 3xx status code and a Location field to send the client elsewhere for the requested resource:
+\begin{itemize}
+	\item 301 - moved permanently
+	\item 302 - found (temporary new link)
+	\item 303 - see other (go there, but may not know what is expected)
+\end{itemize}
+
+\subsection{Basic Authentication}
+Supports simple password mechanism:
+\begin{lstlisting}
+$ nc -C www.cl.cam.ac.uk 80
+GET /~mgk25/hello-basic.html HTTP/1.0
+Authorization: Basic Z3Vlc3Q6Z1VlU3Q=
+\end{lstlisting}
+
+\begin{cons}
+However, not widely used as (1) designer has no control over appearance of pop-up password prompt, (2) clear-text password included in each request and (3) no way to logout except closing browser
+\end{cons}
+
+\subsection{Form Methods}
+\subsubsection{GET}
+\begin{itemize}
+	\item Meant for operations that have no side effects
+	\item Assumed requests are idempotent
+	\item Field values appended to URL st they can easily be quoted, bookmarked and included in links
+	\item Responses can be cached
+\end{itemize}
+
+\subsubsection{POST}
+\begin{itemize}
+	\item Meant for operations with side effects, especially non-idempotent ones
+	\item Browser must not repeat POST request without explicit confirmation by user
+	\item Form fields kept out of URL bar st users cannot accidentally repeat or reveal then via links, quotations or bookmarks
+	\item Sent as request content type: \textit{application/x-www-form-urlencoded}
+\end{itemize}
+
+\subsection{Cookies}
+Web browsers maintain database table where web servers can store (\textit{name=value}) entries (can set multiple cookies at the same time) as data that the browser will present to the server in future request headers
+
+\begin{lstlisting}
+Set-Cookie: sid=hJsndj47Sd8sl3hiu; HttpOnly; Secure
+Set-Cookie: lang=en-GB
+\end{lstlisting} 
+which clients return as:
+\begin{lstlisting}
+Cookie: sid=hJsndj47Sd8sl3hiu; lang=en-GB
+\end{lstlisting}
+
+\begin{itemize}
+	\item Information can be followed by attributes, seperated by semicola.
+	\item Browsers store attributes with each cookie but do not return them in the Cookie: header
+	\item Secure flag ensures cookie only included in HTTPS requests and omitted from HTTP requests
+	\item HttpOnly flag ensures cookie only visible in HTTP(S) requests to servers but not accessible to client-side JS code via the document.cookie API
+	
+	\item By default, browsers return cookies only to server that set them (recording the hostname used but not the port)
+	
+	\item Servers can also limit cookies to be returned only to certain URL prefixes
+	\begin{lstlisting}
+	Set-Cookie: lang=en; Path=/~mgk25/; Secure
+	\end{lstlisting}
+	means browsers will only include in requests to URLs starting with http://www.cl.cam.ac.uk/~mkg25/
+	
+	\item Can also explicitly specify a domain with 'Domain=...'
+	
+	\item If browser receives cookie with same name, Domain value and Path value as a cookie that has already stored, the existing cookie evicted and replaced with new cookie - if different Domain or Path values, browsers store multiple cookies of same name
+	
+	\item Browsers reject Domain values that do not cover origin server's hostname and reject public suffixes
+	
+	\item \textbf{Expiration}: by default, expire at end of browser session but can specify an expiry date or max storage duration
+	
+	
+\end{itemize}
+
+\subsubsection{Session Cookies}
+(1) Verify provided password, (2) generate and store in the browsers a cookie to authenticate the rest of the session
+
+\bigskip
+\noindent
+\textbf{Things to consider}:
+\begin{itemize}
+	\item Passwords linger in browser memory and can be stolen
+	\item Malleable encryption may enable forging of other users' session cookies
+	\item No possibility of logout, the cookie is valid forever
+\end{itemize}
+
+$$S = base64(userid, logintime, Mac_{K}(userid, logintime, clientip))$$
+
+Unforgeable MAC protects both the user ID and login time, which enables the server-side limitation of the validity period. No need to set the \textit{Expires} attribute - quitting the browser will end the session by deleting the cookie
+
+\bigskip
+\noindent
+\textbf{Stateful Servers}: Can simply use a large unguessable random number as a session cookie and compare against a stored copy.
+
+\begin{pros}
+	Server-side logout is possible by deleting cookie in the server
+	
+	Can replace nonce at each HTML request - though causes synchronisation problems when user presses back or reload
+\end{pros}
+
+\begin{cons}
+\bigskip
+\noindent
+\textbf{Pitfalls}:
+\begin{enumerate}
+	\item \textbf{Leaked MAC key}: can be found through (1) SQL injection attack, (2) from config file through GET request, (3) through stolen backup config files
+	
+	\begin{pros}
+	\textbf{Countermeasures}
+	\begin{enumerate}
+		\item Append password hash o the cookie and store in the database instead as the value to check the passwords and session cookies against
+		\item Rotate short-term MAC keys
+		\item Hardware security modules
+	\end{enumerate}
+	\end{pros}
+	
+	\item \textbf{Missing Secure or HttpOnly Flags}: authentication cookies and login passwords can be eavesdropped unless HTTPS is used - can be stole in cross-site scripting attacks
+	
+	\item \textbf{Not renewing session cookie after change of privilege}: Some sites set session cookie before login - if not reset at login, attacker can try to gain access to an account by injecting into victim's browser an unauthenticated session cookie chosen by the attacker, which the victim then elevates through login - \textbf{session fixation}
+\end{enumerate}
+\end{cons}
+
+\subsection{Cross-Site Request Forgery}
+Include links aimed at creating unintended side effect which might be executed as browser has a valid session cookie
+
+\begin{pros}
+\bigskip
+\noindent
+\textbf{Countermeasures}
+\begin{enumerate}
+	\item Check transaction sent as POST
+	\item Check \textit{Referer:} header where browsers report on which URL a link was clicked, if it shows expected form-page URL
+	\item Include an invisible MAC of the session cookie into security-critical form fields - adversary unable to anticipate this, must verify that the field has the expected value
+	
+	\item Short lived sessions
+\end{enumerate}
+\end{pros}
+
+\subsection{Website Compromise Solutions}
+\begin{enumerate}
+	\item Separate strong passwords for each website
+	
+	\item Store passwords in central server - eg LDAP and Kerberos - but compromised web sites log all passwords entered
+	\item Single Sign-On
+\end{enumerate}
+
+\end{document}

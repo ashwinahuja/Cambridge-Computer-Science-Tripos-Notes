@@ -1,0 +1,1780 @@
+\documentclass{article}
+\title{Compiler Construction}
+\author{Ashwin Ahuja}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tabto}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{longtable}
+\usepackage{verbatimbox}
+\newcommand\Includegraphics[2][]{\addvbuffer[3pt 0pt]{\includegraphics[#1]{#2}}}
+
+\providecommand{\dotdiv}{% Don't redefine it if available
+  \mathbin{% We want a binary operation
+    \vphantom{+}% The same height as a plus or minus
+    \text{% Change size in sub/superscripts
+      \mathsurround=0pt % To be on the safe side
+      \ooalign{% Superimpose the two symbols
+        \noalign{\kern-.35ex}% but the dot is raised a bit
+        \hidewidth$\smash{\cdot}$\hidewidth\cr % Dot
+        \noalign{\kern.35ex}% Backup for vertical alignment
+        $-$\cr % Minus
+      }%
+    }%
+  }%
+}
+
+\usepackage[T1]{fontenc}
+\newenvironment{definition}{\par\color{blue}}{\par}
+\newenvironment{pros}{\par\color[rgb]{0.066, 0.4, 0.129}}{\par}
+\newenvironment{cons}{\par\color{red}}{\par}
+\newenvironment{example}{\par\color{brown}}{\par}
+\usepackage{fancyhdr}
+%% Margins
+\usepackage{geometry}
+\geometry{a4paper, hmargin={2cm,2cm},vmargin={2cm,2cm}}
+
+%% Header/Footer
+\pagestyle{fancy} 
+\lhead{Ashwin Ahuja}
+\chead{Compiler Construction}
+\rhead{Part IB, Paper 4}
+\lfoot{}
+\cfoot{\thepage}
+\rfoot{}
+\renewcommand{\headrulewidth}{1.0pt}
+\renewcommand{\footrulewidth}{1.0pt}
+
+\usepackage[export]{adjustbox}
+\usepackage{caption}
+\captionsetup{justification   = raggedright,
+	singlelinecheck = false}
+
+\lstset{
+	basicstyle=\ttfamily,
+	columns=fullflexible,
+	breaklines=true,
+	postbreak=\raisebox{0ex}[0ex][0ex]{\color{red}$\hookrightarrow$\space}
+}
+\usepackage{listings}
+\lstset{
+	escapeinside={(*}{*)}
+}
+
+
+
+\begin{document}
+
+\makeatletter
+\renewcommand{\l@subsection}{\@dottedtocline{2}{1.6em}{2.6em}}
+\makeatother
+
+\begin{titlepage}
+\begin{center}
+			\vspace*{1cm}
+			
+			\Huge
+			\textbf{Compiler Construction}
+			
+			\vspace{0.5cm}
+			\LARGE
+			University of Cambridge
+			
+			\vspace{1.5cm}
+			
+			\textbf{Ashwin Ahuja}
+			
+			\vfill
+			
+			Computer Science Tripos Part IB\\
+			Paper 4
+			
+			\vspace{5cm}
+			
+			April 2019
+			
+\end{center}
+\end{titlepage}
+
+\tableofcontents
+\pagebreak
+\section{Structure}
+Compiler effectively takes a source program text into a program for a target machine. 
+
+\bigskip
+\noindent
+\textbf{Goals}:
+\begin{enumerate}
+	\item Meaning is preserved - therefore correct
+	\item Produce usable error messages
+	\item Generate efficient code
+	\item Itself be efficient
+	\item Be well-structured and maintainable
+\end{enumerate}
+
+It bridges the gap between high level languages which are: (1) machine independent, (2) complex syntax, (3) Complex type system, (4) Variables, (5) Nested scope, (6) Procedures, functions, (7) Objects, (8) Modules and typical target languages which are: (1) Machine specific, (2) Simple syntax, (3) Simple types, (4) Memory, registers, words, (5) Single flat scope
+
+
+\begin{figure}[H] \includegraphics[width=.7\textwidth, left] {./images/2.png} \end{figure}
+
+\subsection{Front End}
+\begin{figure}[H] \includegraphics[width=.7\textwidth, left] {./images/1.png} \end{figure}
+
+\textbf{Lexical Analysis}: Based on finite automaton and regular expression
+
+\noindent
+\textbf{Parsing}: Based on push-down automaton and context free grammars
+
+\noindent
+\textbf{Semantic Analysis}: Enforces the static semantics of the language including type checking, functions, etc
+
+\subsection{Middle}
+Takes the AST and other info and converts into low-level, while carrying out the optimisations as required. Output is a low-level retargetable representation.
+
+Our view of the system suggests that there are a sequence of small transformations between a set of intermediate languages where:
+\begin{enumerate}
+	\item Each intermediate language has its own semantics (may be informal)
+	\item Each transformation preserved semantics
+	\item Each transformation eliminates only a few aspects of the gap
+	\item Each transformation is fairly easy to understand
+	\item Some transformations can be described as optimizations
+	\item Associate each intermediate language with its own interpreter
+\end{enumerate}
+
+\subsection{Back End}
+Takes the low-level retargetable representation and converts it to the specific architecture or type that would allow the user to run the code - requires knowledge of instruction set and details of target machine. In this place, you can also have target-dependent optimisations.
+
+\subsection{SLANG}
+Simple Language - subset of L3 with ugly concrete semantics
+
+\subsubsection{Syntax}
+uop ::= - | \textasciitilde (where \textasciitilde is boolean negation)
+
+bop ::= + | - | * | < | = | $\& \&$ | ||
+
+t ::= bool | int | unit | (t) | t * t | t + t | t -> t | t ref
+
+e ::= () | n | true | false | x | (e) | ? - request integer input from terminal | e bop e | uop e | if e then e else e end | e e | fun (x : t) -> e end | let x : t = e in e end | let f(x : t) : t = e in e end | !e | ref e | e := e | while e do e end | begin e; e; ... e end | (e, e) | snd e | fst e | inl t e | inr t e | case e of inl(x : t) -> e | inr(x : t) -> e end 
+
+\subsubsection{Front End for SLANG}
+\begin{enumerate}
+	\item \textbf{Parsing} - takes input file and converts to a parsed AST
+	\item \textbf{Static Analysis} - takes parsed AST and changes it and outputs a parsed AST. In this step, check types and context-sensitive rules and resolve overloaded operators
+	\item Then, removes the syntactic sugar, including file location information and most type information - creating an intermediate AST
+\end{enumerate}
+
+\subsubsection{Parsed AST}
+\begin{lstlisting}
+type var = string
+type loc = Lexing.position #used to generate error messages
+type type_expr = TEint
+	| TEbool
+	| TEunit
+	| TEref of type_expr
+	| TEarrow of type_expr * type_expr
+	| TEproduct of type_expr * type_expr 
+	| TEunion of type_expr * type_expr
+	
+type oper = ADD | MUL | SUB | LT | AND | OR | EQ | EQB | EQ
+type unary_oper = NEG | NOT
+type expr =
+	| Unit of loc
+	| What of loc
+	| Var of loc * var
+	| Integer of loc * int
+	| Boolean of loc * bool
+	| UnaryOp of loc * unary_oper * expr
+	| Op of loc * expr * oper * expr
+	| If of loc * expr * expr * expr
+	| Pair of loc * expr * expr
+	| Fst of loc * expr
+	| Snd of loc * expr
+	| Inl of loc * type_expr * expr
+	| Inr of loc * type_expr * expr
+	| Case of loc * expr * lambda * lambda
+	| While of loc * expr * expr
+	| Seq of loc * (expr list)
+	| Ref of loc * expr
+	| Deref of loc * expr
+	| Assign of loc * expr * expr
+	| Lambda of loc * lambda
+	| App of loc * expr * expr
+	| Let of loc * var * type_expr * expr * expr 
+	| LetFun of loc * var * lambda * type_expr * expr 
+	| LetRecFun of loc * var * lambda * type_expr * expr
+
+\end{lstlisting}
+
+\noindent
+\textbf{static.ml}
+\begin{enumerate}
+	\item Check type correctness
+	\item Rewrite expressions to resolve EQ to EQI (for integers) or EQB (for booleans)
+	\item Only LetFun is returned by parser and rewrite to LetRecFun when the function is actually recursive
+\end{enumerate}
+
+\begin{lstlisting}
+val infer : (Past.var * Past.type_expr) list -> (Past.expr * Past.type_expr)
+val check : Past.expr -> Past.expr # infer on an empty environment
+\end{lstlisting}
+
+\subsubsection{Internal AST}
+These have no locations and types and no Let and EQ.
+\begin{lstlisting}
+type var = string
+type oper = ADD | MUL | SUB | LT | AND | OR | EQB | EQI 
+type unary_oper = NEG | NOT | READ
+
+type expr = | Unit
+	| Var of var
+	| Integer of int
+	| Boolean of bool
+	| UnaryOp of unary_oper * expr
+	| Op of expr * oper * expr
+	| If of expr * expr * expr
+	| Pair of expr * expr
+	| Fst of expr
+	| Snd of expr
+	| Inl of expr
+	| Inr of expr
+	| Case of expr * lambda * lambda
+	| While of expr * expr
+	| Seq of (expr list)
+	| Ref of expr
+	| Deref of expr
+	| Assign of expr * expr
+	| Lambda of lambda
+	| App of expr * expr
+	| LetFun of var * lambda * expr
+	| LetRecFun of var * lambda * expr
+	
+and lambda = var * expr
+
+In past_to_ast.ml:
+	val translate_expr : Past.expr -> Ast.expr
+\end{lstlisting}
+
+\textbf{Example}: 'let x : t = e1 in e2 end' -> '(fun (x : t) -> e2 end) e1'
+
+\section{Lexing and Parsing}
+\textbf{Problem}: (1) Translate a sequence of characters into (2) a sequence of tokens (3) implemented with some data type
+
+\subsection{Theory of Regular Languages and Finite Automata}
+\textbf{Lexing Problem}
+\begin{enumerate}
+	\item Given an ordered list of regular expressions: $e_{1}, e_{2}, ..., e_{k}$ and an input string w
+	\item Find pairs $(i_{1}, w_{1}), (i_{2}, w_{2}), ..., (i_{n}, w_{n})$ st
+	
+	\begin{enumerate}
+		\item $w=w_{1} w_{2} \dots w_{n}$
+		\item $w_{j} \in L\left(e_{i_{j}}\right)$
+		\item \textbf{Priority Rule}: $w_{j} \in L\left(e_{s}\right) \rightarrow i_{j} \leq s$
+		\item \textbf{Longest Match}: $\forall j  \forall u \in prefix(w_{j+1}w_{j+2} ... w_{n}): u \neq \epsilon \rightarrow \forall s \; w_{j} u \notin L(e_{s}) $
+	\end{enumerate}
+\end{enumerate}
+
+\begin{longtable}[h]{|l|p{0.3\textwidth}|l|}
+		\hline
+		\textbf{Regular Expression}                                                                                            & \textbf{Finite Automata} & \textbf{Token} \\ \hline
+		\textbf{Keyword: if}                                           &          \Includegraphics[width=.3\textwidth, left] {./images/3.png}               &      KEY(IF)          \\ \hline
+		\textbf{Keyword: then}                                                                                                 &         \Includegraphics[width=.3\textwidth, left] {./images/4.png}                  &       KEY(then)         \\ \hline
+		\textbf{Identifier: {[}a-zA-Z{]}{[}a-zA-Z0-9{]}*}                                                                      &           \Includegraphics[width=.3\textwidth, left] {./images/5.png}                &        ID(s)        \\ \hline
+		\textbf{number: {[}0-9{]}{[}0-9{]}*}                                                                                   &           \Includegraphics[width=.2\textwidth, left] {./images/6.png}                &      NUM(n)          \\ \hline
+		\textbf{real: ([0-9] + '.' [0-9]*) | ([0-9]* '.' [0-9]+)  }                                               &             \Includegraphics[width=.3\textwidth, left] {./images/7.png}              &        NUM(n)        \\ \hline
+		\textbf{White-space: (' ' | '\textbackslash n' | '\textbackslash t) + |'$\%$' [A-Za-z0-9' '] + '\textbackslash n'} &             \Includegraphics[width=.3\textwidth, left] {./images/8.png}              &          No token      \\ \hline
+
+\end{longtable}
+
+\begin{definition}
+	\noindent
+	\textbf{Parse Tree} = derivation tree = concrete syntax - contains all the information (in not necessarily the most efficient storage systems)
+	
+	\noindent
+	\textbf{Abstract Syntax Tree}: contains \textbf{only} the information needed to generate an intermediate representation - generally compiler only implicitly constructs a concrete syntax tree in the parsing process and explicitly creates an AST
+\end{definition}
+
+\subsubsection{Constructing a lexer}
+\begin{enumerate}
+	\item INPUT: an ordered list of regular expressions
+	\item Construct all corresponding finite automata
+	\item Construct a single non-deterministic finite automata
+	\item Construct a single deterministic finite automata
+	\item \textbf{Using Longest Match}
+	\subitem This is used in order to work out which path to go down - you do the following (1) Start in initial state then \textbf{repeat} (2) read input until dead state is reached. Emit token associated with last accepting state, (3) reset state to start state
+\end{enumerate}
+
+\subsection{Context-Free Grammars}
+\begin{lstlisting}
+E ::= ID | NUM | E * E | E / E | E + E | E - E | (E)
+\end{lstlisting}
+where:
+
+\begin{itemize}
+	\item E is a non-terminal symbol
+	\item ID and NUM are lexical symbols
+	\item E ::= ... are production rules
+	\item *, (, ), +, - are terminal symbols
+\end{itemize}
+
+
+\begin{definition}
+	\noindent
+	Context Free Grammar is a quadruple G = (N, T, R, S) where:
+	\begin{itemize}
+		\item N is the set of non-terminal symbols
+		\item T is the set of terminal symbols (N and T are disjoint)
+		\item S $\in$ N is the start symbol
+		\item $\mathrm{R} \subseteq \mathrm{N} \times(\mathrm{N} \cup \mathrm{T})^{*}$ is a set of rules
+	\end{itemize}
+\end{definition}
+
+\subsubsection{Derivations}
+\begin{enumerate}
+	\item Start from start symbol S
+	\item Productions used to derive a sequence of tokens from the start symbol
+	\item For arbitrary string a, b and c comprised of both terminal and non terminal symbols and a production A -> b, a single step of derivation is aAc => abc
+	\item $\forall a \implies^{\times} b$ means that b can be derived from a in 0 or more single steps
+	\item $\forall a \implies^{+} b$ means that b can be derived from a in 1 or more single steps
+\end{enumerate}
+
+\subsubsection{Language}
+L(G) is the language generated by grammar G - set of all terminal symbols derived from the start symbol S:
+
+\begin{equation}
+L(G) = |w \in T * | S \implies + w|
+\end{equation}
+That is, for any subset w of T*, if there exists a CFG G such that L(G) = W, then W is called a Context-Free Language over T
+
+\subsection{Ambiguity Problem}
+\begin{cons}
+	\textbf{Issues}:
+	\begin{enumerate}
+		\item CFGs describe how to generate - parsing is the inverse of this...
+		\item Given an input string, is it in the language generated by a CFG - then construct a derivation tree. \textbf{However, the derivation trees are not unique} - can have multiple derivation trees which correspond to the same strings
+	\end{enumerate}
+\end{cons}
+
+
+\noindent
+Can try to modify grammar in order to eliminate ambiguity hence G2 and G4
+
+\bigskip
+\noindent
+\textbf{G2}
+\begin{lstlisting}
+S ::= E
+E ::= E + T | E - T | T
+T ::= T * F | T / F | F
+F ::= NUM | ID | (E)
+\end{lstlisting}
+
+\bigskip
+\noindent
+\textbf{G4}
+\begin{lstlisting}
+S ::= WE | NE
+WE ::= if E then WE else WE | ...
+NE ::= if E then S | if E then WE else NE
+\end{lstlisting}
+
+\begin{cons}
+	\bigskip
+	\noindent
+\textbf{Important points}
+\begin{enumerate}
+	\item Some context free languages are \textbf{inherently ambiguous} - $\nexists$ context-free grammar where it is not ambiguous
+	\item Checking for ambiguity in an arbitrary context-free grammar is an undecidable problem
+	\item Given two grammars G1 and G2, checking L(G1) = L(G2) is not decidable
+\end{enumerate}
+\end{cons}
+
+\subsection{Generating a Lexical Analyser}
+Use regular expressions as basis of a lexical specification then the core of the lexical analyzer is just a deterministic finite automata
+
+\begin{figure}[H] \includegraphics[width=.5\textwidth, left] {./images/9.png} \end{figure}
+
+\subsection{Recursive Descent Parsing}
+Top-down method of syntax analysis in which a set of recursive procedures are used to process the input. One procedure is associated with each non-terminal of a grammar. 
+
+Relies upon information about the first symbols that can be generated by a production body. Therefore need the first symbol for each production rule to be different! Eliminating left recursion fixes this
+
+\begin{cons}
+	However, issue is that it is possible for recursive-descent parsers to loop forever - especially where there is left-recursive productions: expr $\rightarrow$ expr + term
+\end{cons}
+
+\subsubsection{Eliminating Left Recursion}
+Say A ::= $A\alpha | \beta$ where $\alpha$ and $\beta$ are sequences of terminals and non-terminals that do not start with A. Convert this to:
+\begin{enumerate}
+	\item A' ::= $\alpha$ A' | $\epsilon$
+	\item A ::= $\beta$ A'
+\end{enumerate}
+
+\noindent
+Therefore, G2 becomes G6:
+\begin{lstlisting}[escapeinside={(*}{*)}]
+S ::= E
+
+E ::= TE'
+E' ::=  + TE' | -TE' | (*$\epsilon$*)
+
+T ::= FT'
+T' ::= * FT' | / FT' | (*$\epsilon$*)
+
+F ::= NUM | ID | (E)
+\end{lstlisting}
+
+\subsubsection{Required Information}
+\begin{enumerate}
+	\item \textbf{FIRST[X]}: set of terminal symbols that can begin strings derived from X
+	\item \textbf{FOLLOW[X]}: set of terminal symbols that can immediately follow X in some derivation
+	\item \textbf{nullable[X]}: true if X can derive the empty string, false otherwise
+\end{enumerate}
+
+\textbf{Calculating First, Follow and Nullable}:
+\begin{itemize}
+	\item For each terminal symbol Z:
+		
+		FIRST[Z] := {Z}
+		
+		nullable[Z] := false
+		
+	\item For each non-terminal symbol X:
+	
+		FIRST[X] := FOLLOW[X] := {}
+		
+		nullable[X] := false
+	
+	\item Repeat until no change
+	
+	\begin{itemize}
+		\item For each production $X \rightarrow Y_{1} Y_{2} ... Y_{k}$:
+		\begin{itemize}
+		\item If $Y_{1}, ..., Y_{k}$ are all nullable, or k = 0, then nullable[X] := true
+		\item foreach i from 1 to k, each j from i+1 to k:
+		\begin{itemize}
+		\item if Y1 ... Y(i-1) are all nullable or i = 1 then 
+		
+		FIRST[X] := FIRST[X] $\cup$ FIRST[Y(i)]		
+		\item if Y(i+1) ... Yk are all nullable or if i = k then 
+		
+		FOLLOW[Y(i)] := FOLLOW[Y(i)] $\cup$ FOLLOW[X]
+		\item if Y(i+1) ... Y(j-1) are all nullable or i+1 = j then 
+		
+		FOLLOW[Y(i)] := FOLLOW[Y(i)] $\cup$ FIRST[Y(j)]
+		\end{itemize}
+		
+		
+		\end{itemize}
+	\end{itemize}	
+	
+\end{itemize}
+
+\textbf{G6}
+\begin{figure}[H] \includegraphics[width=.5\textwidth, left] {./images/10.png} \end{figure}
+
+Use this information to create the Predictive Parsing Table which states which rule we could be in given a particular symbol, or more formally: Table[X, T] = Set of productions where:
+
+\bigskip
+$
+X ::= Y_{1} ... Y_{k}$ in Table[X, T] if T $\in FIRST[Y_{1} ... Y_{k}]$ or if $(T \in FOLLOW[X]$ AND $nullable[Y_{1} ... Y_{k}])
+$
+
+\begin{figure}[H] \includegraphics[width=.8\textwidth, left] {./images/11.png} \end{figure}
+If there are multiple entries in a single cell, you can't do recursive descent parsing
+
+\subsection{LL and LR}
+\begin{itemize}
+	\item LL(k): Left-to-right parse, Left-most derivation, k-symbol lookahead. Therefore, by looking at the next k tokens an LL(k) parser predicts the next production - above was an example of LL(1)
+	
+	\item LR(k): Left-to-right parse, Right-most-derivation, k-symbol lookahead. Therefore postpones the production selection until the right-hand-side has been seen and as many as k symbols beyond
+	
+	\item LALR(1): subclass of LR(1)
+	
+	
+\end{itemize}
+\textbf{LL(k) vs LR(k) reductions}
+\begin{figure}[H] \includegraphics[width=.6\textwidth, left] {./images/12.png} \end{figure}
+\noindent
+In an LL parser, there are the two actions:
+\begin{enumerate}
+	\item \textbf{Predict}: Based on the leftmost terminal and some number of lookahead tokens, choose which production to apply to get closer to input string
+	\item \textbf{Match}: Match leftmost terminal symbol with leftmost unconsumed symbol of input
+\end{enumerate}
+
+\noindent
+whereas in LR, the actions are:
+\begin{enumerate}
+	\item \textbf{Shift}: Add the next token of input to a buffer for consideration
+	\item \textbf{Reduce}: Reduce a collection of terminals and non-terminals in this buffer back to a non-terminal by reversing a production
+\end{enumerate}
+
+\bigskip
+\noindent
+\textbf{When to shift / reduce}: Build an FSA from LR(0) items - indicate what is on the stack (to the left of $\cdot$) and what is still in the input stream. For example if: (1) S ::= A and A ::= (A) | () then the items are:
+\begin{lstlisting}[escapeinside={(*}{*)}]
+S ::= (*$\cdot$*) A
+S ::= A(*$\cdot$*)
+A ::= (*$\cdot$*) (A)
+A ::= ((*$\cdot$*)A)
+A ::= (A(*$\cdot$*))
+A ::= (A)(*$\cdot$*)
+A ::= (*$\cdot$*)()
+A ::= ((*$\cdot$*))
+A ::= ()(*$\cdot$*)
+\end{lstlisting}
+\textbf{LR Items}
+\begin{itemize}
+	\item If current state contains item A ::= $\alpha \cdot c \beta$ and the current symbol in the input buffer is c. The state prompts parser to perform a shift action with the next state containing $A::=ac \cdot \beta$
+	
+	\item If the state contains the item A ::= $\alpha \cdot$ - the state prompts the parser to perform a reduce action
+	
+	\item If the state contains the item S ::= $\alpha \cdot$ and input buffer is empty then the state prompts the parser to accept
+\end{itemize}
+
+\bigskip
+\noindent
+\textbf{LR(k) States - non-deterministic}
+State: A $\rightarrow \alpha \cdot \beta, a_{1} a_{2} ... a_{k}$ represents the situation:
+\begin{figure}[H] \includegraphics[width=.3\textwidth, left] {./images/13.png} \end{figure}
+\begin{figure}[H] \includegraphics[width=.2\textwidth, left] {./images/14.png} \end{figure}
+
+With $\beta a_{1} a_{2} ... a_{k} \implies w'$
+
+\subsubsection{NFA for LR(0) items}
+Transitions of LR(0) items can be represented by an NFA in which:
+\begin{enumerate}
+	\item Each LR(0) item is a state
+	\item There is a transition from item A ::= $\alpha \cdot c \beta$ to item A $::= \alpha c \cdot \beta$ with label c, where c is a terminal symbol
+	\item Exists an $\epsilon$-transition from item A ::= $\alpha \cdot X \beta$ to X ::= $\cdot y$ where X is a non-terminal
+	\item S ::= $\cdot A$ is the start state
+	\item A ::= $\alpha \cdot$ is a final state
+\end{enumerate}
+
+ DFA for LR(0) parsing can be obtained by the usual NFA to DFA construction, requiring: (1) $\epsilon$-closure, (2) move(S, a)
+ 
+ \bigskip
+ \noindent
+ \textbf{Fixed Point Algorithm}
+ \begin{enumerate}
+ 	\item Every item in I is also an item in Closure(I)
+ 	\item If A ::= $\alpha \cdot B \beta$ is in Closure(I) and B ::= $\cdot y$ is an item, then add B ::= $\cdot y$ to Closure(I)
+ 	\item Repeat until no more new items can be added to Closure(I)
+ \end{enumerate}
+
+\bigskip
+\noindent
+\textbf{Goto()}
+Goto() of a set of items finds the new state after consuming a grammar symbol while in the current state, that is:
+
+\begin{equation}
+\operatorname{Goto}(\mathrm{I}, \mathrm{X})=\text { Closure }(\{\mathrm{A} : :=\alpha \mathrm{X} \cdot \beta | \mathrm{A} :=\alpha \cdot \mathrm{X} \beta \text { in } \mathrm{I}\})
+\end{equation}
+
+
+
+\subsubsection{Building DFA States}
+\begin{itemize}
+	\item Let A be start symbol and S a new start symbol: S ::= A
+	\item First state is Closure($\{      S ::= \cdot A           \}$)
+	\item For state I: for each item A ::= $\alpha \cdot X \beta$ in I
+	\begin{itemize}
+		\item Find Goto(I, X)
+		\item If Goto(I, X) is not already a state, make one
+		\item Add an edge X from state I to Goto(I, X) state
+	\end{itemize}
+	\item Repeat until no more additions are possible
+\end{itemize}
+
+DFA states can be converted into a parse table with symbols and whether it includes a shift or a reduce.
+
+\subsubsection{Parsing with LR Table}
+Use table and the top-of-stack and input symbol to get output action (stored in action table), which does the following:
+\begin{enumerate}
+	\item \textbf{shift sn}: (1) advance input one token, (2) push sn on stack
+	\item \textbf{reduce X ::= $\alpha$}:
+	\begin{enumerate}
+		\item Pop stack 2*|$\alpha$| times (grammar symbols are paired with states). In the state now on top of stack, use goto table to get next state sn
+		\item Push it on top of stack
+	\end{enumerate}
+	\item \textbf{accept}: stop and accept
+	\item \textbf{error}: produce error message
+\end{enumerate}
+
+\noindent
+\textbf{Example}
+\begin{figure}[H] \includegraphics[width=.6\textwidth, left] {./images/43.png} \end{figure}
+
+\subsubsection{LR(0)}
+\begin{cons}
+\begin{enumerate}
+	\item No lookahead
+	\item Vulnerable to unnecessary conflicts:(1) Shift/reduce conflicts (may reduce too soon), (2) Reduce/reduce conflicts
+\end{enumerate}
+\end{cons}
+
+This is fixed using LR(1) adding in systematic lookahead
+
+\subsubsection{LR(1)}
+\textbf{LR(1) item}: is a pair - (X ::= $\alpha \cdot \beta$, a) where:
+\begin{itemize}
+	\item X ::= $\alpha \cdot \beta$ is a production rule
+	\item a is a terminal (lookahead terminal) - LR(1) means a single lookahead terminal
+\end{itemize}
+
+It describes a context of the parser - attempting to find an X followed by an a, and already have an $\alpha$ on top of the stack. Therefore, need to see next a prefix derived from $\beta a$
+
+\bigskip
+\noindent
+\textbf{Closure}
+\begin{lstlisting}[escapeinside={(*}{*)}]
+Closure(items) = 
+repeat:
+	foreach [X ::= (*$\alpha \cdot Y \beta, a$*)] in Items
+			foreach production Y :: y
+					foreach b in First((*$\beta a$*))
+						add [Y ::= (*$\cdot y, b$*)] to Items
+until Items is unchanged	
+\end{lstlisting}
+
+\bigskip
+\noindent
+\textbf{Constructing Parsing DFA}
+\begin{itemize}
+	\item DFA state is closed set of LR(1) items
+	\item Start state is (S' ::= $\cdot$S$\$ $, dummy)
+	\item State that contains [X ::= $\alpha \cdot$ , b] is labelled with 'reduce with X ::= $\alpha$ on lookahead b
+	\item State s that contains $[\mathrm{X} : :=\alpha . \mathrm{Y} \beta, \mathrm{b}]$ has a transition labelled y to the state obtained from Transition(s, Y) where Y can be terminal or non-terminal
+	\begin{lstlisting}[escapeinside={(*}{*)}]
+	Transition(s, Y):
+		Items = {}
+		foreach [X ::= (*$\alpha \cdot Y \beta, b$*)] in s
+			add [X ! (*$\alpha Y \cdot \beta, b$*)] to Items
+		return Closure(Items)
+	\end{lstlisting}
+\end{itemize}
+
+\bigskip
+\noindent
+\textbf{Parse Table}
+\begin{itemize}
+	\item Shift and goto as before
+	\item \textbf{Reduce}: state I with item (A $\rightarrow \alpha \cdot, z$) gives a reduce A $\rightarrow \alpha$ if z is the next character in the input 
+\end{itemize}
+
+\subsection{Auto-Generation Tools - LEX, YACC}
+\begin{cons}
+	\begin{enumerate}
+		\item Slow
+		\item Hard to generate good error messages for compiler users
+		\item Often need to tweak grammar, but tool messages can be obscure
+	\end{enumerate}
+\end{cons}
+
+\section{Interpreters}
+\begin{figure}[H] \hbox{ \hspace{0em} \includegraphics[width=.5\textwidth, left] {./images/31.png}} \end{figure}
+\subsection{Definitional Interpreter - Interpreter 0}
+\begin{itemize}
+	\item Slang / L3 values represented directly as OCaml values
+	\item Recursive interpreter implements a \textbf{denotational semantics}
+	\begin{itemize}
+		\item N = set of integers, B = set of booleans, A = set of addresses, I = set of identifiers, Expr = set of L3 expressions
+		\item E = set of environments = $I \rightarrow V$
+		\item S = set of stores = $A \rightarrow V$
+		\item V = set of value $\approx A$
+		
+		+ B
+		
+		+ N
+		
+		+ $\{() \}$
+		
+		+ V $\times$ V
+		
+		+ (V + V)
+		
+		+ (V $\times$ S) $\rightarrow$ (V $\times$ S)
+		
+		\item M = meaning function : (Expr $\times$ E $\times$ S) $\rightarrow$ (V $\times$ S)
+	\end{itemize}
+	
+	\item Interpreter \textbf{implicitly} uses OCaml's runtime stack. The run-time data structure is the call stack containing an activation record for each function invocation - every invocation of interpret is building an activation record on OCaml's runtime - interpreter 2 makes the stack explicit
+\end{itemize}
+
+\subsubsection{Code}
+\begin{lstlisting}
+type address
+
+type store = address -> value
+
+and value =
+| REF of address
+| INT of int
+| BOOL of bool
+| UNIT
+| PAIR of value * value
+| INL of value
+| INR of value
+| FUN of ((value * store) -> (value * store)) 
+
+type env = Ast.var -> value
+
+val interpret : Ast.expr * env * store -> (value * store)
+
+val update : env * (var * value) -> env
+\end{lstlisting}
+
+\begin{lstlisting}
+let rec interpret (e, env, store) = match e with
+	| Integer n -> (INT n, store) 
+	| Op(e1, op, e2) -> let (v1, store1) = interpret(e1, env, store) 
+		in let (v2, store2) = interpret(e2, env, store1) 
+		in (do_oper(op, v1, v2), store2)
+	| If(e1, e2, e3) -> let (v, store') = interpret(e1, env, store) 
+		in (match v with
+			| BOOL true -> interpret(e2, env, store')
+			| BOOL false -> interpret(e3, env, store')
+			| v -> complain "runtime error. Expecting a boolean!”)
+	| Pair(e1, e2) ->
+		let (v1, store1) = interpret(e1, env, store) in
+		let (v2, store2) = interpret(e2, env, store1) in (PAIR(v1, v2), store2)
+	| Fst e -> (match interpret(e, env, store) with
+		| (PAIR (v1, _), store') -> (v1, store')
+		| (v, _) -> complain "runtime error. Expecting a pair!”)
+	| Snd e -> (match interpret(e, env, store) with
+		| (PAIR (_, v2), store') -> (v2, store')
+		| (v, _) -> complain "runtime error. Expecting a pair!”)
+	| Inl e -> let (v, store') = interpret(e, env, store) in (INL v, store')
+	| Inr e -> let (v, store') = interpret(e, env, store) in (INR v, store')
+	| Lambda(x, e) -> (FUN (fun (v, s) -> interpret(e, update(env, (x, v)), s)), store)
+	| App(e1, e2) -> (* I chose to evaluate argument first! *)
+		let (v2, store1) = interpret(e2, env, store) 
+		in let (v1, store2) = interpret(e1, env, store1) 
+		in (match v1 with
+			| FUN f -> f (v2, store2)
+			| v -> complain "runtime error. Expecting a function!”)
+	| LetFun(f, (x, body), e) -> let new_env = update(env, (f, FUN (fun (v, s) -> interpret(body, update(env, (x, v)), s)))) 
+		in interpret(e, new_env, store)
+	| LetRecFun(f, (x, body), e) ->
+		let rec new_env g = (* a recursive environment!!! *)
+			if g = f then FUN (fun (v, s) -> interpret(body, update(new_env, (x, v)), s)) else env g
+		in interpret(e, new_env, store)
+\end{lstlisting}
+
+\subsection{Interpreter 2}
+\begin{itemize}
+	\item Makes the OCaml runtime stack explicit
+	\item Complex values pushed onto stacks
+	\item One stack for values and environments
+	\item One stack for instructions
+	\item Heap used only for references
+	\item Instructions have a tree-like structure
+\end{itemize}
+
+\noindent
+\textbf{Data Types and Abstract Machine}: State is comprised of a heap - global array of values - pair of the form \textbf{(code, environment-value-stack)}
+\begin{lstlisting}
+type address = int
+type value =
+	| REF of address
+	| INT of int
+	| BOOL of bool
+	| UNIT
+	| PAIR of value * value 
+	| INL of value
+	| INR of value
+	| CLOSURE of bool * closure 
+
+and closure = code * env
+
+and instruction =
+	| PUSH of value
+	| LOOKUP of var
+	| UNARY of unary_oper 
+	| OPER of oper
+	| ASSIGN
+	| SWAP
+	| POP
+	| BIND of var 
+	| FST
+	| SND
+	| DEREF
+	| APPLY
+	| MK_PAIR
+	| MK_INL
+	| MK_INR
+	| MK_REF
+	| MK_CLOSURE of code 
+	| MK_REC of var * code 
+	| TEST of code * code
+	| CASE of code * code
+	| WHILE of code * code
+	
+	
+and code = instruction list
+and binding = var * value
+and env = binding list
+type env_or_value = EV of env | V of value 
+type env_value_stack = env_or_value list 
+type state = code * env_value_stack
+val step : state -> state
+val driver : state -> value 
+val compile : expr -> code 
+val interpret : expr -> value
+type state = code * env_value_stack val step : state -> state
+
+let step = function 
+(* (code stack,         value/env stack, state) -> (code stack,  value/env stack, state) *) 
+	| ((PUSH v) :: ds,                        evs, s) -> (ds, (V v) :: evs, s)
+	| (POP :: ds,                        e :: evs, s) -> (ds, evs, s) 
+	| (SWAP :: ds,                e1 :: e2 :: evs, s) -> (ds, e2 :: e1 :: evs, s) 
+	| ((BIND x) :: ds,               (V v) :: evs, s) -> (ds, EV([(x, v)]) :: evs, s) 
+	| ((LOOKUP x) :: ds,                      evs, s) -> (ds, V(search(evs, x)) :: evs, s)
+	| ((UNARY op) :: ds,             (V v) :: evs, s) -> (ds, V(do_unary(op, v)) :: evs, s) 
+	| ((OPER op) :: ds,   (V v2) :: (V v1) :: evs, s) -> (ds, V(do_oper(op, v1, v2)) :: evs, s)
+	| (MK_PAIR :: ds,     (V v2) :: (V v1) :: evs, s) -> (ds, V(PAIR(v1, v2)) :: evs, s)
+	| (FST :: ds,           V(PAIR (v, _)) :: evs, s) -> (ds, (V v) :: evs, s)
+	| (SND :: ds,           V(PAIR (_, v)) :: evs, s) -> (ds, (V v) :: evs, s)
+	| (MK_INL :: ds,                 (V v) :: evs, s) -> (ds, V(INL v) :: evs, s)
+	| (MK_INR :: ds,                 (V v) :: evs, s) -> (ds, V(INR v) :: evs, s)
+	| (CASE (c1,  _) :: ds,         V(INL v)::evs, s) -> (c1 @ ds, (V v) :: evs, s) 
+	| (CASE ( _, c2) :: ds,         V(INR v)::evs, s) -> (c2 @ ds, (V v) :: evs, s) 
+	| ((TEST(c1, c2)) :: ds,  V(BOOL true) :: evs, s) -> (c1 @ ds, evs, s) 
+	| ((TEST(c1, c2)) :: ds, V(BOOL false) :: evs, s) -> (c2 @ ds, evs, s)
+	| (ASSIGN :: ds,  (V v) :: (V (REF a)) :: evs, s) -> (ds, V(UNIT) :: evs, assign s a v)
+	| (DEREF :: ds,            (V (REF a)) :: evs, s) -> (ds, V(deref s a) :: evs, s)
+	| (MK_REF :: ds,                 (V v) :: evs, s) -> let (a, s') = allocate s v in (ds, V(REF a) :: evs, s')
+	| ((WHILE(c1, c2)) :: ds,V(BOOL false) :: evs, s) -> (ds, V(UNIT) :: evs, s) 
+	| ((WHILE(c1, c2)) :: ds, V(BOOL true) :: evs, s) -> (c2 @ [POP] @ c1 @ [WHILE(c1, c2)] @ ds, evs, s)
+	| ((MK_CLOSURE c) :: ds,                  evs, s) -> (ds,  V(mk_fun(c, evs_to_env evs)) :: evs, s)
+	| (MK_REC(f, c) :: ds,                    evs, s) -> (ds,  V(mk_rec(f, c, evs_to_env evs)) :: evs, s)
+	| (APPLY :: ds,  V(CLOSURE (c, env)) :: (V v) :: evs, s) 
+	-> (c @ ds, (V v) :: (EV env) :: evs, s)
+	| state -> complain ("step : bad state = " ^ (string_of_interp_state state) ^ "\n")
+	
+	
+let rec compile = function 
+	| Unit           -> [PUSH UNIT] 
+	| Integer n      -> [PUSH (INT n)] 
+	| Boolean b      -> [PUSH (BOOL b)] 
+	| Var x          -> [LOOKUP x] 
+	| UnaryOp(op, e) -> (compile e) @ [UNARY op]
+	| Op(e1, op, e2) -> (compile e1) @ (compile e2) @ [OPER op] 
+	| Pair(e1, e2)   -> (compile e1) @ (compile e2) @ [MK_PAIR] 
+	| Fst e          -> (compile e) @ [FST] 
+	| Snd e          -> (compile e) @ [SND] 
+	| Inl e          -> (compile e) @ [MK_INL] 
+	| Inr e          -> (compile e) @ [MK_INR] 
+	| Case(e, (x1, e1), (x2, e2)) -> (compile e) @ [CASE((BIND x1) :: (compile e1) @ leave_scope, (BIND x2) :: (compile e2) @ leave_scope)]
+	| If(e1, e2, e3) -> (compile e1) @ [TEST(compile e2, compile e3)]
+	| Seq []         -> [] 
+	| Seq [e]        -> compile e
+	| Seq (e ::rest) -> (compile e) @ [POP] @ (compile (Seq rest))
+	| Ref e          -> (compile e) @ [MK_REF] 
+	| Deref e        -> (compile e) @ [DEREF] 
+	| While(e1, e2)  -> let cl = compile e1 in cl @ [WHILE(cl, compile e2)]
+	| Assign(e1, e2) -> (compile e1) @ (compile e2) @ [ASSIGN] 
+	| App(e1, e2)    -> (compile e2)   (* I chose to evaluate arg first *) @ (compile e1) @ [APPLY; SWAP; POP]  (* get rid of env left on stack *) 
+	| Lambda(x, e)   -> [MK_CLOSURE((BIND x) :: (compile e) @ leave_scope)]
+	| LetFun(f, (x, body), e)  -> (MK_CLOSURE((BIND x) :: (compile body) @ leave_scope)) ::  (BIND f) :: (compile e) @ leave_scope
+	| LetRecFun(f, (x, body), e) -> (MK_REC(f, (BIND x) :: (compile body) @ leave_scope)) ::  
+	(BIND f) :: (compile e) @ leave_scope
+\end{lstlisting}
+
+\textbf{Driver}: idea is that if e passes the front-end and Interp-0.interpret e = v then driver (compile e, []) = v' where v' represents v
+\begin{lstlisting}
+# Evaluating compile e should leave value of e on top of stack
+val compile : expr -> code
+
+let rec driver state = match state with
+| ([], [V v]) -> v
+| _ -> driver (step state) 
+
+\end{lstlisting}
+
+\subsection{Interpreter 3}
+\begin{itemize}
+	\item \textbf{Flatten code into linear array}
+	Introduce a global array of instructions indexed by a code pointer. At runtime, the code pointer points at the next instruction to be executed:
+	\begin{itemize}
+		\item LABEL L: associate label L with this location in the code array
+		\item GOTO L: set cp to the code address associated with L
+	\end{itemize}
+
+	\item Add code pointer to machine state
+	\item Adds new instructions: (1) LABEL, (2) GOTO, (3) RETURN
+	\item \textbf{Compile away conditionals and while loops}
+	\begin{enumerate}
+		\item \textbf{If(e1, e2, e3)}
+		\begin{figure}[H] \hbox{ \hspace{3em} \includegraphics[width=.15\textwidth, left] {./images/15.png}} \end{figure}
+		
+		\item \textbf{While(e1, e2)}
+		\begin{figure}[H] \hbox{ \hspace{3em} \includegraphics[width=.15\textwidth, left] {./images/16.png}} \end{figure}
+	\end{enumerate}
+\end{itemize}
+
+\subsubsection{Code}
+\begin{itemize}
+	\item Code locations are represented as (L, None) - not yet loaded or (L, Some i) - label L has been assigned numeric address i
+	\item Return address is saved in the stack - where i is the location of the closure's code in RETURN
+\end{itemize}
+\begin{lstlisting}
+let step (cp, evs) = match (get_instruction cp, evs) with 
+	| (PUSH v,                            evs) -> (cp + 1, (V v) :: evs)
+	| (POP,                          s :: evs) -> (cp + 1, evs) 
+	| (SWAP,                  s1 :: s2 :: evs) -> (cp + 1, s2 :: s1 :: evs) 
+	| (BIND x,                   (V v) :: evs) -> (cp + 1, EV([(x, v)]) :: evs) 
+	| (LOOKUP x,                          evs) -> (cp + 1, V(search(evs, x)) :: evs)
+	| (UNARY op,                 (V v) :: evs) -> (cp + 1, V(do_unary(op, v)) :: evs) 
+	| (OPER op,       (V v2) :: (V v1) :: evs) -> (cp + 1, V(do_oper(op, v1, v2)) :: evs)
+	| (MK_PAIR,       (V v2) :: (V v1) :: evs) -> (cp + 1, V(PAIR(v1, v2)) :: evs)
+	| (FST,             V(PAIR (v, _)) :: evs) -> (cp + 1, (V v) :: evs)
+	| (SND,             V(PAIR (_, v)) :: evs) -> (cp + 1, (V v) :: evs)
+	| (MK_INL,                   (V v) :: evs) -> (cp + 1, V(INL v) :: evs)
+	| (MK_INR,                   (V v) :: evs) -> (cp + 1, V(INR v) :: evs)
+	| (CASE (_, Some _),        V(INL v)::evs) -> (cp + 1, (V v) :: evs) 
+	| (CASE (_, Some i),        V(INR v)::evs) -> (i,      (V v) :: evs) 
+	| (TEST (_, Some _),  V(BOOL true) :: evs) -> (cp + 1, evs) 
+	| (TEST (_, Some i), V(BOOL false) :: evs) -> (i,      evs) 
+	| (ASSIGN,    (V v) :: (V (REF a)) :: evs) -> (heap.(a) <- v; (cp + 1, V(UNIT) :: evs))
+	| (DEREF,              (V (REF a)) :: evs) -> (cp + 1, V(heap.(a)) :: evs)
+	| (MK_REF,                   (V v) :: evs) -> let a = new_address () in (heap.(a) <- v; (cp + 1, V(REF a) :: evs))
+	| (MK_CLOSURE loc,                    evs) -> (cp + 1, V(CLOSURE(loc, evs_to_env evs)) :: evs)
+	| (APPLY,  V(CLOSURE ((_, Some i), env)) :: (V v) :: evs) -> (i, (V v) :: (EV env) :: (RA (cp + 1)) :: evs)
+	(* new intructions *) 
+	| (RETURN,    (V v) :: _ :: (RA i) :: evs) -> (i, (V v) :: evs) 
+	| (LABEL l,                           evs) -> (cp + 1, evs) 
+	| (HALT,                              evs) -> (cp, evs) 
+	| (GOTO (_, Some i),                  evs) -> (i, evs) 
+	| _ -> complain ("step : bad state = " ^ (string_of_state (cp, evs)) ^ "\n")
+
+
+let rec comp = function 
+	| Unit           -> ([], [PUSH UNIT]) 
+	| Integer n      -> ([], [PUSH (INT n)]) 
+	| Boolean b      -> ([], [PUSH (BOOL b)])
+	| Var x          -> ([], [LOOKUP x]) 
+	| UnaryOp(op, e) -> let (defs, c) = comp e in  (defs, c @ [UNARY op])
+	| Op(e1, op, e2) -> let (defs1, c1) = comp e1 in  let (defs2, c2) = comp e2 in (defs1 @ defs2, c1 @ c2 @ [OPER op])
+	| Pair(e1, e2)   -> let (defs1, c1) = comp e1 in let (defs2, c2) = comp e2 in (defs1 @ defs2, c1 @ c2 @ [MK_PAIR]) 
+	| Fst e          -> let (defs, c) = comp e in (defs, c @ [FST])
+	| Snd e          -> let (defs, c) = comp e in (defs, c @ [SND])
+	| Inl e          -> let (defs, c) = comp e in (defs, c @ [MK_INL])
+	| Inr e          -> let (defs, c) = comp e in (defs, c @ [MK_INR])
+	| Case(e1, (x1, e2), (x2, e3)) -> 
+		let inr_label = new_label () in 
+		let after_inr_label = new_label () in 
+		let (defs1, c1) = comp e1 in  
+		let (defs2, c2) = comp e2 in  
+		let (defs3, c3) = comp e3 in  (defs1 @ defs2 @ defs3, 
+			(c1 @ [CASE(inr_label, None)] 
+			@ ((BIND x1) :: c2 @ [SWAP; POP])
+			@ [GOTO (after_inr_label, None); LABEL inr_label] 
+			@ ((BIND x2) :: c3 @ [SWAP; POP])
+			@ [LABEL after_inr_label]))
+	| If(e1, e2, e3) -> let else_label = new_label () in 
+			let after_else_label = new_label () in 
+			let (defs1, c1) = comp e1 in  
+			let (defs2, c2) = comp e2 in  
+			let (defs3, c3) = comp e3 in  (defs1 @ defs2 @ defs3, (c1 
+				@ [TEST(else_label, None)] 
+				@ c2 
+				@ [GOTO (after_else_label, None); LABEL else_label] 
+				@ c3 
+				@ [LABEL after_else_label]))   
+	| Seq []         -> ([], [])  
+	| Seq [e]        -> comp e
+	| Seq (e ::rest) -> let (defs1, c1) = comp e in  
+		let (defs2, c2) = comp (Seq rest) in  (defs1 @ defs2, c1 @ [POP] @ c2)
+	| Ref e          -> let (defs, c) = comp e in (defs, c @ [MK_REF])
+	| Deref e        -> let (defs, c) = comp e in (defs, c @ [DEREF])
+	| While(e1, e2)  -> let test_label = new_label () in 
+		let end_label = new_label () in 
+		let (defs1, c1) = comp e1 in  
+		let (defs2, c2) = comp e2 in  (defs1 @ defs2, [LABEL test_label]
+			@ c1 
+			@ [TEST(end_label, None)] 
+			@ c2 
+			@ [POP; GOTO (test_label, None); LABEL end_label; PUSH UNIT])
+	| Assign(e1, e2) -> let (defs1, c1) = comp e1 in  
+		let (defs2, c2) = comp e2 in (defs1 @ defs2, c1 @ c2 @ [ASSIGN])
+	| App(e1, e2)    -> let (defs1, c1) = comp e1 in let (defs2, c2) = comp e2 in  (defs1 @ defs2, c2 @ c1 @ [APPLY]) 
+	| Lambda(x, e)    -> let (defs, c) = comp e in  
+		let f = new_label () in 
+		let def = [LABEL f ; BIND x] @ c @ [SWAP; POP; RETURN] in (def @ defs, [MK_CLOSURE((f, None))])
+	
+	
+let compile e = 
+	let (defs, c) = comp e in 
+	let result = 
+		c @               (* body of program *) 
+		[HALT]          (* stop the interpreter *) 
+		@ defs in       (* the function definitions *) 
+	in result
+
+\end{lstlisting}
+
+This is a very clean machine, but has a very inefficient treatment of environments - still using OCaml's runtime memory management to manipulate complex values
+
+
+\subsection{Jargon Virtual Machine}
+\textbf{Changes}:
+\begin{enumerate}
+	\item Introduces an \textbf{addressable} stack
+	\item Replaces variable lookup by a location on the stack or heap determined at compile time
+	\item Adds frame pointers pointing into the stack - so that we can define locations relatively
+	\item Optimise representations of closures such that they contain only values associated with free variables and pointer to code
+	\item Restrict values on stack to be simple (int, bool, heap addresses) with complex data being placed onto the heap
+\end{enumerate}
+
+\bigskip
+\noindent
+\subsubsection{Structure}
+\begin{itemize}
+	\item \textbf{Stack Frame}
+	\begin{itemize}
+		\item Each \textbf{frame} has a stack pointer pointing to the top and a frame pointer pointing to the bottom.
+		\begin{itemize}
+			\item Stack elements in virtual machines are generally restricted to be of a fixed size.
+			\item Need to shift data from high-level stack to a lower-level stack with fixed size elements
+			\item Therefore, puts the data in the heap and place pointers to the heap on the stack
+		\end{itemize}
+		\item The frame pointer stays constant in each frame with the stack pointer moving up and down depending on the number of variables in each frame
+		\item As an item calls code at a specific heap address, the top of the previous stack frame contains the pointer to the closure and the argument value with which the new code is called. 
+		\item Bottom of the new stack frame contains the saved frame pointer and the return address
+	\end{itemize}
+	
+	\item Heap is addressable with a 0-indexed integer byte address
+	
+	\item Separate code array with a code pointer pointing at a specific line of code
+\end{itemize}
+
+\subsubsection{Item Code}
+\begin{lstlisting}
+type instruction =
+	| PUSH of stack_item
+	| LOOKUP of value_path (* MODIFIED *)
+	| UNARY of Ast.unary_oper (* MODIFIED *)
+	| OPER of Ast.oper
+	| ASSIGN
+	| SWAP
+	| POP
+	(* | BIND of var 		not needed *)
+	| FST
+	| SND
+	| DEREF
+	| APPLY
+	| RETURN
+	| MK_PAIR
+	| MK_INL
+	| MK_INR
+	| MK_REF
+	| MK_CLOSURE of location * int  (* MODIFIED *)
+	| TEST of location
+	| CASE of location
+	| GOTO of location
+	| LABEL of label
+	| HALT
+	
+	
+type stack_item =
+	| STACK_INT of int
+	| STACK_BOOL of bool
+	| STACK_UNIT
+	| STACK_HI of heap_index (* Heap Index *)
+	| STACK_RA of code_index  (* Return Address *)
+	| STACK_FP of stack_index (* (saved) Frame Pointer *)
+	 
+type heap_type = 
+	| HT_PAIR
+	| HT_INL
+	| HT_INR
+	| HT_CLOSURE
+	
+	
+type heap_item =
+	| HEAP_INT of int
+	| HEAP_BOOL of bool
+	| HEAP_UNIT
+	| HEAP_HI of heap_index (* Heap Index *)
+	| HEAP_CI of code_index  (* Code pointer for closures *)
+	| HEAP_HEADER of int * heap_type (* int is number items in heap block *)
+\end{lstlisting}
+
+\subsubsection{Finding variable's value at runtime}
+\begin{itemize}
+	\item Every free variable in the body of the closure can be found relative to the frame pointer
+	
+	\item Formal parameter is at stack location fp-2 and other free variables are found at:
+	\begin{itemize}
+		\item Follow heap pointer found at fp-1
+		\item Each free variable can be associated with a fixed offset from this heap address
+	\end{itemize}
+
+	\item \textbf{Static Links}:
+
+	\begin{itemize}
+		\item Stack frame for callee defined at nesting depth i <= k+1, with the static link pointing down to the closest frame of definer at nesting depth i-1
+		\item Stack frame for caller defined at nesting depth k used to evaluate code at depth k+1
+	\end{itemize}
+
+	\begin{figure}[H] \hbox{ \hspace{3em} \includegraphics[width=.3\textwidth, left] {./images/27.png}} \end{figure}
+	
+	\textbf{Caller and Callee at same nesting depth k}
+	\begin{figure}[H] \hbox{ \hspace{3em} \includegraphics[width=.5\textwidth, left] {./images/28.png}} \end{figure}
+	
+	\textbf{Caller at depth k and callee at depth i < k}
+	\begin{figure}[H] \hbox{ \hspace{3em} \includegraphics[width=.5\textwidth, left] {./images/29.png}} \end{figure}
+	
+	\textbf{Caller at depth k and callee at depth k+1}
+	\begin{figure}[H] \hbox{ \hspace{3em} \includegraphics[width=.5\textwidth, left] {./images/30.png}} \end{figure}
+	
+	\item \textbf{Argument values}: 
+	
+	\begin{itemize}
+		\item \textbf{Static Distance 0}: pass an integer and the address of the argument is fp-j
+		\item \textbf{Static Distance d, 0 < d}
+		\begin{lstlisting}
+		p := !(fp + 2);
+		for c = 1 to d:
+			p := !(p+2);
+		v := !(p-j);
+		\end{lstlisting}
+	\end{itemize}
+\end{itemize}
+
+\subsubsection{How operations work?}
+\begin{enumerate}
+	\item \textbf{MK$\_$INR}
+	\begin{figure}[H]  \includegraphics[width=.5\textwidth, left] {./images/17.png} \end{figure}
+	
+	\item \textbf{CASE}
+	
+	(CASE ($\_$, Some $\_$), V(INL v)::evs) -> (cp + 1, (V v) :: evs)
+	\begin{figure}[H] \hbox{ \hspace{3em} \includegraphics[width=.5\textwidth, left] {./images/18.png}} \end{figure}
+	
+	(CASE ($\_$, Some i), V(INR v)::evs) -> (i, (V v) :: evs)
+	\begin{figure}[H] \hbox{ \hspace{3em} \includegraphics[width=.5\textwidth, left] {./images/19.png}} \end{figure}
+	
+	\item \textbf{MK$\_$PAIR}
+	\begin{figure}[H] \hbox{ \hspace{3em} \includegraphics[width=.5\textwidth, left] {./images/20.png}} \end{figure}
+	
+	\item \textbf{FST}
+	\begin{figure}[H] \hbox{ \hspace{3em} \includegraphics[width=.5\textwidth, left] {./images/21.png}} \end{figure}
+	
+	\item \textbf{MK$\_$CLOSURE(c, n)}: c is the code location of start of instructions for closure and n is the number of free variables in the body of the closure. Effectively put the values associated with free variables on the stack and then construct the closure on the heap:
+	\begin{figure}[H] \hbox{ \hspace{3em} \includegraphics[width=.5\textwidth, left] {./images/22.png}} \end{figure}
+	
+	\item \textbf{APPLY}
+	\begin{figure}[H] \hbox{ \hspace{3em} \includegraphics[width=.5\textwidth, left] {./images/23.png}} \end{figure}
+	
+	\item \textbf{RETURN}
+	\begin{figure}[H] \hbox{ \hspace{3em} \includegraphics[width=.5\textwidth, left] {./images/24.png}} \end{figure}
+	
+	\item \textbf{LOOKUP (HEAP$\_$OFFSET k)}
+	\begin{figure}[H] \hbox{ \hspace{3em} \includegraphics[width=.5\textwidth, left] {./images/25.png}} \end{figure}
+	
+	\item \textbf{LOOKUP (STACK$\_$OFFSET - 1)} - need to be able to find a closure - has to be a fixed offset from a frame pointer - therefore push the current closure onto the stack
+	\begin{figure}[H] \hbox{ \hspace{3em} \includegraphics[width=.5\textwidth, left] {./images/26.png}} \end{figure}
+	
+\end{enumerate}
+
+\subsubsection{Notes}
+\begin{enumerate}
+	\item Semantic GAP between L3 and Slang program and a low-level translation has been significantly reduced
+	\item Implementing the Jargon VM at a lower-level of abstraction looks like a relatively easy problem
+	
+	\begin{cons}
+	\item However, harder to verify compilers and generate efficient code
+	
+	\item Languages which are higher order - provide more than just first-order functions - are harder. With first-order functions, can avoid allocating environments on the heap since all values associated with free variables will be somewhere on the stack
+	
+	\end{cons}
+\end{enumerate}
+
+
+
+
+\section{Recursion to Iteration Transforms}
+\subsection{Tail Recursion Elimination}
+\begin{definition}
+	\textbf{Tail-Recursion}: If implemented with a stack, the call stack will simply grow and then shrink - with no ups and downs in between - this code can be replaced by iterative code that does not require a call stack. 
+	
+	This can be done using an OCaml compiler in order to make all tail recursive functions into iterative functions
+\end{definition}
+\subsection{Continuation Passing Style (CPS)}
+This is a general method for transforming any recursive function into a tail recursive function. This works by adding an extra argument (a continuation - represents the rest of the computation), Then, can defunctionalise these continuations and represent them with a stack - therefore have a tail recursive function that carries its own stack as an extra argument.
+
+\bigskip
+\noindent
+\textbf{cnt}: function expecting the result of of the main function as its argument
+
+\subsubsection{cnt}
+\begin{lstlisting}
+# fib : int -> int 
+let rec fib m = 
+	if m = 0 then 1
+	else if m = 1 then 1
+	else fib(m - 1) + fib (m - 2)
+	
+# fib_cps_v2 : (int -> int) * int -> int 
+let rec fib_cps (m, cnt) = 
+	if m = 0 then cnt 1 
+	else if m = 1 then cnt 1
+	else 
+		let cnt2 a b = cnt (a + b)
+		in 
+			let cnt1 a = fib_cps(m - 2, cnt2 a) 
+			in fib_cps(m - 1, cnt1)
+\end{lstlisting}
+
+Effectively makes the order of the evaluation that is implicit in the original 'fib(m-1) + fib(m-2) explicit as:
+\begin{enumerate}
+	\item compute fib(m-1)
+	\item compute fib(m-2)
+	\item add results together
+	\item return
+\end{enumerate}
+
+\subsubsection{Identity Continuation}
+\begin{lstlisting}
+let id (x : int) = x
+let fib x = fib_cps(x, id)
+\end{lstlisting}
+
+\subsection{Defunctionalisation (DFC)}
+In fib-cps, can replace id, cnt1 and cnt2 with instances of a new data type - therefore remove the need for a functional argument:
+\begin{lstlisting}
+type cnt = ID | CNT1 of int * cnt | CNT2 of int * cnt
+
+# apply_cnt : cnt * int -> int 
+let rec apply_cnt = function
+	| (ID, a) -> a
+	| (CNT1 (m, cnt), a) -> fib_cps_dfc(m - 2, CNT2 (a, cnt)) 
+	| (CNT2 (a, cnt), b) -> apply_cnt (cnt, a + b)
+	
+	
+# fib_cps_dfc : (cnt * int) -> int 
+and fib_cps_dfc (m, cnt) = if m = 0
+	then apply_cnt(cnt, 1) else if m = 1
+		then apply_cnt(cnt, 1)
+	else fib_cps_dfc(m -1, CNT1(m, cnt))
+	
+# fib_2:int->int
+let fib_2 m = fib_cps_dfc(m, ID)
+\end{lstlisting}
+
+Continuations are just lists, therefore: 
+\begin{lstlisting}
+type tag = SUB2 of int | PLUS of int
+type tag_list_cnt = tag list
+
+# apply_tag_list_cnt : tag_list_cnt * int -> int 
+let rec apply_tag_list_cnt = function
+	| ([], a) -> a
+	| ((SUB2 m) :: cnt, a) -> fib_cps_dfc_tags(m - 2, (PLUS a):: cnt) 
+	| ((PLUS a) :: cnt, b) -> apply_tag_list_cnt (cnt, a + b)	
+	
+	
+# fib_cps_dfc_tags : (tag_list_cnt * int) -> int 
+and fib_cps_dfc_tags (m, cnt) = if m = 0
+	then apply_tag_list_cnt(cnt, 1) else if m = 1
+		then apply_tag_list_cnt(cnt, 1)
+	else fib_cps_dfc_tags(m - 1, (SUB2 m) :: cnt)					
+	
+# fib_3:int->int
+let fib_3 m = fib_cps_dfc_tags(m, [])
+\end{lstlisting}
+
+\subsection{Evaluating Expressions Example}
+\begin{lstlisting}
+type expr = 
+	| INT of int
+	| PLUS of expr * expr 
+	| SUBT of expr * expr 
+	| MULT of expr * expr
+	
+# eval : expr -> int a simple recusive evaluator for expressions 
+let rec eval = function
+	| INT a -> a
+	| PLUS(e1, e2) -> (eval e1) + (eval e2)
+	| SUBT(e1, e2) -> (eval e1) - (eval e2)
+	| MULT(e1, e2) -> (eval e1) * (eval e2)
+
+type cnt_2 = int -> int
+type state_2 = expr * cnt_2
+
+# eval_aux_2 : state_2 -> int 
+let rec eval_aux_2 (e, cnt) = match e with
+| INT a -> cnt a
+| PLUS(e1, e2) -> eval_aux_2(e1, fun v1 -> eval_aux_2(e2, fun v2 -> cnt(v1 + v2))) 
+| SUBT(e1, e2) -> eval_aux_2(e1, fun v1 -> eval_aux_2(e2, fun v2 -> cnt(v1 - v2))) 
+| MULT(e1, e2) -> eval_aux_2(e1, fun v1 -> eval_aux_2(e2, fun v2 -> cnt(v1 * v2)))
+
+# id_cnt : cnt_2 
+let id_cnt (x : int) = x
+
+# eval_2 : expr -> int 
+let eval_2 e = eval_aux_2(e, id_cnt)
+\end{lstlisting}
+
+\noindent
+\textbf{Then, defunctionalise that:}
+\begin{lstlisting}
+type cnt_3 = 
+	| ID
+	| OUTER_PLUS of expr * cnt_3 
+	| OUTER_SUBT of expr * cnt_3 
+	| OUTER_MULT of expr * cnt_3 
+	| INNER_PLUS of int * cnt_3
+	| INNER_SUBT of int * cnt_3 
+	| INNER_MULT of int * cnt_3
+	
+type state_3 = expr * cnt_3
+
+# apply_3 : cnt_3 * int -> int 
+let rec apply_3 = function
+	| (ID, v) -> v
+	| (OUTER_PLUS(e2, cnt), v1) -> eval_aux_3(e2, INNER_PLUS(v1, cnt)) 
+	| (OUTER_SUBT(e2, cnt), v1) -> eval_aux_3(e2, INNER_SUBT(v1, cnt)) 
+	| (OUTER_MULT(e2, cnt), v1) -> eval_aux_3(e2, INNER_MULT(v1, cnt)) 
+	| (INNER_PLUS(v1, cnt), v2) -> apply_3(cnt, v1 + v2)
+	| (INNER_SUBT(v1, cnt), v2) -> apply_3(cnt, v1 - v2)
+	| (INNER_MULT(v1, cnt), v2) -> apply_3(cnt, v1 * v2)
+	
+# eval_aux_2 : state_3 -> int 
+and eval_aux_3 (e, cnt) = match e with
+	| INT a -> apply_3(cnt, a)
+	| PLUS(e1, e2) -> eval_aux_3(e1, OUTER_PLUS(e2, cnt)) 
+	| SUBT(e1, e2) -> eval_aux_3(e1, OUTER_SUBT(e2, cnt)) 
+	| MULT(e1, e2) -> eval_aux_3(e1, OUTER_MULT(e2, cnt))
+	
+
+# eval_3 : expr -> int 
+let eval_3 e = eval_aux_3(e, ID)
+\end{lstlisting}
+
+\noindent
+\textbf{Converting to Stack using Driver and Accumulator}
+\begin{lstlisting}
+type tag =
+	| O_PLUS of expr 
+	| I_PLUS of int
+	| O_SUBT of expr 
+	| I_SUBT of int
+	| O_MULT of expr
+	| I_MULT of int
+
+type acc =
+	| A_INT of int
+	| A_EXP of expr
+
+type cnt_5 = tag list
+
+type state_5 = expr * cnt_5 * acc
+
+let step_5 = function
+	| (cnt, A_EXP (INT a)) -> (cnt, A_INT a)
+	| (cnt, A_EXP (PLUS(e1, e2))) -> (O_PLUS(e2) :: cnt, A_EXP e1)
+	| (cnt, A_EXP (SUBT(e1, e2))) -> (O_SUBT(e2) :: cnt, A_EXP e1)
+	| (cnt, A_EXP (MULT(e1, e2))) -> (O_MULT(e2) :: cnt, A_EXP e1)
+	| ((O_PLUS e2) :: cnt, A_INT v1) -> ((I_PLUS v1) :: cnt, A_EXP e2) 
+	| ((O_SUBT e2) :: cnt, A_INT v1) -> ((I_SUBT v1) :: cnt, A_EXP e2) 
+	| ((O_MULT e2) :: cnt, A_INT v1) -> ((I_MULT v1) :: cnt, A_EXP e2)
+	| ((I_PLUS v1) :: cnt, A_INT v2) -> (cnt, A_INT (v1 + v2))
+	| ((I_SUBT v1) :: cnt, A_INT v2) -> (cnt, A_INT (v1 - v2))
+	| ((I_MULT v1) :: cnt, A_INT v2) -> (cnt, A_INT (v1 * v2))
+	| ([], A_INT v) -> ([], A_INT v)
+	 
+let rec driver_5 = function
+	| ([], A_INT v) -> v
+	| state -> driver_5 (step_5 state)
+
+let eval_5 e = driver_5([], A_EXP e)
+\end{lstlisting}
+
+\bigskip
+\noindent
+\textbf{Actually two independent stacks - one for expressions and one for values}: separate these. Can also observe that the evaluator is interleaving the decomposition of the input expression into sub-expressions and the computation of the addition, subtraction and multiplication. It can be refactored into decomposition before computation.
+
+\textit{Key insight: An interpreter can (usually) be refactored into a translation (compilation!) followed by a lower-level interpreter}
+\begin{lstlisting}
+# low-level instructions 
+type instr =
+	| Ipush of int 
+	| Iplus
+	| Isubt
+	| Imult
+	
+type code = instr list
+type state_7 = code * value_stack
+
+# compile : expr -> code 
+let rec compile = function
+	| INT a -> [Ipush a]
+	| PLUS(e1, e2) -> (compile e1) @ (compile e2) @ [Iplus]
+	| SUBT(e1, e2) -> (compile e1) @ (compile e2) @ [Isubt]
+	| MULT(e1, e2) -> (compile e1) @ (compile e2) @ [Imult]
+
+# step_7 : state_7 -> state_7 
+let step_7 = function
+	|(Ipushv::is, vs)-> (is,v::vs)
+	| (Iplus :: is, v2::v1::vs) -> (is, (v1 + v2) :: vs) 
+	| (Isubt :: is, v2::v1::vs) -> (is, (v1 - v2) :: vs) 
+	| (Imult :: is, v2::v1::vs) -> (is, (v1 * v2) :: vs) 
+	| _ -> failwith "eval : runtime error!"
+	
+let rec driver_7 = function
+	| ([], [v]) -> v
+	| _ -> driver_7 (step_7 state)
+	
+let eval_7 e = driver_7 (compile e, []) l
+
+\end{lstlisting}
+
+\section{Compilers in OS context}
+In order to create a Jargon byte code interpreter:
+\begin{enumerate}
+	\item Generate a compact byte code for each Jargon instruction
+	\item Compiler writes the byte codes to a file
+	\item Implement an interpreter in C or C++ for these byte codes
+	\item This is much faster at executing than using the ML implementation
+\end{enumerate}
+
+\subsection{Portability}
+Can use a Virtual Machine to target multiple platforms - however, may want to compile to an assembler. This lost portability can be regained through the extra effort of implementing code generation for every desired target platform.
+
+\subsection{Linker}
+\begin{definition}
+	\textbf{Assembler}: takes symbolic names and addersses to numeric codes and numeric addresses
+	
+	\bigskip
+	\noindent
+	\textbf{Object Files}: Must contain at least the following (Executable and Linkable Format can be used as a common format for both input and output): 
+	\begin{enumerate}
+		\item Program instructions
+		\item Symbols being exported
+		\item Symbols being imported
+		\item Constants used in the program
+	\end{enumerate}
+
+\end{definition}
+
+\begin{enumerate}
+	\item Takes object files as input - noting all undefined symbols
+	\item Recursively searches libraries adding ELF files which define symbols until all the names are defined - and throws an error if any symbol is undefined or multiply defined
+	\item Concatenated all code segments - forming output code segment
+	\item Concatenates all data segments
+	\item Creates a single address space by address relocation
+\end{enumerate}
+\bigskip
+\noindent
+\textbf{Static Linker}: Does things at compile time - where all the required input files are included in the executable - this is very assured but may produce very large output files. 
+
+\bigskip
+\noindent
+\textbf{Dynamic Linker}: Does things at run time - when referring to a shared library, the object files contain stubs, not code and the operating system loads and links the code on demand.
+\begin{itemize}
+	\begin{pros}
+		\item Executables are smaller
+		\item Library bug fixes do not require re-linking
+	\end{pros}
+
+	\begin{cons}
+		\item Non-compatible changes to library can break previously working programs
+	\end{cons}
+\end{itemize}
+
+\subsection{Application Binary Interface}
+Set of runtime conventions followed by all tools that deal with binary representations of a program, including compilers, assemblers, linkers and language runtime support. Things specified includes:
+
+\begin{enumerate}
+	\item C Calling conventions used for system calls or calls to compiled C code:
+	\begin{itemize}
+		\item Register usage and stack frame layout
+		\item Passing of parameters and how results are returned
+		\item Caller / callee responsibilities for placement and cleanup
+	\end{itemize}
+	
+	\item Byte-level layout and semantics of object files
+	\begin{itemize}
+		\item \textbf{Executable and Linkable Format}
+			\begin{figure}[H] \hbox{ \hspace{3em} \includegraphics[width=.5\textwidth, left] {./images/32.png}} \end{figure}
+			
+				\begin{figure}[H] \hbox{ \hspace{3em} \includegraphics[width=.5\textwidth, left] {./images/33.png}} \end{figure}
+	\end{itemize}
+	
+	\item Linking, loading and name mangling
+\end{enumerate}
+
+\subsection{Runtime System}
+Runtime System is a libraries implementing functionality that is needed to run compiled code on a specific operating system - this is normally tailored to the language being compiled, implementing:
+\begin{enumerate}
+	\item Interface between OS and language
+	\item Memory management
+	\item Foreign function interface - calling other language code from a piece of code
+	\item Efficient implementations of primitive operations defined in compiled language
+	\item May provide runtime type checking, method lookup, security checks, etc
+\end{enumerate}
+
+This is used by:
+\begin{enumerate}
+	\item \textbf{Virtual Machine}: Implementation of the VM will include a runtime system
+	\item \textbf{Linker based system}: Runtime system will feed into the linker alongside the generated code
+\end{enumerate}
+Implementer of compiler and the runtime system must agree on many low-level details of memory layout and data representation. 
+
+\subsection{Memory Layout in UNIX}
+	\begin{figure}[H] \hbox{ \hspace{0em} \includegraphics[width=.3\textwidth, left] {./images/34.png}} \end{figure}
+	
+\begin{definition}
+	\textbf{Heap}: used for dynamically allocating memory - used for (1) very large objects or (2) for objects returned by functions or procedures and must outlive the associated the activation record. Managed automatically 
+\end{definition}
+
+\subsection{x86 Assembler}
+\begin{itemize}
+	\item CISC architecture with 16, 32 and 64 bit versions
+	\item \textbf{32 bit version}:
+	\begin{itemize}
+		\item General purpose registers: EAX, EBX, ECX, EDX
+		\item Special purpose registers: ESI, EDI (often used to pass the first argument), EBP (normally used as the frame pointer), EIP (code pointer), ESP (normally used as the stack pointer)
+		\item Segment and flag registers
+	\end{itemize}
+
+	\item \textbf{64 bit version}:
+	\begin{itemize}
+		\item Rename 32-bit registers with R - RAX, ...
+		\item More general registers: R8, R9, ..., R15
+	\end{itemize}
+
+	\item Two assembler versions - GAS and Intel notation. In GAS, a suffix is used to indicate the width of the arguments: b(yte) - 8 bits, w(ord) - 16 bits, l(ong) - 32 bits, q(uad) - 64 bits
+	
+
+\end{itemize}
+
+\noindent
+\subsubsection{Jargon VM instructions in X86}
+\begin{longtable}[]{|l|p{0.7\textwidth}|}
+\hline
+\textbf{Jargon VM Instruction} & \textbf{X86 Instruction}  \\  \hline
+GOTO loc & jmp loc  \\ \hline
+POP  & addl \$4, \%esp \# move stack pointer 1 word  \\ \hline
+
+PUSH v  & \begin{tabular}[c]{@{}l@{}}subl $\$$4, $\%$esp $\#$ make room on top of stack\\ movl $\$$i, ($\%$esp) $\#$ where i is integer representing v \end{tabular}        \\ \hline
+
+FST  & \begin{tabular}[c]{@{}l@{}}movl (\%esp), \%edx \# store "a" into edx\\ movl 4(\%edx), \%edx \# load v1, 4 bytes, 1 word, after header\\ movl \%edx, (\%esp) \# replace "a" with "v1" at top of stack\end{tabular}  \\ \hline
+
+
+SND                            & \begin{tabular}[c]{@{}l@{}}movl (\%esp), \%edx \# store "a" into edx\\ movl 8(\%edx), \%edx \# vload v2, 8 bytes, 2 words after header\\ movl \%edx, (\%esp) \# replace "a" with "v2" at top of stack\end{tabular} \\ \hline
+
+MK$\_$PAIR & \Includegraphics[width=.5\textwidth, left] {./images/35.png} \\
+\hline 
+
+\end{longtable}
+
+\subsubsection{Arithmetic}
+Need to be able to distinguish between values and pointers at runtime, in OCaml:
+\begin{itemize}
+	\item Store integers as 31 and 63 bits rather than 32 and 64
+	\item Compilers use LSB to distinguish integers (bit=1) from pointers (bit=0)
+\end{itemize}
+
+\section{Performance improvements}
+\subsection{Stacks vs Registers}
+\begin{itemize}
+	\item Stacks based execution is much much slower
+	\item But argument locations are implicit, so the instructions are smaller
+\end{itemize}
+
+But, while registers are fast, there aren't very many, so have to use these registers very effectively:
+\begin{itemize}
+	\item Requires careful examination of a program's structure
+	\item \textbf{Analysis Phase}: building data structures (directed graphs) that capture the definition
+	\item \textbf{Transformation Phase}: using this information to rewrite code, attempting to efficiently utilise registers
+	\item However, the problem is NP-complete
+\end{itemize}
+
+\subsubsection{Caller / Callee Conventions}
+Caller and Callee code can use an overlapping set of registers but an agreement is needed concerning the use of registers.
+\begin{itemize}
+	\item Arguments passed in specific registers
+	\item Results returned in specific register
+	\item Must save and restore registers that are used as scratch space
+	\item In general identify subsets of registers as caller saved or callee saved:
+	\begin{itemize}
+		\item Caller saved: if caller cares about value in register, save it before making any call
+		\item Callee saved: caller can be assured that the callee will leave the register intact (if necessary, my saving and restoring it)
+	\end{itemize}
+\end{itemize}
+\subsubsection{Register Spilling}
+Explains what to do when all the registers are in use, there are a number of options of what to do:
+\begin{enumerate}
+	\item Use the stack for scratch space
+	\item Flush registers
+	\begin{enumerate}
+		\item Move some register values to the stack
+		\item Use the registers for computation
+		\item Restore the registers to their original value
+	\end{enumerate}
+\end{enumerate}
+
+
+\subsection{Inline Expansion}
+\begin{itemize}
+\begin{pros}
+	\item Avoids building activation records at runtime
+	\item May allow further optimisations
+\end{pros}
+\begin{cons}
+	\item May lead to code bloat
+\end{cons}
+	\item Need to be aware that even if inline all occurrences of a function, can't delete definition as it might be required at link time
+	
+	\item Need to be careful about scope of variables
+\end{itemize}
+
+\subsection{Constant Propagation - Constant Folding}
+Propagate constants and evaluate simple expressions at compile-time as far as can be done. These opportunities are often exposed by inline expansion.
+
+
+\subsection{Peephole Optimisation}
+Sweep a window over the code sequences looking for instances of simple code patterns that can be rewritten to better code - can be employed with constant folding, eg:
+\begin{enumerate}
+	\item Eliminate useless combinations (push 0; pop)
+	\item Introduce machine-specific instructions
+	\item Improve control flow - rewriting \textbf{GOTO L1 ... L1: GOTO L2} to \textbf{GOTO L2 ... L1: GOTO L2}
+\end{enumerate}
+
+\section{OOP object representations}
+Object is stored as all object data containing an extra argument containing a pointer to the vtable for that class (contains all the methods), where if it is inheriting from something else, the vtable contains information about inherited fields. Therefore, pointer to a child object can be treated as if it is a pointer to a parent object. 
+
+\bigskip
+\noindent
+\textbf{vtable}
+\begin{itemize}
+	\item Method written as methodName$\_$whereDeclared$\_$whereDefined if any methods have been overwritten.
+	\item If nothing has been overwritten, written as methodName$\_$whereDeclaredAndDefined
+\end{itemize}
+
+Need to define whether implementing static or dynamic polymorphism.
+
+\section{Exceptions on stack}
+\textbf{e handle f}: if an expression e evaluated normally to value v, then v is the result of the entire expression. Otherwise, an exceptional value v is raised in the evaluation of e, then the result is (f v')
+
+\bigskip
+\noindent
+\textbf{raise e}: Evaluate expression to value v, then raise v as an exceptional value which can only be handled
+
+\begin{figure}[H] \hbox{ \hspace{0em} \includegraphics[width=.75\textwidth, left] {./images/36.png}} \end{figure}
+
+\section{Runtime Memory Management}
+\subsection{Explicit Memory Management}
+User library manages the memory with the programmer deciding when and where to allocate (void* malloc(long n)) and deallocate (void free(void *adds)). The library calls the OS for more pages when necessary.
+\begin{itemize}
+\begin{pros}
+	\item Gives programmers a lot of control
+	\item Allows us to implement better memory management for higher level language
+\end{pros}
+\begin{cons}
+	\item Tedious and relies upon humans not making mistakes - not realistic
+\end{cons}
+\end{itemize}
+
+\subsection{Automated Memory Management}
+Programmers can implicitly allocate new storage dynamically, with no need to worry about reclaiming space no longer used. The memory could be easily exhausted without some method of reclaiming and recycling the storage that will no longer be used.
+
+Deals with: (1) allocation, (2) de-allocation, (3) compaction and (4) memory-related interactions with the OS
+
+\bigskip
+\noindent
+\textbf{Finding what is required}: If data is accessible from the root set, then is is not garbage and cannot be removed - couple of methods:
+\begin{enumerate}
+	\item \textbf{Reference Counting}: Keep a reference count with each object that represents the number of pointers to it - is garbage when the count is 0
+	\begin{itemize}
+	\begin{pros}
+		\item Very simple and incremental
+	\end{pros}
+	\begin{cons}
+		\item Can't detect cycles
+		\item Space / time overhead to maintain count
+	\end{cons}
+	\end{itemize}
+	
+	\item \textbf{Tracing}: Find all objects reachable from the root set - finding the transitive closure of the pointer graph. Works using copying between two heaps or \textbf{mark and sweep}
+	\begin{enumerate}
+		\item \textbf{Mark}: Depth first traversal of object graph from the roots to mark live data
+		\item \textbf{Sweep}: iterate over entire heap, adding the unmarked data back onto the free list
+	\end{enumerate}
+
+	\textbf{Copying Data}:
+	Use two heaps, with one being used by the program and the other being unused until the garbage collection time:
+	\begin{enumerate}
+		\item Start at roots and traverse the reachable data
+		\item Copy reachable data from the active heap to the other heap
+		\item Dead objects are left behind in from space
+		\item Heaps switch roles
+	\end{enumerate}
+\end{enumerate}
+
+
+\bigskip
+\begin{itemize}
+\begin{pros}
+	\item Simple
+	\item Collects cycles
+	\item Automatic compaction eliminates fragmentation
+\end{pros}
+\begin{cons}
+	\item Twice as much memory used as the program requires
+	\item Long garbage control pauses - does not work for interactive, real time applications
+	\item Long lived objects (which are often larger) have to be copied over and over again
+	
+	\bigskip
+	\textbf{Generational Garbage Collection}: Segregate objects into multiple areas by age and do (normal) garbage collection on areas containing older objects less often than the younger ones
+	\begin{enumerate}
+		\item \textbf{Promotion}: promote objects from young generation to old generation when it survives a collection
+		\item Need to be aware of older objects that are pointing to newer ones
+		\item Ratio of major and minor collections are often application specific as are the sizes of the generations
+		\item Often, different GC algorithms used for newer and older generations as they have different characteristics - eg Copying Collection for the new items and mark-sweep for the old items
+	\end{enumerate}
+\end{cons}
+\end{itemize}
+
+\section{Bootstrapping a Compiler}
+The general idea is to have a compiler compiling itself.
+
+\subsection{Notation}
+\begin{figure}[H] \hbox{ \hspace{0em} \includegraphics[width=.3\textwidth, left] {./images/37.png}} \end{figure}
+
+\textbf{Tombstones}: Application a called trans that translates programs in language A into programs in language B and is written in language C
+\begin{figure}[H] \hbox{ \hspace{0em} \includegraphics[width=.3\textwidth, left] {./images/38.png}} \end{figure}
+
+
+\textbf{Goal}: Created a new language L and have written a compiler in it where the compiler produces code in B (which is a widely used instruction set). Want to compile out compiler so that it can be run on a machine running B.
+\begin{enumerate}
+	\item \textbf{Write small interpreter for a small language of byte codes} - referred to MBC
+	\item \textbf{Pick a small subset S of L and write a translator by hand from S to MBC}
+	\begin{figure}[H] \hbox{ \hspace{3em} \includegraphics[width=.35\textwidth, left] {./images/39.png}} \end{figure}
+	
+	\item \textbf{Write a compiler for L in sub-language S}
+	\begin{figure}[H] \hbox{ \hspace{3em} \includegraphics[width=.35\textwidth, left] {./images/40.png}} \end{figure}
+	
+	\item \textbf{Write a compiler for L in L and then compile it}: can now use the fully optimised compiler
+\end{enumerate}
+
+\begin{figure}[H] \hbox{ \hspace{0em} \includegraphics[width=.65\textwidth, left] {./images/41.png}} \end{figure}
+
+\subsection{Instructions for use}
+\textbf{Elements}
+\begin{figure}[H]
+\includegraphics[width=0.6\linewidth]{images/42.png}
+\end{figure}
+\begin{enumerate}
+	\item Use gcc to compile the zoom interpreter
+	\item Use zoom to run comp$\_$2.mbc (can rename it if you want to hide this information) with input comp.L to output the compiler comp.B
+\end{enumerate}
+
+
+\end{document}

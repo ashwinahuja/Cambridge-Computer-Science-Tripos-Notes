@@ -33,7 +33,7 @@ Compiler Construction ([TeX](https://ashwin-ahuja.com/static/CompilerConstructio
 
 Further Java ([Word](https://ashwin-ahuja.com/static/FurtherJava.docx), [PDF](https://ashwin-ahuja.com/static/FurtherJava.pdf))
 
-Software and Security Engineering ([TeX](https://ashwin-ahuja.com/static/Security.tex), [PDF](https://ashwin-ahuja.com/static/Security.pdf))
+Security ([TeX](https://ashwin-ahuja.com/static/Security.tex), [PDF](https://ashwin-ahuja.com/static/Security.pdf))
 
 ### Paper 5
 Computer Design ([Word](https://ashwin-ahuja.com/static/ComputerDesign.docx), [PDF](https://ashwin-ahuja.com/static/ComputerDesign.pdf))

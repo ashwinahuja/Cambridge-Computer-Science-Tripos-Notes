@@ -1,0 +1,825 @@
+\documentclass{article}
+\title{Business Studies}
+\author{Ashwin Ahuja}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{mathtools}
+
+ 
+\usepackage{multicol}
+\usepackage[moderate]{savetrees}
+\usepackage{tabto}
+\usepackage{amssymb}
+\usepackage[T1]{fontenc}
+\newenvironment{definition}{\par\color{blue}}{\par}
+\newenvironment{pros}{\par\color[rgb]{0.066, 0.4, 0.129}}{\par}
+\newenvironment{cons}{\par\color{red}}{\par}
+
+\newenvironment{example}{\par\color{brown}}{\par}
+\usepackage{fancyhdr}
+%% Margins
+\usepackage{geometry}
+\geometry{a4paper, hmargin={2cm,2cm},vmargin={2cm,2cm}}
+
+%% Header/Footer
+\pagestyle{fancy} 
+\lhead{Ashwin Ahuja}
+\chead{Business Studies}
+\rhead{Part II}
+\lfoot{}
+\cfoot{\thepage}
+\rfoot{}
+\renewcommand{\headrulewidth}{1.0pt}
+\renewcommand{\footrulewidth}{1.0pt}
+
+\usepackage[export]{adjustbox}
+\usepackage{caption}
+\captionsetup{justification   = raggedright,
+	singlelinecheck = false}
+
+\lstset{
+	basicstyle=\ttfamily,
+	columns=fullflexible,
+	breaklines=true,
+	postbreak=\raisebox{0ex}[0ex][0ex]{\color{red}$\hookrightarrow$\space}
+}
+\usepackage{listings}
+\lstset{
+	escapeinside={(*}{*)}
+}
+
+
+
+\begin{document}
+
+
+\begin{titlepage}
+\begin{center}
+			\vspace*{1cm}
+			
+			\Huge
+			\textbf{Business Studies}
+			
+			\vspace{0.5cm}
+			\LARGE
+			University of Cambridge
+			
+			\vspace{1.5cm}
+			
+			\textbf{Ashwin Ahuja}
+			
+			\vfill
+			
+			Computer Science Tripos \\
+			Part II
+			
+			\vspace{5cm}
+			
+			January 2020
+			
+\end{center}
+\end{titlepage}
+
+\tableofcontents
+\pagebreak
+
+\begin{multicols}{2}
+
+\section{Idea Development}
+\begin{quote}
+    Job of an entrepreneur is to reduce the risk by reducing the uncertainty in a business proposition
+\end{quote}
+
+\begin{itemize}
+    \item \textbf{Cambridge Phenomenon}: Explosion of companies across scientific industries in the last fifty years.
+    \item Global GDP increasing year on year consistently over time
+    \item VC funding has continuously increased year on year
+\end{itemize}
+
+\subsection{Growth Drivers}
+\begin{enumerate}
+    \item Mainframe - 1960
+    \item Minicomputer - 1980
+    \item PC - 1990
+    \item Desktop Internet - 2000
+    \item Mobile Internet - 2010
+\end{enumerate}
+
+\subsection{Human-Computer Interaction Technology Development}
+\begin{enumerate}
+    \item Punch Cards - 1832
+    \item QWERTY keyboard - 1872
+    \item Electromechanical Computer - 1941
+    \item Electronic Computer - 1943
+    \item Paper Tape Reader - 1944
+    \item Mainframe Computers - 1948
+    \item Trackball - 1952
+    \item Joystick - 1967
+    \item Microcomputers - 1974
+    \item Portable Computer - 1975
+    \item GUI (window based) - 1981
+    \item Commercial Use of Mouse - 1983
+    \item Mobile Computing (PalmPilot) - 1996
+    \item Touch - 2007
+    \item Voice on mobile - 2011
+    \item Voice on Connected / Ambient devices - 2014
+\end{enumerate}
+
+\subsection{Why you?}
+\begin{enumerate}
+    \item Barriers to market entry
+    \item Barriers to competition
+    \item Unique advantages
+\end{enumerate}
+
+\subsection{Why now?}
+\begin{enumerate}
+    \item Money availability
+    \item Support
+    \item Infrastructure
+    \item People
+    \item Government
+    \item Society attitude
+\end{enumerate}
+
+\subsection{Why do it?}
+\begin{enumerate}
+    \item Wealth generation
+    \item Better things
+    \item Make a difference
+\end{enumerate}
+
+\subsection{Properties of an Entrepreneur}
+\begin{itemize}
+    \item Someone who starts a project without having the full resources or knowledge - works with estimation, guess and gut feel
+    \item Penchant for risk taking (market, technological and financial risk)
+    \item N.B. Value accrues as the risk lessens
+\end{itemize}
+
+\subsection{Types of companies}
+Companies can either be high profit (with organic growth and financed by debt) or high growth (finance with equity and build up a community)
+
+\subsection{Investor Criteria}
+\begin{enumerate}
+    \item \textbf{Market}: is there a sustainable market need
+    \item \textbf{Technical}: is there a defensible technological advantage
+    \item \textbf{People}: strong team
+    \item \textbf{Financial}: need believable plans + 60\% IRR
+    \item \textbf{Major Risks}: Framework to understand and manage risks
+\end{enumerate}
+
+\subsection{Risks}
+\begin{enumerate}
+    \item Market Need - this is the largest risk
+    \begin{itemize}
+        \item Why do people need it and why do they need your thing
+        \item What is the route to market
+        \item (1) \textbf{Global}, (2) \textbf{Sustainable}, (3) \textbf{Under-served}, (4) \textbf{Growing} market need
+        \item Describe in terms of \textbf{Features, Advantages and Benefits}
+        \begin{itemize}
+            \item Advantages described in terms of: (1) Intellectual Property, (2) Defensible technological leadership
+        \end{itemize}
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Plans}
+\begin{enumerate}
+    \item Business Plan
+        \begin{itemize}
+            \item Executive Summary and Funding Requirement
+            \item Concept
+            \item Market: (1) Global market size and need, (2) Sustainability, (3) Competition, (4) Marketing plans
+            \item Team
+            \item Technology and IPR
+            \begin{itemize}
+                \item \textbf{Patents} offer an absolute right to invention (defined by the Berne convention). The item must be novel and reducible to hardware. Important to note that they are expensive to acquire and it's sometimes to just use the network effect!
+                \item \textbf{Trademark}: Exclusive right to use of name or mark
+                \item \textbf{Copyright}: copying prevented but not reinvention. It is self-declarative and just requires you saying 'Copyright <year> <author>' - lasts 70 years from the death of the author. Fair use covers text only but is not well defined. 
+            \end{itemize}
+            \item Summary of plans: (1) Development plans with methodology and milestones, (2) Marketing, (3) Sales and distribution, (4) Quality and industry standards
+            \item Financials
+            \item Appendices:
+            \begin{itemize}
+                \item Financial Model
+                \item Key staff
+                \item Letters of support
+                \item Correspondence re IPR
+                \item Full development plan
+                \item Full marketing and sales plan
+                \item Examples and brochures
+            \end{itemize}
+        \end{itemize}
+    \item Development Plan
+    \item Project Plan = what doing and when
+    \item Marketing Plan = how to reach people
+    \item Sales Plan
+    \item Quality Plans = how to make sure have made the right thing
+    \item Financial Projections with budget and cashflow. Idea is that you pay back financing in the third year
+\end{enumerate}
+
+
+\section{Money and Tools}
+\subsection{Accounting}
+\textbf{Why?} They act as a set of instruments on the dashboard of the company. To control, you have to first measure the accounting. It is also a statutory duty to: (1) keep proper books of the accounts, (2) do an annual audit, (3) be solvent
+
+\noindent
+\textbf{Double Entry}: Idea is that you have debits (to receive - left side) and credit (to give - right side) which balance each other out.
+
+\textbf{Format}
+\begin{enumerate}
+    \item \textbf{Income}:
+    \begin{enumerate}
+        \item Sales
+        \item Interest
+        \item TOTAL Income
+    \end{enumerate}
+    \item \textbf{Expenditure}
+    \begin{enumerate}
+        \item Cost of Goods (CoG)
+        \item Salaries
+        \item Overheads
+        \item Marketing
+        \item TOTAL Expenditure
+        \item Profit
+    \end{enumerate}
+\end{enumerate}
+
+\begin{figure}[H] \includegraphics[width=.4\textwidth, left] {./images/2.png} \end{figure}
+
+\textbf{Interlinking of Accounts}
+\begin{figure}[H] \includegraphics[width=.4\textwidth, left] {./images/3.png} \end{figure}
+
+\textbf{Boundaries}
+\begin{enumerate}
+    \item Entity
+    \item Periodicity
+    \item Going concern
+    \item Quantitative
+\end{enumerate}
+
+\textbf{Ethics}
+\begin{enumerate}
+    \item \textbf{Prudence}: Overstate losses, understate profits
+    \item \textbf{Consistent}: use same rules throughout
+    \item \textbf{Objective}: avoid personal preference
+    \item \textbf{Relevance}: true and fair
+\end{enumerate}
+
+\subsubsection{Tests}
+\begin{enumerate}
+    \item Current Ratio = Current Assets / Current Liabilities - measures the liquidity and val < 1 indicates potential cash flow problems
+    \item \textbf{Liquidity Ratios}: (1) Current assets, (2) Acid tests
+    \begin{itemize}
+        \item \textbf{Acid Test - quick health test}: (Current Assets - Stocks) / Liabilities. Shows shorter term liquidity - idea that it takes time to sell stocks
+    \end{itemize}
+    \item \textbf{Profitability Ratios}: (1) Return on investment, (2) Gross profit, (3) Net profit, (4) Markup
+    \begin{itemize}
+        \item ROI = Profit before tax / shareholders' funds
+        \subitem Should be 40\% for long term sustainable high growth
+    \end{itemize}
+    \item \textbf{Investment Ratio}: (1) PE ratio, (2) Gearing, (3) Earnings per share
+    \begin{itemize}
+        \item \textbf{Gearings} = Net borrowings / shareholders' funds: this shows the reliance on borrowings and hence the vulnerability to interest rate rises
+    \end{itemize}
+    \item \textbf{Efficiency Ratios}: (1) Stock turnover, (2) Asset turnover, (3) Debtor collection period, (4) Creditor payment period
+\end{enumerate}
+
+\subsection{Product Stages}
+\begin{figure}[H] \includegraphics[width=.4\textwidth, left] {./images/4.png} \end{figure}
+Chasm is when you move from the development company to production company - it is very tough to cross this
+
+
+\subsection{Sources of Finance}
+\begin{enumerate}
+    \item \textbf{Debt}: Loans - repay the same amount regardless of performance
+    \item \textbf{Equity}: give share of the company and return depends on the performance of the company
+    \item \textbf{Convertible debentures}
+    \item \textbf{Redeemable preference shares}
+    \item Family and friends
+    \item Crowd Funding
+    
+\end{enumerate}
+
+Generally raise money in stages - with 30\% dilution at each stage. Do this as different people have different risk appetites. N.B. VC target is 10x return over ten years.
+
+\subsection{Company Types}
+\begin{enumerate}
+    \item Sole Trader
+    \item Partnership
+    \item Private Company
+    \item Ltd Private Company
+    \item Public limited company (plc) - when you sell shares publicly
+    \item Listed company
+\end{enumerate}
+
+\subsection{Stocks, Shares, Futures and Options}
+\subsubsection{Stocks}
+\begin{itemize}
+    \item Multiple types: ordinary vs preference (appoints directors and gets paid first), voting and dividend rights
+    \item \textbf{Buying and Selling}: illegal to advertise unless member of an SRO (or are one). Private companies need board approval to sell shares (and pay stamp duty). Public companies are listed on a public exchange
+\end{itemize}
+
+\subsubsection{Options and Futures}
+\begin{itemize}
+    \item Contracts to buy or sell at a fixed price at some future data - typically 10\% change. \textbf{Futures} requires the completion whereas the completion is optional for options
+\end{itemize}
+
+\subsubsection{Valuation}
+\begin{enumerate}
+    \item Market value - compare to similar products
+    \item Utility value - cost to reproduce
+    \item Asset value
+    \item Net present value of future profit - calculated using EV and EBITDA
+    \item Discounted Cash Flow
+    \item Black-Scholes Model
+\end{enumerate}
+
+\section{Law}
+\subsection{Setting Up}
+\begin{enumerate}
+    \item Set up as a legal entity: (1) Register company, directors and shareholders, (2) register for tax, (3) Register as employed, (4) Find pension provider, (5) Register with ICO
+    \item Get: (1) Solicitor, (2) Agent, (3) Mem and Arts, objectives, share conditions
+    \item Establish company books: (1) Minute book and initial resolutions, (2) Appointment of Bank, Auditors, insurance, (3) Employee handbook
+\end{enumerate}
+
+Need the following:
+\begin{enumerate}
+    \item Premises
+    \item Phone and internet
+    \item Letterhead
+    \item Accounts and accounting system
+    \item Purchasing system
+    \item Asset control
+    \item Insurance
+    \item Recruitment
+    \item Furniture and Equipment
+\end{enumerate}
+
+\subsection{Duties of Directors - appointed by shareholders}
+\begin{enumerate}
+    \item Ensure solvency
+    \item Maintain fiduciary duty to shareholders
+    \item Ensure business complies with all applicable laws
+\end{enumerate}
+
+\subsection{Control}
+\begin{itemize}
+    \item 25\% + blocks substantive resolutions
+    \item 50\% + = day to day control
+    \item 75\% + = absolute control
+\end{itemize}
+
+\subsection{Internet Issues}
+\begin{itemize}
+    \item Legality of encryption
+    \item Definition of fair use
+    \item Signatures of contracts (jurisdiction, audit trails and liabilities)
+\end{itemize}
+
+\subsection{Tort}
+Avoiding infringements of the rights of others and giving adequate notice to others of your rights that you want to enforce. i.e. if you infringe other rights you can't enforce your own rights
+\begin{enumerate}
+    \item Defamation
+    \item Negligence
+    \item Copyright
+    \item Trademarks
+    \item Patents
+\end{enumerate}
+
+\section{People Organisation}
+\begin{figure}[H] \includegraphics[width=.4\textwidth, left] {./images/1.png} \end{figure}
+
+\subsection{Management}
+They set the lead for the culture and sets all the goals that the entire team is attempting to achieve. They have to be accountable for the decisions they make. \textbf{Two Pizza Rule}: don't have meeting that couldn't be fed by two pizzas. Growth break points are: 7, 50, 350. 
+
+The \textbf{classical} model is where tasks are reduced to simple elements which are boring and repetitive - when individuals are primarily motivated by money! In this Foyolism model, there are the following tasks: (1) Planning, (2) Organisation, (3) Staffing, (4) Direction, (5) Co-ordination, (6) Controlling. Taylor talks about how you select, train and develop each employee providing detailed instruction and supervision rather than letting them train themselves. Management methods include things like Gantt charts and task and bonus systems.
+
+\subsection{Human Relations}
+Important to remember that humans are the key asset and hence must consider individuals social needs, motivations, behaviour, etc. McGregor proposed two possibilities:
+\begin{itemize}
+    \item \textbf{Theory X}: \textbf{authority, direction and control}. Idea is that people have to be made to work with hierarchichal structure, defined roles, little flexibility. This is generally for traditional industries
+    \item \textbf{Theory Y}: \textbf{integration, self-control}: People want to work but are prevented from doing so - will exercise self-control when committed to common objectives, accepting responsibility for their actions. Plays well with a flat management structure. Used for most modern technology companies.
+\end{itemize}
+
+\subsection{Teams}
+Teams should be large small - seven. They have: (1) definable membership, (2) shared identity, (3) shared purpose, (4) interdependence, (5) interaction. Belbin proposed a number of team roles - everyone should be given a role. Tuckman proposed the following stages of formation:
+\begin{enumerate}
+    \item Forming
+    \item Storming
+    \item Norming
+    \item Performing
+\end{enumerate}
+
+Weinberg talks about how to do egoless work by creating a culture to minimise personal factors so quality of work can be improved with: (1) open communication, (2) objective feedback, (3) asking for help to be encouraged. Important to say Dunbar's number is 100-250 which defines the number of relationships in which an individual knows who each person is and how each person related to every other person. If people don't connect, leads to: (1) intergroup hostility, (2) inward thinking, (3) NIH syndrome
+
+\subsubsection{Hiring and Firing}
+\textbf{Logistics}
+\begin{itemize}
+    \item When hiring, need to create an employment contract that defines: (1) hours and holidays, (2) remuneration, (3) grievance procedure. Important to be aware of the need for non-discrimination according to the Equalities Act 2010.
+    \item When firing: 2 verbal and 2 written warnings. Can offer redundancy instead or have a settlement agreement
+\end{itemize}
+
+Recruiting:
+\begin{itemize}
+    \item Define the role carefully: (1) define work, (2) define work, (3) define personal characteristics
+    \item Use personal contacts
+    \item Referrals
+    \item Advertisements
+    \item Agencies
+    \item \textbf{Conducting Interviews}
+    \begin{itemize}
+        \item Purpose is to (1) learn about person, (2) compare with job spec, (3) provide information about organisation and role, (4) encourage positive feelings about role
+        \item \textbf{Preparation is important} - need to be aware of who is involved, where it is happening, how to get reports from interviewers.
+        \item \textbf{Issues with conducting interviews}
+        \begin{enumerate}
+            \item Pre-conceived ideas
+            \item Only remembering last candidate
+            \item Eye conduct
+            \item Projection
+            \item Leading questions
+        \end{enumerate}
+        
+        It's important to create a rapport, listening rather than talking
+        
+        \textbf{Questions}: have multiple types of questions, with differing (1) pace, (2) open / closed, (3) situations, (4) probing vs relaxed, (5) relaxed vs stressful
+        
+        At the end, check the plan and explain the next stage.
+        
+        \item How to make a decision
+        \begin{enumerate}
+            \item Skills
+            \item Personal qualities
+            \item Best compared to the rest
+            \item CVs, references, etc
+        \end{enumerate}
+    \end{itemize}
+    
+    \item \textbf{Doing interviews}: Opportunity to sell yourself and learn about company, role, etc. Not more than three major points in an answer. 
+\end{itemize}
+
+\subsection{Appraisals}
+\textbf{Why?} Enable members to get clear idea of how they are doing and where they may need support or training. Can also be used for setting objectives both from the employers and employees' point of view.
+
+\textbf{Form}:
+\begin{enumerate}
+    \item Date, Name, Job title, Assessor
+    \item Self assessment
+    \item Assessor or line management assessment
+    \item Key objectives
+    \item Development plan
+    \item Jointly agreed actions
+    \item Follow up
+\end{enumerate}
+
+\section{Project Planning and Management}
+\subsection{Role of a manager}
+\begin{enumerate}
+    \item Direct resources for achievement of goals
+    \item Provide vision and inspiration
+\end{enumerate}
+
+Managers can range on a line from authoritarian to democratic and in between the two.\\
+
+\textbf{Qualities}
+\begin{enumerate}
+    \item Technical and organisational knowledge
+    \item Ability to grasp situations
+    \item Ability to make decisions
+    \item Ability to manage change
+    \item Creativity
+    \item Mental flexibility
+    \item Experience
+    \item Pro-active
+    \item Moral courage
+    \item Resilience
+    \item Social Skills
+\end{enumerate}
+
+\subsection{Project Management Variable}
+\textbf{Resource, Time and Function}: can have any two but not all three\\
+
+\textbf{Development Cycle}
+\begin{figure}[H] \includegraphics[width=.4\textwidth, left] {./images/5.png} \end{figure}
+
+\textbf{Approaches and Methodologies}
+\begin{enumerate}
+    \item \textbf{Top Down}: waterfall decomposition
+    \item \textbf{Bottom Up}
+    \item \textbf{Rapid Prototype}: (1) Successive refinement, (2) agile engineering
+    \begin{itemize}
+        \item Agile defined in 2001 - manifesto was published
+        \item A number of agile software development frameworks were then created including Kanban, Scrum, etc
+        \item Packlog -> Sprint Backlog -> Sprint -> Working increment of software
+    \end{itemize}
+    \item \textbf{Middle through}
+    \item \textbf{Spiral Methodology}
+    \begin{figure}[H] \includegraphics[width=.4\textwidth, left] {./images/6.png} \end{figure}
+\end{enumerate}
+
+\subsection{Scrum Meetings}
+Consist of:
+\begin{enumerate}
+    \item Daily Scrum
+    \item Scrum of scrums
+    \item Script planning meetings
+    \item Script review meetings
+    \item Sprint retrospective
+\end{enumerate}
+
+Can use PERT and GANTT charts to visually represent a project and its progress. Allows for critical path analysis which allows us to compute the earliest and latest start / finish for each task. The difference is the slack. Critical path joins the tasks for which there is no slack - where any delays in tasks on Critical Path affects the whole project.\\
+
+\textbf{Levelling}
+\begin{itemize}
+    \item Adjust tasks to match resources available
+    \item Automatic system is available but not always giving optimum result
+    \item Tasks delayed within slack without affecting project dates
+    \item Adding resource to late project can cause \textbf{Recursive Collapse} (additional learning delays and overheads)
+\end{itemize}
+
+\textbf{Estimation Techniques}
+\begin{enumerate}
+    \item Experience
+    \item Comparison with similar tasks - 20 lines of code / day, 20 working days per month (but 200 a year)
+    \item Decomposition
+    \item \textbf{Rules of thumb}
+    \begin{itemize}
+        \item For software projects, estimate 10x cost and 3x time
+        \item 1/3/10 rule: 1 for prototype, 3 for creating project, 10 for sales and marketing
+        \item \textbf{Hartree's Law}: Time for completion is a constant regardless of the state of the project - project is 90\% complete 90\% of the time
+        \item 80\% rule - don't plan to use more than 80\% of available resource
+    \end{itemize}
+\end{enumerate}
+
+\section{Quality, Maintenance and Documentation}
+\subsection{Productisation}
+\begin{enumerate}
+    \item Does product work on all target systems? Hardware variants and OS variants
+    \item Internationalisation
+    \item Testing: usability, markets and standards approvals
+    \item Documentation
+    \item Legals: IPR, licence, liability
+    \item Packaging
+    \item Manufacture
+    \item Marketing Materials
+    \item Maintenance and after sale support
+\end{enumerate}
+
+\textbf{Supply Side Management}
+\begin{enumerate}
+    \item \textbf{Quality Control}: monitoring and contingency planning
+    \item \textbf{Information Systems}: stock control, JiT shipping, supplier integration
+    \item \textbf{Reliability of Supply}: multiple sources
+    \item \textbf{Change management}: evolution, tracking and support
+\end{enumerate}
+
+\textbf{Scale Up} takes lots of time and money. In particular to reach new markets, there are a number of issues with (1) regulation, (2) translation, (3) adaption, (4) high volume manufacturing. It also takes time to hire staff and acquire materials.
+
+\subsection{Plans for quality}
+It's highly important and is hard to add later and is cheaper in the long run. It requires board-level function. Part of this is following standards which need to be clearly defined:
+\begin{enumerate}
+    \item ISO 9000 / BS 5750: Quality management systems and trace-ability
+    \item BS 7799: Information Management and Security
+    \item \textbf{Internal Standards}
+    \item Coding standards (naming, structure, testing)
+    \item Documentation standards
+\end{enumerate}
+
+Also important to record and audit all key decisions and documents.
+
+\subsubsection{Key Documents}
+\begin{enumerate}
+    \item \textbf{Project Definition}: (1) User Requirements Document, (2) Project Constraints Document
+    \item \textbf{Base Definition}: (1) Functional Spec or prototype, (2) Top Level Design
+    \item \textbf{Control}: (1) Project Plan, (2) Project Log, (3) Quality Plan, (4) Document Plan
+    \item Detailed Controlled Documents: (1) Sub-system specs and interfaces, (2) Data model and dictionary, (3) Module specs and interface, (4) Released code and documentation
+\end{enumerate}
+
+Part of how you maintain quality is by \textbf{monitoring} so you have time to do something about it. A lot of this comes down to culture of the company allowing for communications both internal and external. It is also important to have milestones and weekly meetings. However, it is important to keep these meetings short (circulating the agenda and papers before).\\
+
+\textbf{Brain-storming}: method for problem solving that can fix issues with otherwise unseen issues. Should vote on all ideas and work on top few
+
+\subsection{Board Meetings}
+Where decisions are made rather than having discussions. Agenda looks like:
+\begin{itemize}
+    \item Call to order: (1) attendance, (2) minutes, (3) matters arising
+    \item Statutory Business
+    \item Reports: (1) Finance, (2) Business Development, (3) Personnel, (4) Shareholder's Issues
+    \item AOB
+    \item Date of next meeting
+\end{itemize}
+
+
+Important to be aware of: \textbf{S}trengths, \textbf{W}eaknesses, \textbf{O}pportunities, \textbf{T}hreats
+
+\subsection{Testing}
+Need to make a test plan running a test suite testing:
+\begin{enumerate}
+    \item Base functionality
+    \item Specific Bugs
+    \item Performance
+    \item Correct failure
+\end{enumerate}
+
+Should also have a bug reporting system (with history) - with action plan for fixes and prioritisation
+\subsection{Plan for maintenance}
+Important to keep the relationship with clients going, with a revenue stream for maintenance and for future sales. Can run a help desk, publish documentation, etc.
+
+\subsection{Plan for documentation}
+Requires ten times the coding effort and is a specialist skill. There are levels of documents: (1) user, (2) training, (3) system, (4) maintenance. It is important to have a documentation standard
+
+\section{Marketing and Selling}
+Sales = moving product, Marketing = what to sell, to who and how
+
+\subsection{Marketing}
+\begin{itemize}
+    \item Look at product characteristics and price sensitivity to attempt to get the product to people.
+    \subitem Market Characteristics are: (1) size, (2) sustainability, (3) defensible
+    \item Market using multiple marketing channels, informing marketing routes
+\end{itemize}
+
+\textbf{ACCTO}: Criteria for customer acceptance (80\% of new produce failures due to customer acceptance)
+\begin{itemize}
+    \item A - relative advantage over competitors
+    \item C - complexity
+    \item C - compatibility
+    \item T - trial-ability
+    \item O - observability
+\end{itemize}
+
+Produce a market requirement document with:
+\begin{enumerate}
+    \item User Profile
+    \item Product Description
+    \item Customer Profile
+    \item Competitive Analysis: what are table stakes and what are USPs
+    \item Positioning: thought that customers have when they hear the product name
+    \item Market Trends
+    \item Market Size
+    \item Route to market
+    \item Pricing
+    \item Customer Support
+    \item Business Opportunity
+    \item Alliances and Partners
+    \item Marcoms - telling market about the produce
+\end{enumerate}
+
+Sell a product though its (1) features, (2) advantages, (3) benefits
+
+\subsection{Product or Service Requirements}
+Customers need to:
+\begin{enumerate}
+    \item Know about it
+    \item Have opportunity to purchase it
+    \item Have means to purchase it
+    \item Be satisfied that it meets a real need
+\end{enumerate}
+
+\subsubsection{Market Analysis}
+\begin{itemize}
+    \item Desk Research: (1) existing market and solutions, (2) competition (3) demographics \\
+    \textbf{Discover Market from Bottom Up}
+    \begin{enumerate}
+        \item Understand problem
+        \item Define solution
+        \item Validate qualitatively
+        \item Verify quantitatively
+    \end{enumerate}
+    \item Market Surveys: (1) Qualitative, (2) Quantitative
+    \item Distribution channels
+    \begin{itemize}
+        \item Direct sales
+        \begin{itemize}
+            \item Bespoke - requires sales staff
+            \item Multiple mail order requirements in terms of staff and assets
+        \end{itemize}
+        \item Distributor / retailer
+    \end{itemize}
+    \item Market communications
+    \begin{itemize}
+        \item Targeting
+        \item Advertising
+        \item PR
+        \item Direct mail
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Pricing Models}
+\begin{enumerate}
+    \item Market comparison - order of magnitude better or cheaper
+    \item Utility
+    \item Cost + Profit
+    \item Loss leader 
+\end{enumerate}
+
+\subsection{Sales}
+\textbf{Main technique}: Listen to the customer's needs, concerns and authority\\
+
+\textbf{Stages}:
+\begin{enumerate}
+    \item \textbf{Prospecting}: locating the most likely buyers through (1) cold calling and (2) qualified prospects using marketing responses, exhibitions, lookalike audiences. Likely to get 10\% result in sale - 2 calls per day
+    \item \textbf{Pre-approach}
+    \begin{itemize}
+        \item \textbf{Research}: (1) Who are decision makers? What is management structure? What are their concerns?
+        \item \textbf{Preparation}: (1) Presentation, (2) Cards, brochures, etc
+    \end{itemize}
+    \item \textbf{Approach}: Contact building
+    \item \textbf{Survey}: Find out what they need, what their constraints are, what the budget is. Also find the right person to contact, their structure for purchasing timescale, etc
+    \item \textbf{Proposal}: Sell the benefits to the customer, consisting of:
+    \begin{itemize}
+        \item Introduction
+        \item Objectives
+        \item Recommendations
+        \item Benefits
+        \item Financial Justification
+        \item Warranty and service
+        \item Company Background
+        \item Price and conditions
+    \end{itemize}
+    \item \textbf{Demonstration}: need to be well prepared with all of the demonstration planned out
+    \item \textbf{Close}: be aware of customers' hidden agenda and perhaps offer a discount or limited offer
+    \item \textbf{Service}: Manage relationships with regular liaison and good communications
+\end{enumerate}
+
+\subsection{Planning and Records}
+\begin{enumerate}
+    \item Graded Prospect List - keep a good list of all the important information:
+    \begin{enumerate}
+        \item Company name
+        \item Address
+        \item Phone
+        \item Fax
+        \item Contact name
+        \item Decision maker
+        \item Potential \%
+        \item Previous contact: date, who, action
+        \item Next contact: date, who, action
+    \end{enumerate}
+    \item Sales Forecast: company, amount, time analysis, product analysis, comments
+    \item Call analysis
+    \item Sales cost analysis
+\end{enumerate}
+
+\subsection{Control and Commissions}
+\textbf{Control}: Structure sales organisation structure by product, geography, channel, key account
+
+\noindent
+\textbf{Measurement}: (1) Cost per sale, (2) Response rate, (3) Timeliness, (4) Individual measures, targets
+
+\noindent
+\textbf{Commission}: Don't stint, instead pay basic salary, pay on delivery or payment
+
+\section{Growth and Exit Routes}
+\subsection{New Markets}
+Can grow horizontally (similar products or services with new customers - different geography, applications, pricing) or vertically (new products for similar customers)\\
+\begin{cons}
+\textbf{Problems of Growth}:
+\begin{enumerate}
+    \item \textbf{Communications}: needs a conscious effort
+    \begin{pros}
+    \begin{itemize}
+        \item Formal channels
+        \item Charters
+        \item Newsletters
+        \item Company meetings and informal events
+    \end{itemize}
+    \end{pros}
+    \item \textbf{Control and Monitoring}
+    \item \textbf{Structural Change}: need to develop good management structures
+    \begin{pros}
+    Have a set of groups and sub-groups, charters and reporting structures
+    \end{pros}
+    \item \textbf{Formalisation}
+    \item \textbf{Cash}
+    \item \textbf{Second system effects}
+\end{enumerate}
+\end{cons}
+
+\subsection{Exit Routes}
+\begin{enumerate}
+    \item Acquisition - natural process, can either be forced sale or wildflower model. Then leads to a number of stages after this occurs starting with selling the company and ending with working with the new parent company
+    \item Flotation - normally just for raising capital when company is worth £10m+
+    \item Management buy out - much easier to fund compared to flotation. Also allows for introduction of new blood to a mature company
+    \item Liquidation - can be voluntary to compulsory
+\end{enumerate}
+
+\subsubsection{Valuation}
+\begin{enumerate}
+    \item Asset value
+    \item NPV of profitability
+    \item DCF
+    \item Utility
+    \item Comparison with similar
+    \item Market value
+    \item Probabilistic methods - matrix, black scholes
+    \item Paper vs Cash
+    \item Lock-in periods
+\end{enumerate}
+
+\subsubsection{Managing Traumatic Change - Kubler-Ross Model}
+Four stages when dealing with the change: (1) Denial, (2) Anger, (3) Resignation, (4) Acceptance
+
+
+\end{multicols}
+\end{document}

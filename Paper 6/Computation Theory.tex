@@ -1,0 +1,1201 @@
+\documentclass{article}
+\title{Computation Theory}
+\author{Ashwin Ahuja}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tabto}
+\usepackage{amssymb}
+\usepackage{amsmath}
+
+\providecommand{\dotdiv}{% Don't redefine it if available
+  \mathbin{% We want a binary operation
+    \vphantom{+}% The same height as a plus or minus
+    \text{% Change size in sub/superscripts
+      \mathsurround=0pt % To be on the safe side
+      \ooalign{% Superimpose the two symbols
+        \noalign{\kern-.35ex}% but the dot is raised a bit
+        \hidewidth$\smash{\cdot}$\hidewidth\cr % Dot
+        \noalign{\kern.35ex}% Backup for vertical alignment
+        $-$\cr % Minus
+      }%
+    }%
+  }%
+}
+\usepackage[T1]{fontenc}
+\newenvironment{definition}{\par\color{blue}}{\par}
+\newenvironment{pros}{\par\color[rgb]{0.066, 0.4, 0.129}}{\par}
+\newenvironment{cons}{\par\color{red}}{\par}
+\newenvironment{example}{\par\color{brown}}{\par}
+\usepackage{fancyhdr}
+%% Margins
+\usepackage{geometry}
+\geometry{a4paper, hmargin={2cm,2cm},vmargin={2cm,2cm}}
+
+%% Header/Footer
+\pagestyle{fancy} 
+\lhead{Ashwin Ahuja}
+\chead{Computation Theory}
+\rhead{Part IB, Paper 6}
+\lfoot{}
+\cfoot{\thepage}
+\rfoot{}
+\renewcommand{\headrulewidth}{1.0pt}
+\renewcommand{\footrulewidth}{1.0pt}
+
+\usepackage[export]{adjustbox}
+\usepackage{caption}
+\captionsetup{justification   = raggedright,
+	singlelinecheck = false}
+
+\lstset{
+	basicstyle=\ttfamily,
+	columns=fullflexible,
+	breaklines=true,
+	postbreak=\raisebox{0ex}[0ex][0ex]{\color{red}$\hookrightarrow$\space}
+}
+\usepackage{listings}
+\lstset{
+	escapeinside={(*}{*)}
+}
+
+
+
+\begin{document}
+
+\makeatletter
+\renewcommand{\l@subsection}{\@dottedtocline{2}{1.6em}{2.6em}}
+\makeatother
+
+\begin{titlepage}
+\begin{center}
+			\vspace*{1cm}
+			
+			\Huge
+			\textbf{Computation Theory}
+			
+			\vspace{0.5cm}
+			\LARGE
+			University of Cambridge
+			
+			\vspace{1.5cm}
+			
+			\textbf{Ashwin Ahuja}
+			
+			\vfill
+			
+			Computer Science Tripos Part IB\\
+			Paper 6
+			
+			\vspace{5cm}
+			
+			April 2019
+			
+\end{center}
+\end{titlepage}
+
+\tableofcontents
+\pagebreak
+
+\section{Algorithmically Undecidable Problems}
+\begin{definition}
+Mathematical problems which can't be solved even given unlimited time and working space, for example:
+\end{definition}
+\begin{itemize}
+    \item Hilbert's Entsheidungsproblem
+    \item Halting Problem
+    \item Hilbert's 10th Problem
+\end{itemize}
+
+\subsection{Entsheidungsproblem (Decision Problem)}
+\begin{definition}
+    Is there an algorithm st when fed a statement in formal language of first-order arithmetic, determines in a finite number of steps whether or not the statement is provable from Peano's axioms for arithmetic using the usual rules of first-order logic. This could help solve things like the Goldbach Conjecture (every even integer strictly greater than two is the sum of two primes) using the following:
+\end{definition}
+
+\begin{equation}
+    \forall k>1 \exists p, q(2k=p+q \wedge prime(p) \wedge prime(q))
+\end{equation}
+
+More formally, the associated problem is given:
+\begin{enumerate}
+    \item A set \textbf{S} whose elements are finite data structures of some kind (formulas of first-order logic)
+    \item A property \textbf{P} of elements of \textbf{S} (property of a formulat that it has a proof)
+\end{enumerate}
+the associated problem it: \textit{to find an algorithm which terminates with result 0 or 1 when fed an element s $\in$ S and yields the result 1 when fed s iff s has property P}
+
+\bigskip
+\noindent
+\textbf{Algorithm}: First issue is that there was no precise definition of an algorithm, just examples of what are algorithms. The features they included were that:
+\begin{enumerate}
+    \item \textbf{Finite} description of the procedure in terms of elementary operations
+    \item \textbf{Deterministic}: next step uniquely determined if there is one
+    \item Can recognise when it terminates and what the result it (does not necessarily terminate)
+\end{enumerate}
+
+\bigskip
+\noindent
+\textbf{Negative Solutions to Entsheidungsproblem}: Given by Turing and Church in 1935/36. It is composed of:
+\begin{enumerate}
+    \item Precise, mathematical definition of algorithm (\textit{Turing: Turing Machines} and \textit{Church: lambda-calculus})
+    \item Regard algorithms as data on which algorithms can act and reduce the problem to.
+    \item Construct an algorithm encoding instances (A, D) of the Halting Problem as arithmetic statements $\Phi_{A, D}$ with the property that $\Phi_{A, D} \leftrightarrow A(D)\downarrow$
+\end{enumerate}
+
+\subsection{The Halting Problem}
+Decision problem with:
+\begin{itemize}
+    \item Set \textbf{S} consisting of all pairs \textbf{(A, D)}, where A is an algorithm and D is a datum on which it is designed to operate
+    \item Property \textbf{P} holds for \textbf{(A, D)} if algorithm A when applied to datum D eventually produces a result (that is, it halts - \textbf{A(D) $\downarrow$}
+\end{itemize}
+
+Turing and Church's work shows that the Halting Problem is \textbf{undecidable: there is no algorithm H st $\forall$ (A, D) $\in$ S}
+\begin{equation}
+H(A, D)=\left\{\begin{array}{ll}{1} & {if A(D) \downarrow} \\ {0} & {otherwise }\end{array}\right.
+\end{equation}
+
+\noindent
+\textbf{Proofs that Halting Problem is Undecidable}: If there were such an H, let C be the following algorithm
+\begin{lstlisting}
+input A; compute H(A, A); if H(A, A) = 0 then return 1, else loop forever
+\end{lstlisting}
+
+Since H is total and by definition of H:
+\begin{equation}
+\forall A(C(A) \downarrow \; \leftrightarrow H(A, A)=0)
+\end{equation}
+\begin{equation}
+\forall A(H(A, A)=0 \leftrightarrow \neg A(A) \downarrow)
+\end{equation}
+\begin{equation}
+So \; \forall A(C(A) \downarrow \leftrightarrow \neg A(A) \downarrow)
+\end{equation}
+
+Taking A to be the algorithm C:
+\begin{equation}
+C(C) \downarrow \leftrightarrow \neg C(C) \downarrow
+\end{equation}
+which is a contradiction, therefore there exists no such algorithm H.
+
+\bigskip
+This doesn't quite work as we've taken A as a datum on which A is designed to operate - we've therefore assumed that we can pass a function to a function - not a first-order function then.
+
+This can be used to negatively prove the Entsheidungsproblem by showing that any algorithm deciding provability of arithmetic statements could be used to decide the Halting Problem - therefore no such exists.
+
+\subsection{Hilbert's 10th Problem}
+\begin{definition}
+    Given an algorithm, which, when started with a Diophantine equation, determines in a finite number of operations whether or not there are natural numbers satisfying the equation.
+    
+    \bigskip
+    \noindent
+    \textbf{Diophantine Equations}: $
+p\left(x_{1}, \ldots, x_{n}\right)=q\left(x_{1}, \ldots, x_{n}\right)
+$ where p and q are polynomials in unknowns x$_{1}$, ..., x$_{n}$ with coefficients from $
+\mathbb{N}=\{0,1,2, \ldots\}
+$
+\end{definition}
+
+Posed in 1900, but proved undecidable by reduction from the Halting Problem by Y Matijasevič, J Robinson, M Davis and H Putnam. The original proof used Turing machines, but a later, simpler proof used register machines (concept made by Minsky and Lambek). 
+
+\section{Register Machines}
+\begin{definition}
+Operate on $ \mathbb{N} $ stored in finite (idealised) registers ($R_{0}, R_{1}, ..., R_{n}$) each storing a natural numbers, using the following elementary operations:
+\begin{enumerate}
+    \item \textbf{Add 1} to the contents of a register
+    \item Test whether the contents of a register is 0
+    \item \textbf{Subtract 1} from the contents of a register if it is non-zero
+    \item \textbf{Jumps}
+    \item \textbf{Conditionals} (if, then, else)
+\end{enumerate}
+And a program consisting of a finite list of instructions of the form \textit{label : body} where for i = 0, 1, 2, ..., the (i+1)$^{th}$ instruction has label L$_{i}$. The instruction body takes one of the three forms:
+\begin{enumerate}
+    \item \textbf{R$^{+} \rightarrow L^{'}$}
+    \subitem Add 1 to the contents of register R and jump to instruction labelled L$^{'}$
+    \item \textbf{R$^{-} \rightarrow L^{'}, L^{"}$}
+    \subitem If the contents of R > 0, then subtract 1 from it and jump to L$^{'}$, else jump to L$^{"}$
+    \item \textbf{HALT}
+    \subitem Stop executing instructions
+\end{enumerate}
+
+\bigskip
+\noindent
+\textbf{Configuration}: $
+c=\left(\ell, r_{0}, \ldots, r_{n}\right)
+$ where $
+\ell
+$ is the current label and r$_{i}$ is the current contents of R$_{i}$. R$_{i}$ = x [in configuration c] means $
+c=\left(\ell, r_{0}, \ldots, r_{n}\right)
+$ with r$_{i}$=x. 
+
+\noindent
+Initial Configuration c$_{0}$ = (0, r$_{0}$, r$_{1}$, ..., r$_{n}$) where r$_{i}$ = initial contents of register R$_{i}$
+
+\bigskip
+\noindent
+\textbf{Computation}: finite sequence of configurations $c_{0}, c_{1}, c_{2}, \ldots $ where c$_{0}$ is an initial configuration and each c in the sequence determines the next configuration in the sequence by carrying out the program instruction labelled L$_{\ell}$
+
+\bigskip
+\noindent
+\textbf{Halting}: For a finite computation, the last configuration is a halting configuration, where the instruction is either HALT \textbf{(proper halt)} or another instruction involving going to an instruction that doesn't exist (\textbf{erroneous halt}). 
+\begin{itemize}
+    \item Erroneous halts can always be turned into proper halts by adding extra HALT instructions to the list with appropriate labels
+\end{itemize}
+\end{definition}
+
+\subsection{Graphical Representation}
+One node in the graph for each instruction, with arcs representing jumps between instructions. 
+\begin{figure}[H] \includegraphics[width=.3\textwidth, left] {./images/1.png} \end{figure}
+
+\subsection{Partial Functions}
+Relation between initial and final register contents which is defined by a register machine program is a partial function. This is because register machine computation is deterministic - in any non-halting configuration, the next configuration is uniquely determined by the program.
+
+\bigskip
+\begin{definition}
+Partial function from set X to set Y is specified by any subset f $f \subseteq X \times Y$ (ordered pairs) satisfying:
+
+\begin{equation}
+(x, y) \in f \wedge\left(x, y^{\prime}\right) \in f \rightarrow y=y^{\prime}
+\end{equation}
+$\forall x \in X \; and \; y, y^{\prime} \in Y$
+
+For all x $\in$ X, there is at most one y $\in$ Y, with (x, y) $\in$ f
+\end{definition}
+
+\subsubsection{Notation}
+\begin{itemize}
+    \item f(x) = y means (x, y) $\in$ f
+    \item f(x) $\downarrow$ means $\exists y \in Y(f(x) = y)$
+    \item f(x) $\uparrow$ means $\neg \exists y \in Y(f(x) = y)$
+    \item X $\rightharpoonup$ means set of all partial functions from X to Y
+    \item X $\rightarrow$ Y means set of all total functions from X to Y
+\end{itemize}
+
+\bigskip
+\noindent
+Partial function from set X to set Y is total if it satisfies f(x) $\downarrow$ $\forall x \in X$
+
+\subsection{Computable Functions}
+$f \in \mathbb{N}^{n} \rightarrow \mathbb{N}$ is (register machine) computable if there is a register machine M with at least n+1 registers such that $(x_{1}, ..., x_{n}) \in \mathbb{N}$ and all y $\in \mathbb{N}$, with the computation of M starting with R$_{0}=0$, R$_{1} = x_{1}$, ..., R$_{n} = x_{n}$ and all other registers set to 0, and halts with R$_{0}$=y iff f($x_{1}, ..., x_{n}$) = y
+
+\bigskip
+\textbf{Examples of Computable Functions}
+\begin{enumerate}
+    \item Multiplication
+    \begin{figure}[H] \includegraphics[width=.4\textwidth, left] {./images/2.png} \end{figure}
+    
+    \item Projection: $p(x, y) \triangleq x$
+    \item Constant: $c(x) \triangleq n$
+    \item Truncated Subtraction: $ x \dotdiv y \triangleq \left\{\begin{array}{ll}{x-y} & {\text { if } \; y \leq x} \\ {0} & {\text { if } \; y>x }\end{array}\right.$
+    
+    \item Integer Division: $x \operatorname{div} y \triangleq \left\{\begin{array}{ll}{\text {integer part of } x / y} & {\text { if } y>0} \\ {0} & {\text { if } y=0}\end{array}\right.$
+    
+    \item Integer Remainder: $x \bmod y \triangleq x \dotdiv y(x \; d i v \; y)$
+    
+    \item Exponentiation base 2: $e(x) \triangleq 2^{x}$
+    
+    \item Logarithm base 2: $\log _{2}(x) \triangleq \left\{\begin{array}{ll}{\text {greatest } y \text { such that } 2^{y} \leq x} & {\text { if } x>0} \\ {0} & {\text { if } x=0}\end{array}\right.$
+    
+    \item Sequential Composition: M1; M2
+    \begin{figure}[H] \includegraphics[width=.4\textwidth, left] {./images/3.png} \end{figure}
+    
+    \item IF R=0 THEN M1 ELSE M2
+    \begin{figure}[H] \includegraphics[width=.4\textwidth, left] {./images/4.png} \end{figure}
+    
+    \item WHILE R$\neq$0 DO M
+    \begin{figure}[H] \includegraphics[width=.4\textwidth, left] {./images/5.png} \end{figure}
+\end{enumerate}
+\section{Coding Programs as Numbers}
+Turing / Church solutions for Entscheidungsproblem use the idea that the algorithms can be the data on which the algorithms act - therefore need to be able to code Register Machines as numbers. In general, these codings are called \textbf{Gödel Numberings}
+
+\bigskip
+\textbf{Aim}: Coding st RM program and initial contents of the registers can be coded into a number and that can be decoded back into the RM programs and initial contents of the registers.
+
+\subsection{Numerical Coding of Pairs}
+A possible numerical coding of pairs is as follows:
+\begin{equation}
+    \text { For } x, y \in \mathbb{N}, \text { define } \left\{\begin{array}{cc}{\langle\langle x, y\rangle\rangle} & {\triangleq 2^{x}(2 y+1)} \\ {\langle x, y\rangle} & {\triangleq 2^{x}(2 y+1)-1}\end{array}\right.
+\end{equation}
+\begin{itemize}
+    \item <-, -> gives a bijection (one-one correspondence) between $\mathbb{N} \times \mathbb{N} and \mathbb{N}$
+    \item <<-, ->> gives a bijection between $\mathbb{N} \times \mathbb{N}$ and $\{ n\in \mathbb{N} | n \neq 0 \}$
+\end{itemize}
+
+\subsubsection{Numerical Coding of Lists}
+For l $\in$ list $\mathbb{N}$ (set of all finite lists of natural numbers), define $\ulcorner$l$\urcorner$ $\in \mathbb{N}$ by induction on the length of list l:
+\begin{equation}
+\left\{
+\begin{array}{l}{
+\ulcorner [] \urcorner \triangleq 0
+} 
+\\ 
+{
+\ulcorner x::l \urcorner \triangleq \; \ll x, \ulcorner l \urcorner \gg \; = 2^{x} (2 \ulcorner l \urcorner + 1)
+}
+\end{array}
+\right.
+\end{equation}
+
+Thus, $\ulcorner [x_{1}, x_{2}, ..., x_{n}] \urcorner$ = $\ll x_{1}, \ll x_{1}, ..., \ll x_{n}, 0 \gg ... \gg \; \gg$
+
+\begin{figure}[H] \includegraphics[width=.45\textwidth, center] {./images/6.png} \end{figure}
+
+\subsection{Numerical Coding of Programs}
+$P \text { is the RM program } \left[ \begin{array}{c}{\mathrm{L}_{0} : \operatorname{body}_{0}} \\ {\mathrm{L}_{1} : \operatorname{body}_{1}} \\ {\vdots} \\ {\mathrm{L}_{n} : \operatorname{bod} y_{n}}\end{array}\right]
+$
+
+\bigskip
+\noindent
+then the numerical code is:
+$
+    \ulcorner P \urcorner \triangleq \ulcorner [\ulcorner body_{0} \urcorner, ..., \ulcorner body_{n} \urcorner] \urcorner
+$
+
+\bigskip
+\noindent
+where $\ulcorner body \urcorner$ is defined by:
+$\begin{cases}
+\ulcorner R_{i}^{+} \rightarrow L_{j} \urcorner \triangleq \; \ll 2i, j \gg \\
+\ulcorner R_{i}^{-} \rightarrow L_{j}, L_{k} \urcorner \triangleq \; \ll 2i+1, <j, k> \gg  \\
+\ulcorner HALT  \urcorner \; \triangleq \; 0
+\end{cases}$
+
+\bigskip
+\noindent
+\textbf{Decoding}
+\begin{lstlisting}
+if x=0 then body(x) is HALT,
+else (x>0 and) let x = <<y, z>> in
+    if y=2i, then body(x) is Ri+ -> Lz
+    else y=2i+1 let z = <j, k> in body(x) is Ri- -> Lj, Lk
+\end{lstlisting}
+
+\noindent
+So any e $\in \mathbb{N}$ decodes to a unique program prog(e), called the program with index e:
+\begin{equation}
+\operatorname{prog}(e) \triangleq \left[ \begin{array}{c}{\mathrm{L}_{0} : \operatorname{bod} y\left(x_{0}\right)} \\ {\vdots} \\ {\mathrm{L}_{n} : \operatorname{bod} y\left(x_{n}\right)}\end{array}\right] \text { where } e=\ulcorner\left[x_{0}, \ldots, x_{n}\right]\urcorner
+\end{equation}
+
+=> prog(0) is the program with an empty list of instructions, which by convention is a Register Machine that does nothing - halts immediately
+
+\section{Universal Register Machine}
+Universal Register Machine U carries out the following (starting with R$_{0}$=0, R$_{1}$=e (code of a program), R$_{2}$=a (code of a list of arguments) and all other registers zeroed:
+\begin{enumerate}
+    \item Decode e as a Register program P
+    \item Decode a as a list of register values $a_{1}, ..., a_{n}$
+    \item Carry out the computation of the Register Machine program P starting with R$_{0}=0, R_{1} = a_{1}, ..., R_{n} = a_{n}$ (and any other registers occurring in P set to 0)
+\end{enumerate}
+
+\subsection{Register Usage}
+\begin{itemize}
+    \item \textbf{R$_{1}$}: P - code of the RM to be simulated
+    \item \textbf{R$_{2}$}: A - code of current register contents of simulated RM
+    \item \textbf{R$_{3}$}: PC program counter - number of the current instruction
+    \item \textbf{R$_{4}$}: N code of the current instruction body
+    \item \textbf{R$_{5}$}: C type of the current instruction body
+    \item \textbf{R$_{6}$}: R current value of the register to be incremented by current instruction
+    
+    \item \textbf{R$_{7}$}, \textbf{R$_{8}$} and \textbf{R$_{9}$} are auxiliary registers
+\end{itemize}
+
+\subsection{Structure of URM Program}
+\begin{enumerate}
+    \item Copy PCth item of the list in P to N (halting if PC > length of list); goto 2
+    \item If N=0, then copy 0th item of list in A to $R_{0}$ and halt, else (decode N as $\ll y, z \gg$; C ::= y; N ::= z; goto 3
+    \begin{itemize}
+        \item C = 2i and current instruction is $R_{i}^{+} \rightarrow L_{z}$
+        \item OR
+        \item C = 2i + 1 and current instruction is $R_{i}^{-} \rightarrow L_{j}, L_{k}$ where z = <j, k>
+    \end{itemize}
+    \item Copy \textbf{i}th item of list in A to R; goto 4
+    \item Execute current instruction on R; update PC to next label; restore register values to A; goto 1
+\end{enumerate}
+
+In order to do this, need to define Register Machines for manipulating codes of lists of numbers.
+
+\bigskip
+\noindent
+\textbf{Prerequisite RMs}
+\begin{itemize}
+    \item \textbf{Copy Contents from R to S}
+    
+    $START \rightarrow S::=R \rightarrow HALT$
+    
+    \begin{figure}[H] \includegraphics[width=.4\textwidth, left] {./images/7.png} \end{figure}
+    
+    \item \textbf{Push X to L}
+    
+    $START \rightarrow (X, L) ::= (0, X :: L) (2^{X}(2L+1))\rightarrow HALT$
+    \begin{figure}[H] \includegraphics[width=.4\textwidth, left] {./images/8.png} \end{figure}
+    
+    \item \textbf{Pop L to X}:
+    \begin{lstlisting}
+    if L = 0 then (X::= 0; goto EXIT) else
+    let L = <<x, l>> in (X ::= x, L ::= l; goto HALT)
+    \end{lstlisting}
+    \begin{figure}[H] \includegraphics[width=.6\textwidth, left] {./images/10.png} \end{figure}
+\end{itemize}
+
+\subsection{Program for \textbf{U}}
+\begin{figure}[H] \includegraphics[width=.7\textwidth, left] {./images/11.png} \end{figure}
+
+\section{Halting Problem}
+\begin{definition}
+A register machine H decides the Halting Problem if for all e, $a_{1}, ..., a_{n} \in \mathbb{N}$, starting H with $R_{0}$=0, $R_{1}$=e and R$_{2}$=$\ulcorner [a_{1}, ..., a_{n}] \urcorner$ and all other registers zeroed, the computation of H always halts with $R_{0}$ containing 0 or 1; moreover when the computation halts, $R_{0}$ iff the register machine program with index e eventually halts when started with $R_{0}$=0, $R_{1} = a_{1}, ..., R_{n} = a_{n}$ and all other registered zeroed.
+\end{definition}
+
+\bigskip
+\noindent
+\textbf{Theorem:} No such register machine H can exist
+
+\subsection{Proof of Theorem}
+Assume $\exists$ a RM H that decides the Halting Problem and derive a contradiction as follows:
+\begin{enumerate}
+    \item Let H' be obtained from H by replacing 'START $\rightarrow$' with 'START $\rightarrow$ Z ::= $R_{1} \rightarrow$ push Z to $R_{2}\rightarrow$ where Z is a register not mentioned in H's program
+    \item Let C be obtained from H' by replacing each HALT (and each erroneous halt) by 
+    \begin{figure}[H] \includegraphics[width=.15\textwidth, left] {./images/12.png} \end{figure}
+    
+    \item Let $c \in \mathbb{N}$ be the index of C's program
+    
+    \item C started with $R_{1}$ = c eventually halts 
+    
+    \item $\iff$ H' started with $R_{1}$=c halts with $R_{0}$=0
+    
+    \item $\iff$ H started with $R_{1}$=c, R$_{2}=\ulcorner [c] \urcorner$ halts with R$_{0}=0$
+    
+    \item $\iff$ prog(c) started with $R_{1}$=c does not halt
+    
+    \item $\iff$ C started with $R_{1}$=c does not halt - this is a contradiction
+    
+\end{enumerate}
+
+\subsection{Enumerating Computable Functions}
+For each e $\in \mathbb{N}$, let $\varphi_{e} \in \mathbb{N} \rightharpoonup \mathbb{N}$ be the unary partial function computed by the Register Machine with program prog(e). So, for all x, y $\in \mathbb{N}$:
+
+\bigskip
+$\varphi_{e}(x)=y $ holds iff computation of prog(e) starts with $R_{0}$=0, $R_{1}$=x and all other registers zeroed eventually halts with $R_{0}=y$
+
+\bigskip
+Therefore, $e \mapsto \varphi_{e}$ defines an onto function from $\mathbb{N}$ to the collection of all computation partial functions from $\mathbb{N}$ to $\mathbb{N}$ - therefore this collection is countable. Therefore $\mathbb{N} \rightharpoonup \mathbb{N}$
+
+\bigskip
+\noindent
+\textbf{Example Uncomputable Function}: f $\in \mathbb{N} \rightharpoonup \mathbb{N}$ is the partial function with graph {(x, 0) | $\varphi_{x}(x)\uparrow$}
+
+\begin{equation}
+f(x)=\left\{\begin{array}{ll}{0} & {\text { if } \varphi_{x}(x) \uparrow} \\ {\text {undefined}} & {\text { if } \varphi_{x}(x) \downarrow}\end{array}\right.
+\end{equation}
+
+\begin{itemize}
+    \item f is not computable, as if it were, then f = $\varphi_{e}$ for some $e \in \mathbb{N}$ and hence
+    \item If $\varphi_{e}(e)\uparrow$, then f(e) = 0; so $\varphi_{e}(e)$=0 (since f = $\varphi_{e}$) hence $\varphi_{e}(e)\downarrow$
+    \item If $\varphi_{e}(e)\downarrow$ then $f(e)\downarrow$ (since f = $\varphi_{e}$) so $\varphi_{e}(e)\uparrow$ (by definition of f)
+    \item Therefore this is a contradiction, therefore f cannot be computable
+\end{itemize}
+
+\subsection{Undecidable Sets of Numbers}
+Set ($S \subseteq \mathbb{N}$) is RM decidable if 
+\begin{itemize}
+    \item Its characteristic function $\chi_{s} \in \mathbb{N} \rightarrow \mathbb{N}$ is a register machine computable function.
+    \item $\equiv$ iff there is a RM M with the property that: (1) $\forall x \in \mathbb{N}$, M started with $R_{0}=0, R_{1}=x$ and all other registers zeroed eventually halts with $R_{0}$ containing 1 or 0 and (2) $R_{0}=1$ on halting iff $x\in S$
+\end{itemize}
+Otherwise it is called undecidable. In order to prove undecidability, generally try to prove that that decidability of S would imply decidability of the Halting Problem.
+
+\bigskip
+\noindent
+\begin{example}
+\noindent
+\textbf{Claim}: $S_{0} \triangleq {e | \varphi_{e}(0)\downarrow}$ is undecidable
+
+\noindent
+\textbf{Proof}: Suppose $M_{0}$ is a RM computing $\chi_{S_{0}}$. From $M_{0}$s program (using the same techniques as for constructing a universal Register Machine), we can construct a Register Machine to carry out.
+\begin{lstlisting}[escapeinside={(*}{*)}, frame=single]
+let e = R(*$_{1}$*) and (*$\ulcorner$[a1,...,an]$\urcorner$*)  = R2 in
+    (*$R_{1}::= \ulcorner (R_{1} ::= a_{1}); ...; (R_{n} ::= a_{n}); prog(e) \urcorner$*)
+(*R$_{2}$*) ::= 0;
+run M(*$_{0}$*)
+\end{lstlisting}
+\begin{figure}[H] \includegraphics[width=.6\textwidth, left] {./images/13.png} \end{figure}
+
+Therefore, by assumption on $M_{0}$, H decides the Halting Problem - this is a contradiction. Therefore no such $M_{0}$ exists, therefore $\chi_{S_{0}}$ is uncomputable => $S_{0}$ is undecidable
+\end{example}
+
+\section{Turing Machines}
+Register Machines computation abstracts away particular, concrete abstractions of numbers and the associated elementary operations of increment / decrement / zero-test.
+
+Turing Machines are more concrete: even numbers have to be represented in terms of a fixed finite alphabet of symbols and increment / decrement / zero-test programmed in terms of more elementary symbol manipulating operations
+
+
+\subsection{Features}
+\begin{enumerate}
+    \item Linear tape, unbounded to right, divided into cells containing a symbol from a finite alphabet of tape symbols. Only finitely many cells contain non-blank symbols
+    \item The machine is in one of a finite set of states
+    \item The tape symbol is being scanned by a tape head
+    \item The machine computes in discrete steps, each of which depends on the current state and the symbol being scanned by the tape head.
+    
+    \bigskip
+    \noindent
+    \textbf{Actions}
+    \begin{itemize}
+        \item Overwrite the current tape cell with a symbol
+        \item Move left or right one cell
+        \item Stay stationary
+        \item Change state
+    \end{itemize}
+    \item \textbf{Alphabet}
+    \begin{itemize}
+        \item \textbf{$\triangleright$}: left endmarker symbol (start symbol)
+        \item \textbf{\textvisiblespace}: blank symbol
+    \end{itemize}
+\end{enumerate}
+
+\bigskip
+\noindent
+More accurately specified by:
+\begin{enumerate}
+    \item \textbf{Q}: finite set of machine states
+    \item \textbf{$\Sigma$}: finite set of tape symbols (disjoint from Q)
+    \item $s \in Q$, an initial state
+    \item \textbf{$\delta \in (Q \times \Sigma \rightarrow (Q \cup \{ acc, rej \}) \times \Sigma \times \{ L, R, S \}$}: transition function
+    \begin{itemize}
+        \item Specifies for each state and symbol a next state (or accept or reject)
+        \item Symbol to overwrite the current symbol
+        \item And direction for the tape head to move (left, right or stationary)
+        \item $\forall q \in Q \; \exists q' \in Q \cup \{$accept, reject$\}$ with $\delta (q, \triangleright ) = (q', \triangleright, R)$ (left endmarker is never overwritten and machine always moves to the right when scanning it)
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Configuration}
+(q, w, u) where:
+\begin{enumerate}
+    \item $q \in Q \cup \{ acc, rej \}$ = current state
+    \item w = non-empty string (w = va) of tape symbols under ad to the left of the tape head, whose last element (a) is contents of cell under the tape head.
+    \item u = (possibly empty) string of tape symbols to the left of the tape head (upto some point beyond which all symbols are \textvisiblespace)
+    \item Hence, wu $\in \Sigma^{*}$ represents the current tape contents
+    \item The initial configuration is (s, $\triangleright$, u)
+\end{enumerate}
+
+\subsection{Representing Transitions}
+Given a TM = (Q, $\Sigma$, s, $delta$), we write:
+\begin{equation}
+    (q, w, u) \rightarrow_{M} (q', w', u')
+\end{equation}
+to mean: (1) q $\neq$ acc, rej, (2) w = va (for some v and a) and:
+\begin{enumerate}
+    \item Either $\delta(q, a)=\left(q^{\prime}, a^{\prime}, L\right), w^{\prime}=v, \text { and } u^{\prime}=a^{\prime} u$ 
+    \item OR $\delta(q, a)=\left(q^{\prime}, a^{\prime}, S\right), w^{\prime}=v a^{\prime} \text { and } u^{\prime}=u$
+    \item OR $\begin{array}{l}{\delta(q, a)=\left(q^{\prime}, a^{\prime}, R\right), u=a^{\prime \prime} u^{\prime \prime} \text { is non-empty, }} \\ {w^{\prime}=v a^{\prime} a^{\prime \prime} \text { and } u^{\prime}=u^{\prime \prime}}\end{array}$
+    \item OR $\delta(q, a)=\left(q^{\prime}, a^{\prime}, R\right), u=\varepsilon \text { is empty, } w^{\prime}=v a^{\prime}$ \textvisiblespace and $u^{\prime} = \epsilon$
+\end{enumerate}
+
+\subsection{Computation}
+Computation of a TM M is a (finite or infinite) sequence of configurations where (1) c$_{0}$ = ($s, \triangleright, u$) is an initial configuration and (2) $c_{i} \rightarrow _{M} c_{i+1}$ holds for i $\in \mathbb{Z}^{+}$. The computation:
+\begin{enumerate}
+    \item Does not halt if the sequence is infinite
+    \item Halts if the sequence is finite or if its last element is of the form (acc, w, u) or (rej, w, u)
+\end{enumerate}
+
+\subsection{Computation of a Turing Machine (M) can be implemented by a Register Machine}
+\textbf{Proof}
+\begin{enumerate}
+    \item \textbf{Fix a numerical encoding of M's states, tape symbols, tape contents and configurations}
+    \begin{enumerate}
+        \item Identify states and type symbols with specific numbers: (1) acc=0, rej=1, Q={2, 3, ..., n} and (2) \textvisiblespace=0, $\triangleright$=1, $\Sigma$={0,1, ..., m}
+        
+        \item Code configurations c = (q, w, u) is given by:
+        
+        \noindent
+        $\ulcorner c \urcorner = \ulcorner [q, [a_{n}, ..., a_{1}] \urcorner , \ulcorner [b_{1}, ..., b_{m}] \urcorner ] \urcorner$ where w = $a_{1} ... a_{n}$ (n > 0) and u = $b_{1} ... b_{m}$ (m $\geq$ 0)
+        
+        We reverse the w to make it easier to use our Register Machine programs for list manipulation
+    \end{enumerate}
+    \item \textbf{Implement M's transition function (finite table) using RM instructions on codes}
+    \begin{enumerate}
+        \item We use registers to represent (1) Q - current state, (2) A - current tape symbol, (3) D - current direction of the tape head (L = 0, R = 1, S = 2)
+        \item Can turn the finite table of (argument, result)-pairs specifying $\delta$ into a Register Machine program $\rightarrow (Q, A, D) ::= \delta(Q, A) \rightarrow$ such that starting the program with Q=q, A=a, D=d and all other registers zero, it halts with Q=q', A=a', D=d' where (q', a', d') = $\delta(q, a)$
+    \end{enumerate}
+    
+    
+    \item \textbf{Implement a Register Machine to repeatedly carry out $\rightarrow_{M}$}
+    
+    \begin{enumerate}
+        \item Uses registers to store: (1) C - code of current configuration, (2) W - code of tape symbols at and left of tape head, (3) U - code of tape symbols right of tape head
+        \item Starting with C containing the code of an initial configuration (and all other registers zeroed), the RM halts iff M halts and in that case C holds the code of the final configuration
+        
+        \begin{figure}[H] \includegraphics[width=.65\textwidth, left] {./images/14.png} \end{figure}
+    \end{enumerate}
+\end{enumerate}
+
+\subsection{Computation of a Register Machine can be implemented by a Turing Machine}
+Can be reasonably easily proven, just need to show how to carry out the action of each type of the RM.
+\subsubsection{Tape encoding of list of numbers}
+\begin{definition}
+A tape over $\Sigma$ = {$\triangleright$, \textvisiblespace, 0, 1} codes a list of numbers if precisely two cells contain 0 and the only cells containing 1 occur between these
+\end{definition}
+\begin{figure}[H] \includegraphics[width=.45\textwidth, left] {./images/15.png} \end{figure}
+corresponds to the list [$n_{1}, n_{2}, ..., n_{k}$]
+
+\section{Notions of Computability}
+Church defined computability using $\lambda$-calculus and Turing used Turing machines - though Turing showed that the two approaches determine the same class of computable functions.
+
+\bigskip
+\begin{definition}
+\noindent
+\textbf{Church-Turing Thesis}: Every algorithm can be realised as a Turing machine
+\end{definition}
+\bigskip
+Further evidenced by:
+\begin{itemize}
+    \item Goedel and Kleene (1936): partial recursive functions
+    \item Post (1943) and Markov (1951): canonical systems for generating the theorems of a formal system
+    \item Lambek and Minsky (1961): register machines
+\end{itemize}
+
+\subsection{Turing Computability}
+f $\in \mathbb{N}^{n} \rightharpoonup \mathbb{N}$ is Turing computable iff $\exists$ a Turing machine M with the following property:
+\begin{enumerate}
+    \item Starting M from initial state with tape head on the left endmarker of a tape coding [0, $x_{1}, ..., x_{n}$], M halts iff f($x_{1}, ..., x_{n}$)$\downarrow$ and in that case the final tape codes a list whose first element is y where f($x_{1}, ..., x_{n}$) = y
+\end{enumerate}
+
+\subsection{Aim}
+A more abstract, machine-independent description of the collection of computable partial functions than provided by register / Turing machines. They form the smallest collection of partial functions containing some basic functions and closed under some fundamental operations for forming new functions from old - composition, primitive recursion and minimisation.
+
+\subsection{Functions}
+\begin{definition}
+\textbf{Kleene Equivalence of possibly-undefined expressions}: Either both LHS and RHS are undefined or they are both defined and equal.
+\end{definition}
+
+\begin{enumerate}
+    \item \textbf{Projection}: $proj^{n}_{i} \in \mathbb{N}^{n} \rightarrow \mathbb{N}$
+    
+    
+    $proj^{n}_{i}(x_{1}, ..., x_{n}) \triangleq x_{i}$
+    
+    $\text { START } \rightarrow\left[\mathrm{R}_{0} : :=\mathrm{R}_{i}\right] \rightarrow \mathrm{HALT}$
+    
+    \item \textbf{Constant with value 0}: $\mathrm{zero}^{n} \in \mathbb{N}^{n} \rightarrow \mathbb{N}$
+    
+    
+    $z \operatorname{ero}^{n}\left(x_{1}, \ldots, x_{n}\right) \triangleq 0$
+    
+    $\text { START } \rightarrow \mathrm{HALT}$
+    
+    \item \textbf{Successor}: $\operatorname{succ} \in \mathbb{N} \rightarrow \mathbb{N}$
+    
+    
+    $\operatorname{succ}(x) \triangleq x+1$
+    
+    $\text { START } \rightarrow \mathrm{R}_{1}^{+} \rightarrow\left[\mathrm{R}_{0} : :=\mathrm{R}_{1}\right] \rightarrow \mathrm{HALT}$
+    
+    \item \textbf{Composition} of f $\in \mathbb{N}^{n} \rightharpoonup \mathbb{N}$ with $g_{1}, ..., g_{n} \in \mathbb{N}^{m} \rightharpoonup \mathbb{N}$ is $f \circ\left[g_{1}, \ldots, g_{n}\right] \in \mathbb{N}^{m} \rightarrow \mathbb{N}$ satisfying for all $x_{1}, \dots, x_{m} \in \mathbb{N}$:
+    
+    $f \circ\left[g_{1}, \ldots, g_{n}\right]\left(x_{1}, \ldots, x_{m}\right) \equiv f\left(g_{1}\left(x_{1}, \ldots, x_{m}\right), \ldots, g_{n}\left(x_{1}, \ldots, x_{m}\right)\right)$
+    
+    \bigskip
+    Therefore, $f \circ\left[g_{1}, \ldots, g_{n}\right]\left(x_{1}, \ldots, x_{m}\right)=z$ iff $\exists$ $y_{1}, \dots, y_{n}$ with $\boldsymbol{g}_{i}\left(\boldsymbol{x}_{\mathbf{1},} \ldots, \boldsymbol{x}_{m}\right)$ (for i = 1, ..., n) and $f\left(y_{1}, \ldots, y_{n}\right)=z$
+    
+    \bigskip
+    \textbf{Idea is that $f \circ\left[\boldsymbol{g}_{1}, \ldots, \boldsymbol{g}_{n}\right]$ is computable if f and $\boldsymbol{g}_{1}, \ldots, \boldsymbol{g}_{n}$ are}
+    
+    \bigskip
+    \textit{
+    \textbf{Proof}: Given RM programs $\left\{\begin{array}{l}{F} \\ {G_{i}}\end{array}\right.$ computing $\left\{\begin{array}{l}{f\left(y_{1}, \ldots, y_{n}\right)} \\ {g_{i}\left(x_{1}, \ldots, x_{m}\right)}\end{array}\right.$ in $R_{0}$ starting with $\left\{\begin{array}{l}{\mathrm{R}_{1}, \ldots, \mathrm{R}_{n}} \\ {\mathrm{R}_{1}, \ldots, \mathrm{R}_{m}}\end{array}\right.$ set to $\left\{\begin{array}{l}{y_{1}, \ldots, y_{n}} \\ {x_{1}, \ldots, x_{m}}\end{array}\right.$, then we can define a RM program computing the composition ($f \circ\left[g_{1}, \ldots, g_{n}\right]\left(x_{1}, \ldots, x_{m}\right)$) starting with $\mathrm{R}_{1}, \ldots, \mathrm{R}_{m} \text { set to } x_{1}, \ldots, x_{m}$
+    }
+    
+    \begin{figure}[H] \includegraphics[width=.65\textwidth, left] {./images/16.png} \end{figure}
+    
+    
+\end{enumerate}
+
+\section{Primitive Recursion}
+Partial Function f is primitive recursive ($\in PRIM$) if it can be built in finitely many steps from the basic functions by use of the operations of composition and primitive recursion. PRIM is the smallest set (with respect to subset including) of partial functions containing the basic functions and closed under the operations of composition and primitive recursion.
+
+\bigskip
+\noindent
+\textbf{Theorem}: Given $f \in \mathbb{N}^{n} \rightharpoonup \mathbb{N}$ and $g \in \mathbb{N}^{n+2} \rightharpoonup \mathbb{N}$, $\exists! h \in \mathbb{N}^{n+1} \rightharpoonup \mathbb{N}$ which satisfies $\forall \vec{x} \in \mathbb{N}^{n} \text { and } x \in \mathbb{N}$:
+\begin{equation}
+\left\{\begin{array}{ll}{h(\vec{x}, 0)} & {\equiv f(\vec{x})} \\ {h(\vec{x}, x+1)} & {\equiv g(\vec{x}, x, h(\vec{x}, x))}\end{array}\right.
+\end{equation}
+
+\noindent
+This h is written as $\rho^{n}(f, g)$ and it is called the partial function defined by primitive recursion from f and g.
+
+\bigskip
+\noindent
+\textbf{Theorem:} All functions f $\in PRIM$ are computable
+
+\noindent
+\textbf{Proof}:
+\begin{itemize}
+    \item Basic functions are computable, composition preserves computability as already proved, therefore must show:
+    
+    \begin{equation}
+        \rho^{n}(f, g) \in \mathbb{N}^{n+1} \rightarrow \mathbb{N} \; computable \; if \; f \in \mathbb{N}^{n} \rightarrow \mathbb{N} \; and \; g \in \mathbb{N}^{n+2} \rightarrow \mathbb{N} are
+    \end{equation}
+    
+    \item Suppose f and g are computed by RM programs F and G, then this RM computes $\rho^{n}(f, g)$
+    
+    \begin{figure}[H] \includegraphics[width=.65\textwidth, left] {./images/18.png} \end{figure}
+\end{itemize}
+
+\noindent
+\textbf{All functions f $\in PRIM$ are all total as}:
+\begin{enumerate}
+    \item All basic functions are total
+    \item If f, $\boldsymbol{g}_{\mathbf{1},} \ldots, \boldsymbol{g}_{\boldsymbol{n}}$ are total, then so is $f \circ\left(\boldsymbol{g}_{1}, \ldots, \boldsymbol{g}_{n}\right)$
+    \item If f and g are total, then so is $\rho^{n}(f, g)$
+\end{enumerate}
+
+
+\subsection{Examples of Primitive Recursive Functions}
+\textbf{Addition}
+\begin{equation}
+    add \in \mathbb{N}^{2} \rightarrow \mathbb{N} = \left\{\begin{array}{ll}{a d d\left(x_{1}, 0\right)} & {\equiv x_{1}} \\ {a d d\left(x_{1}, x+1\right)} & {\equiv a d d\left(x_{1}, x\right)+1}\end{array}\right.
+\end{equation}
+
+Therefore $a d d=\rho^{1}(f, g) \text { where } \left\{\begin{array}{ll}{f\left(x_{1}\right)} & {\triangleq x_{1}} \\ {g\left(x_{1}, x_{2}, x_{3}\right)} & {\triangleq x_{3}+1}\end{array}\right.$
+
+f = $proj_{1}^{1}$ and g = $\operatorname{succ} \circ \operatorname{proj}_{3}^{3}$ so add can be made from basic functions and so add $\in PRIM$
+
+
+\bigskip
+\noindent
+\textbf{Predecessor}
+\begin{equation}
+\text { pred } \in \mathbb{N} \rightarrow \mathbb{N} = \left\{\begin{array}{ll}{\text {pred}(0)} & {\equiv 0} \\ {\operatorname{pred}(x+1)} & {\equiv x}\end{array}\right.
+\end{equation}
+
+Therefore, pred = $\rho^{0}(f, g) \text { where } \left\{\begin{array}{ll}{f( )} & {\triangleq 0} \\ {g\left(x_{1}, x_{2}\right)} & {\triangleq x_{1}}\end{array}\right.$ = $\rho^{0}\left(\mathrm{zero}^{0}, \mathrm{proj}_{1}^{2}\right)$
+
+\bigskip
+\noindent
+\textbf{Multiplication}
+\begin{equation}
+    m u l t \in \mathbb{N}^{2} \rightarrow \mathbb{N} = \left\{\begin{array}{ll}{\operatorname{mult}\left(x_{1}, 0\right)} & {\equiv 0} \\ {\operatorname{mult}\left(x_{1}, x+1\right)} & {\equiv \operatorname{mult}\left(x_{1}, x\right)+x_{1}}\end{array}\right.
+\end{equation}
+\begin{equation}
+    mult = \rho ^{1} (zero^{1}, add \circ (proj^{3}_{3}, proj_{1}^{3}))
+\end{equation}
+
+Therefore, since mult can be made from composition and primitive recursion (since add can be)
+
+\section{Minimisation}
+Given a partial function $f \in \mathbb{N}^{n+1} \rightharpoonup \mathbb{N}$, define $\mu^{n} f \in \mathbb{N}^{n} \rightarrow \mathbb{N}$ by:
+
+$$\mu^{n} f(\vec{x}) \triangleq $$ least x such that $f(\vec{x}, x)=0$ and for each i=0, ..., x-1, $f(\vec{x}, i)$ is defined and > 0 
+\bigskip
+OR
+
+\begin{equation}
+    \mu^{n} f=\left\{(\vec{x}, x) \in \mathbb{N}^{n+1} | \exists y_{0}, \ldots, y_{x}\right. \left(\bigwedge_{i=0}^{x} f(\vec{x}, i)=y_{i}\right) \wedge\left(\bigwedge_{i=0}^{x-1} y_{i}>0\right) \wedge y_{x}=0 \}
+\end{equation}
+
+\section{Partial Recursion}
+Partial Function f is partial recursive ($\in PR$) if it can be built in finitely many steps from the basic functions by use of the operations of composition, primitive recursion \textbf{and minimisation}. PR is the smallest set (with respect to subset including) of partial functions containing the basic functions and closed under the operations of composition, primitive recursion \textbf{and minimisation}.
+
+The members of PR that are total are called recursive functions - their are recursive functions that are not primitive recursive - eg Fibonacci Numbers
+
+\bigskip
+\noindent
+\textbf{Theorem}: All functions f $\in PR$ are computable
+
+\noindent
+\textbf{Proof}: Suppose f is computer by RM program F. Then the following RM computes $\mu ^{n} f$
+\begin{figure}[H] \includegraphics[width=.65\textwidth, left] {./images/17.png} \end{figure}
+
+\noindent
+\textbf{Theorem}: Every computable partial function is partial recursive
+
+\noindent
+\textbf{Proof}:
+\begin{itemize}
+    \item Let $f \in \mathbb{N}^{n} \rightarrow \mathbb{N}$ be computed by RM M with N $\geq$ n registers.
+    \item construct primitive recursive functions lab, val$_{0}$, next$_{M}$ $\in \mathbb{N} \rightarrow \mathbb{N}$, satisfying:
+    \begin{enumerate}
+        \item $lab(\ulcorner[l, r_{0}, ..., r_{N}]\urcorner)=l$
+        \item $val_{0}(\ulcorner[l, r_{0}, ..., r_{N}]\urcorner)=r_{0}$
+        \item $next_{M}(\ulcorner[l, r_{0}, ..., r_{N}]\urcorner)=$ code of M's next configuration
+    \end{enumerate}
+    
+    \item Writing $\vec{x}$ for $x_{1}, ..., x_{n}$, let $\operatorname{config}_{M}(\vec{x}, t)$ be the code of M's configuration after t steps, starting with initial register values: $\mathrm{R}_{0}=0, \mathrm{R}_{1}=x_{1}, \ldots, \mathrm{R}_{n}=x_{n}, \mathrm{R}_{n+1}=0, \dots, \mathrm{R}_{N}=0$. This is in PRIM because:
+    $$ \left\{\begin{array}{ll}{\operatorname{config}_{M}(\vec{x}, 0)} & {=\ulcorner[0,0, \vec{x}, \vec{0}]\urcorner} \\ {\operatorname{config}_{M}(\vec{x}, t+1)} & {=n e x t_{M}\left(\operatorname{config}_{M}(\vec{x}, t)\right)}\end{array}\right.$$
+    
+    \item Assume M has a single HALT as last instruction. Let $h a l t_{M}(\vec{x})$ be the number of steps M takes to halt, when started with initial register values $\vec{x}$. 
+    
+    \item Satisfies $\operatorname{halt}_{M}(\vec{x}) \equiv \text { least } t$ st $I-\operatorname{lab}\left(\operatorname{config}_{M}(\vec{x}, t)\right)=0$ and hence in PR (because lab, $config_{M}, I - () \in PRIM$.
+    
+    \item Therefore, $f(\vec{x}) \equiv v a l_{0}\left(\operatorname{config} _{M}\left(\vec{x}, h a l t_{M}(\vec{x})\right)\right)$ and f $\in PR$
+\end{itemize}
+
+\section{Ackermann's Function}
+\textbf{$$ack \in \mathbb{N}^{2} \rightarrow \mathbb{N}$$}
+$$ack(0, x_{2}) = x_{2}+1$$
+$$ack(x_{1}+1, 0) = ack(x_{1}, 1)$$
+$$ack(x_{1} + 1, x_{2}+1)=ack(x_{1}, ack(x_{1}+1, x_{2}))$$
+
+\noindent
+ack is (1) computable and therefore is recursive and (2) grows faster than any primitive recursive function $f \in \mathbb{N}^{2} \rightarrow \mathbb{N}$:
+
+$\exists N_{F} \forall x_{1}, x_{2} \; > N_{f} (f(x_{1}, x_{2}) < ack(x_{1}, x_{2}))$
+
+\noindent Hence ack is not primitive recursive
+
+\section{Lambda Calculus}
+\textbf{Function Definition Notation}
+\begin{enumerate}
+    \item Named: let f be the function f(x) = x$^{2}$ + x + 1
+    \item Anonymous: f: x $\mapsto$ $x^{2}$ + x + 1
+    \item Lambda Notation: $\lambda x . x^{2} + x + 1$
+\end{enumerate}
+
+
+\begin{definition}
+\noindent
+$\lambda$-Terms are built from a given, countable collection of variables (x, y, z) by operations for forming $\lambda$-terms:
+\begin{enumerate}
+    \item $\lambda$-abstraction ($\lambda$x.M) where x is a variable and M is a $\lambda$-term
+    \item Application which is left-associative (MM') where M and M\ are $\lambda$-terms
+\end{enumerate}
+\end{definition}
+
+\subsection{Notational Conventions}
+\begin{itemize}
+    \item $\left(\lambda x_{1} x_{2} \ldots x_{n} \cdot M\right) \equiv \left(\lambda x_{1} \cdot\left(\lambda x_{2} \ldots\left(\lambda x_{n} \cdot M\right) \ldots\right)\right)$
+    
+    \item $\left(M_{1} M_{2} \dots M_{n}\right) \equiv \left(\ldots \cdot\left(M_{1} M_{2}\right) \ldots M_{n}\right)$
+    
+    \item Drop outermost parentheses and those enclosing the body of a $\lambda$-abstraction - eg: $(\lambda x .(x(\lambda y .(y x)))) \equiv \lambda x . x(\lambda y . y x)$
+    
+    \item x $\#$ M means that the variable x does not occur anywhere in the $\lambda$-term M
+\end{itemize}
+
+\subsection{Free and Bound Variables}
+In $\lambda x.M$, x is the \textbf{bound variable} and M is the body of the $\lambda$-abstraction. Occurrence of x in a $\lambda$-term M is:
+\begin{enumerate}
+    \item Binding if in between $\lambda$ and .
+    \item Bound if in the body of a binding occurrence of x
+    
+    \item Free if neither binding nor bound
+    
+    \item Sets of free and bound variables:
+    
+    \begin{itemize}
+        \item FV(x) = {x}
+        \item FV($\lambda x.M$) = FV(M) - {x}
+        \item FV(MN) = FV(M) $\cup$ FV(N)
+        \item FV(M) = $\empty \implies M$ is a closed term, or combinator
+        \item BV(x) = $\empty$
+        \item BV($\lambda x.M$) = BV(M) $\cup$ {x}
+        \item BV(MN) = BV(M) $\cup$ BV(N)
+    \end{itemize}
+\end{enumerate}
+
+\subsection{$\alpha$-Equivalence (M =$_{\alpha}$ M')}
+is the equivalence relation (reflexive, symmetric and transitive) inductively generated by the rules:
+\begin{enumerate}
+    \item$\overline{x=_{\alpha} x}$
+    \item $\frac{z \#(M N) \; \; \; M\{z / x\}=_{\alpha} N\{z / y\}}{\lambda x . M=_{\alpha} \lambda y . N}$
+    \item $\frac{M =_{\alpha} M' \; \; \; N=_{\alpha}N'}{MN =_{\alpha}M'N'}$
+\end{enumerate}
+where $M\{ z / x \}$ is M with all occurrences of x replaced by z. 
+
+\bigskip
+This effectively says that the name of the bound variable is immaterial and therefore if M' = M{x'/x} is the result of taking M and changing all occurrences of x to some variable x' $\#$ M then $\lambda x.M$ and $\lambda x'.M'$ both represent the same function
+
+\subsection{$\beta$-Reduction}
+$\lambda x.M$ represented the function f st f(x) = M $\forall x$. Regard $\lambda x.M$ as a function on $\lambda$-terms via substitution: map each N to M[N/x] (result of substituting N for free x in M).
+
+\bigskip
+\noindent
+\textbf{Substitution N[M/x]}: Result of replacing all free occurrences of x in N with M, avoiding the capture of free variables in M by $\lambda$-binders in N
+\begin{enumerate}
+    \item $x[M / x]=M$
+    \item $y[M / x]=y \quad \text { if } y \neq x$
+    \begin{itemize}
+        \item y does not occur in M and
+        \item y $\neq$ x
+        \item This makes substitution capture-avoiding
+        \begin{example}
+        \item If $x \neq y$: $(\lambda y.x)[y/x] \neq \lambda y.y$
+        \end{example}
+    \end{itemize}
+    \item $(\lambda y . N)[M / x]=\lambda y . N[M / x] \quad \text { if } y \#(M x)$
+    \item $\left(N_{1} N_{2}\right)[M / x]=N_{1}[M / x] N_{2}[M / x]$
+\end{enumerate}
+
+\noindent
+N $\mapsto$ N[M/x] induces a totally defined function from the set of $\alpha$-equivalence classes of $\lambda$-terms to itself
+
+\bigskip
+Natural notion of computation for $\lambda$-terms is given by stepping from: (1) $\beta$-redex \textit{($\lambda x.M$)N} to (2) $\beta$-reduct \textit{M[N/x]}
+
+
+\subsubsection{$\beta$-Reduction Rules}
+\begin{enumerate}
+    \item $\overline{(\lambda x . M) N \rightarrow M[N / x]}$
+    
+    \item $\frac{M \rightarrow M^{\prime}}{\lambda x \cdot M \rightarrow \lambda x . M^{\prime}}$
+    
+    \item $\frac{M \rightarrow M^{\prime}}{M N \rightarrow M^{\prime} N}$
+    
+    \item $\frac{M \rightarrow M^{\prime}}{N M \rightarrow N M^{\prime}}$
+    
+    \item $\frac{N =_{\alpha}M \; \; \; M \rightarrow M^{\prime} \; \; \; M^{\prime} =_{\alpha}N^{\prime}}{N\rightarrow N^{\prime}}$
+\end{enumerate}
+
+\subsubsection{$\beta$-Conversion (M $=_{\beta}$ N)}
+Holds if N can be obtained from M by performing zero or more steps of $\alpha$-equivalence, $\beta$-reduction or $\beta$-expansion
+
+\bigskip
+\noindent
+\textbf{Rules}
+\begin{enumerate}
+    \item $\frac{M=_{\alpha} M^{\prime}}{M=_{\beta} M^{\prime}}$
+    \item $\frac{M \rightarrow M^{\prime}}{M=_{\beta} M^{\prime}}$
+    \item $\frac{M=_{\beta} M^{\prime}}{M^{\prime}=_{\beta} M}$
+    \item $\frac{M=_{\beta}M' \; \; \; M'=_{\beta}M"}{M=_{\beta}M"}$
+    \item $\frac{M=_{\beta} M^{\prime}}{\lambda x \cdot M=_{\beta} \lambda x . M^{\prime}}$
+    \item $\frac{M=_{\beta} M^{\prime} \quad N=_{\beta} N^{\prime}}{M N=_{\beta} M^{\prime} N^{\prime}}$
+\end{enumerate}
+
+\subsubsection{Church-Rosser Theorem}
+\textbf{Theorem}: $\twoheadrightarrow$ is confluent ie $M_{1} \twoheadleftarrow M \twoheadrightarrow M_{2} \implies \exists M^{\prime} \; st  \; M_{1} \twoheadrightarrow M^{1} \twoheadleftarrow M_{2}$
+
+\noindent
+\textbf{Corollary}: $M_{1} =_{\beta} M_{2} \iff \exists M(M_{1} \twoheadrightarrow M \twoheadleftarrow M_{2})$
+
+\noindent
+\textbf{Proof}:
+\begin{itemize}
+    \item $=_{\beta}$ satisfies the rules generating $\twoheadrightarrow$, so $M \twoheadrightarrow M' \implies M =_{\beta} M'$
+    
+    \item Therefore $M_{1} \twoheadrightarrow M \twoheadleftarrow M_{2} \implies M_{1}=_{\beta}M=_{\beta}M_{2} \implies M_{1}=_{\beta}M_{2}$
+    
+
+\end{itemize}
+
+\bigskip
+Conversely, relation $\left\{\left(M_{1}, M_{2}\right) | \exists M\left(M_{1} \twoheadrightarrow M \twoheadleftarrow M_{2}\right)\right\}$ satisfies the rules generating $=_{\beta}$: the only difficult case is the closure of the relation under transitivity and for this, we use Church-Rosser Theorem:
+\begin{figure}[H] \includegraphics[width=.35\textwidth, center] {./images/19.png} \end{figure}
+
+Therefore, $M_{1}=_{\beta}M_{2} \implies \exists M(M_{1} \twoheadrightarrow M' \twoheadleftarrow M_{2})$
+
+
+\subsection{$\beta$-Normal Forms}
+\begin{definition}
+$\lambda$-term is in $\beta$-normal form if it contains no $\beta$-redexes (no sub-terms of the form $(\lambda x.M)M'$). 
+
+M has $\beta$-nf N if M $=_{\beta}$N with N being a $\beta$-nf.
+
+$\beta$-nf of M is unique upto $\alpha$-equivalence if it exists (if $N_{1} =_{\beta} N_{2}$ with $N_{1}$ and $N_{2}$ both being $\beta$-nfs then $N_{1}=_{\alpha}N_{2}$)
+\end{definition}
+
+\bigskip
+Important to note that some $\lambda$ terms have no $\beta$-nf and that a term can possess both a $\beta$-nf and infinite chains of reduction from it.
+
+\subsubsection{Normal-order Reduction}
+Deterministic strategy for reducing $\lambda$-terms: reduce the left-most, outer-most redex first where:
+\begin{itemize}
+    \item left-most means reduce M before N in MN
+    \item outer-most means reduce ($\lambda x.M$)N rather than either of M or N
+\end{itemize}
+This is guaranteed to reduce to the $\beta$-nf if it possesses one
+
+\subsection{Lambda-Definable Functions}
+In order to relate $\lambda$-calculus to register and Turing Machine computation, or to compute partial recursive functions, we need to encode numbers, pairs and lists as $\lambda$-terms.
+
+\subsubsection{Church's Numerals}
+\begin{figure}[H] \includegraphics[width=.3\textwidth, left] {./images/20.png} \end{figure}
+
+Notation: $\left\{\begin{array}{ll}{M^{0} N} & {\triangleq N} \\ {M^{1} N} & {\triangleq M N} \\ {M^{n+1} N} & {\triangleq M\left(M^{n} N\right)}\end{array}\right.$ so we can write $\underline{n}$ as $\lambda f x . f^{n} x$ and we have $\underline{n} \boldsymbol{M} \boldsymbol{N}=_{\beta} \boldsymbol{M}^{n} \boldsymbol{N}$
+
+\subsubsection{Definition}
+$f \in \mathbb{N}^{2} \rightharpoonup \mathbb{N}$ is $\lambda$-definable if there is a closed $\lambda$-term F that represents it: $\forall (x_{1}, ..., x_{n}) \in \mathbb{N}^{n}$ and $y \in \mathbb{N}$
+\begin{enumerate}
+    \item $f\left(x_{1}, \ldots, x_{n}\right)=y \implies F \vec{x_{1}} ... \vec{x_{n}} =_{\beta} \vec{y}$
+    
+    \item $f\left(x_{1}, \ldots, x_{n}\right) \uparrow \implies F \vec{x_{1}} ... \vec{x_{n}}$ has no $\beta$-nf
+    
+    \subitem This condition can make it tricky to find a $\lambda$-term representing a non-total function
+\end{enumerate}
+
+\subsubsection{Computability}
+Partial function is computable iff it is $\lambda$-definable: gets split into:
+\begin{enumerate}
+    \item Every partial recursive function is $\lambda$-definable
+    \item $\lambda$-definable functions are Register Machine computable
+\end{enumerate}
+
+\subsubsection{Showing elements of PRIM are $\lambda$-definable}
+\begin{enumerate}
+    \item $\operatorname{proj}_{i}^{n} \in \mathbb{N}^{n} \rightarrow \mathbb{N}$ is represented by $\lambda x_{1} \ldots x_{n} \cdot x_{i}$
+    \item $\text { zero }^{n} \in \mathbb{N}^{n} \rightarrow \mathbb{N}$ is represented by $\lambda x_{1} \ldots x_{n} \cdot \underline{0}$
+    \item $\operatorname{succ} \in \mathbb{N} \rightarrow \mathbb{N}$ is represented by $\lambda x_{1} f x . f\left(x_{1} f x\right)$ OR $\lambda x_{1} f x. x_{1} f (f x)$
+\end{enumerate}
+
+\subsection{Representations}
+\subsubsection{Representing Composition}
+If total function f $\in \mathbb{N}^{n} \rightarrow \mathbb{N}$ is represented by F and total functions $g_{1}, \ldots, g_{n} \in \mathbb{N}^{m} \rightarrow \mathbb{N}$ are represented by $G_{1}, \dots, G_{n}$, then the composition ($f \circ\left(g_{1}, \ldots, g_{n}\right) \in \mathbb{N}^{m} \rightarrow \mathbb{N}$) is represented by $\lambda x_{1} \ldots x_{m} . F\left(G_{1} x_{1} \ldots x_{m}\right) \ldots\left(G_{n} x_{1} \ldots x_{m}\right)$
+
+However, this does not necessarily work for partial functions
+
+\subsubsection{Representing Primitive Recursion}
+If $f \in \mathbb{N}^{n} \rightarrow \mathbb{N}$ is represented by $\lambda$-term F and $g \in \mathbb{N}^{n+2} \rightarrow \mathbb{N}$ is represented by $\lambda$-term G, want to show $\lambda$-definability of the unique $h \in \mathbb{N}^{n+1} \rightarrow \mathbb{N}$ that satisfies h = $h=\Phi_{f, g}(h)$, where $\mathbf{\Phi}_{f, g} \in\left(\mathbb{N}^{n+1} \rightarrow \mathbb{N}\right) \rightarrow\left(\mathbb{N}^{n+1} \rightarrow \mathbb{N}\right)$ is given by:
+
+\begin{equation}
+\begin{aligned} h(\vec{a}, a)=& \text { if } a=0 \text { then } f(\vec{a}) \\ & \text { else } g(\vec{a}, a-1, h(\vec{a}, a-1)) \end{aligned}
+\end{equation}
+
+OR
+
+\begin{equation}
+\left\{\begin{array}{ll}{h(\vec{a}, 0)} & {=f(\vec{a})} \\ {h(\vec{a}, a+1)} & {=g(\vec{a}, a, h(\vec{a}, a))}\end{array}\right.
+\end{equation}
+
+\textbf{Strategy}:
+\begin{enumerate}
+    \item Show that $\Phi_{f, g}$ is $\lambda$-definable
+    \item Show that we can solve fixed point equations X = MX up to $\beta$-conversion in the $\lambda$-calculus
+\end{enumerate}
+
+\subsubsection{Representing Booleans}
+\begin{itemize}
+    \item True $\triangleq \lambda xy.x$
+    \item False $\triangleq \lambda xy.y$
+    \item If $\triangleq \lambda f$ xy. f xy
+\end{itemize}
+
+\subsubsection{Representing Test-for-Zero}
+\begin{equation}
+    Eq \; _{0} \triangleq \lambda x.x(\lambda y.False) \; True
+\end{equation}
+
+\subsubsection{Representing Ordered Pairs}
+$$Pair \triangleq \lambda x y f.f xy $$
+$$Fst \triangleq \lambda f.f \; True$$
+$$Snd \triangleq \lambda f.f \; False$$
+
+\subsubsection{Representing Predecessor}
+Has to satisfy:
+\begin{enumerate}
+    \item Pred $\vec{n+1} =_{\beta} \vec{n}$
+    \item Pred $\vec{0} =_{\beta} \vec{0}$
+\end{enumerate}
+
+\begin{equation}
+    Pred \triangleq \lambda y f x . Snd(y (G f)(Pair \; x \; x))
+\end{equation}
+where
+\begin{equation}
+    G \triangleq \lambda f p . Pair(f(Fst \; p))(Fst \; p)
+\end{equation}
+
+\subsubsection{Representing Primitive Recursion}
+$f \in \mathbb{N}^{n} \rightarrow \mathbb{N}$ represented by a $\lambda$-term F and $g \in \mathbb{N}^{n+2} \rightarrow \mathbb{N}$ is represented by $\lambda$-term G, we want to show $\lambda$-definability of the unique $h \in \mathbb{N}^{n+1} \rightarrow \mathbb{N}$ that satisfies $h = \Phi_{f, g}(h)$ where $\Phi_{f, g} \in\left(\mathbb{N}^{n+1} \rightarrow \mathbb{N}\right) \rightarrow\left(\mathbb{N}^{n+1} \rightarrow \mathbb{N}\right)$ is given by:
+
+\begin{equation}
+    \begin{array}{c}{\Phi_{f, g}(h)(\vec{a}, a) \triangleq \text { if } a=0 \text { then } f(\vec{a})} \\ {\text { else } g(\vec{a}, a-1, h(\vec{a}, a-1))}\end{array}
+\end{equation}
+
+\bigskip
+\textbf{Strategy}
+\begin{enumerate}
+    \item Show that $\Phi_{f, g}$ is $\lambda$-definable
+    
+    $$Y(\lambda z \overrightarrow{x} x . If( Eq _{0} \; x)(F \overrightarrow{x})(G \overrightarrow{x} ( Pred \; x)(z \overrightarrow{x} ( Pred \; x)))) $$
+    
+    
+    \item Show that we can solve fixed point equations (X = MX) up-to $\beta$-conversion in the $\lambda$-calculus
+\end{enumerate}
+
+\bigskip
+\textbf{Every $f \in$ PRIM is $\lambda$-definable}: in order to expand this to all recursive functions, we have to consider how to represent the minimisation.
+
+\subsection{Examples}
+\begin{enumerate}
+    \item \textbf{Addition is $\lambda$-definable because represented by}: $P \triangleq \lambda x_{1} x_{2}, \lambda f x \cdot x_{1} f\left(x_{2} f x\right)$
+    
+    $P \underline{m} \underline{n}=_{\beta} \lambda f x . \underline{m} f(\underline{n} fx)$
+    
+    $P \underline{m} \underline{n}=_{\beta}\lambda f x . m f\left(f^{n} x\right)$
+    
+    $P \underline{m} \underline{n}=_{\beta} \lambda f x \cdot f^{m}\left(f^{n} x\right)$
+    
+    $= \lambda f x . f^{m+n} x$
+    (this is provable using induction on n)
+    
+    $\vec{m+n}$
+\end{enumerate}
+
+\subsection{Curry's Fixed Point Combinator Y}
+\begin{tabular}{ |c|c|c| } 
+ \hline
+ \textit{Name} & \textbf{Naive Set Theory} & \textbf{$\lambda$ calculus} \\ 
+ \textbf{Russell Set} & $R \triangleq \{ x | \neg (x \in x) \} $ & $not \triangleq \lambda b. If \; b \; False \; else \; True$ \\ 
+  & & $R \triangleq \lambda x . not (x x)$ \\ 
+  & & \\
+  \textbf{Russell's Paradox} & $R \in R \iff \neg (R \in R)$ & $RR =_{\beta} not (RR)$ \\
+  & & $Ynot =_{\beta} RR = (\lambda x. not(x x))(\lambda x . not (x x))$ \\
+  & & $Yf = (\lambda x. f(x x))(\lambda x . f(x x))$ \\
+  & & $Y = \lambda f . (\lambda x .f(xx))(\lambda x.f(xx))$ \\
+  
+ \hline
+ \end{tabular}
+ \begin{equation}
+     Y \triangleq \lambda f . (\lambda x . f(xx))(\lambda x.f(xx))
+ \end{equation}
+ 
+ This satisfied $Y M \rightarrow (\lambda x . M(x x))(\lambda x . M(x x))$
+ 
+ $\rightarrow M((\lambda x . M(x x))(\lambda x . M(x x)))$
+ 
+ \bigskip
+ Hence, $Y M \rightarrow M((\lambda x . M(x x))(\lambda x . M(x x))) \leftarrow M(Y M)$
+ 
+ \bigskip
+ Therefore, for all $\lambda-terms$ M: $\mathbf{Y} \boldsymbol{M}=_{\beta} \boldsymbol{M}(\mathbf{Y} \boldsymbol{M})$
+
+\subsection{Turing's Fixed Point Combinator}
+$$A \triangleq \lambda xy.y(xxy)$$
+$$\Theta \triangleq AA$$
+
+$$\Theta M = AAM = (\lambda xy.y(xxy))AM \twoheadrightarrow M(AAM) = M(\Theta M)$$
+
+\subsection{Representing Minimisation}
+\begin{equation}
+    \mu ^{n} f(\overrightarrow{x}) = g(\overrightarrow{x}, 0)
+\end{equation}
+\begin{equation}
+    g(\overrightarrow{x}, x) = if \; f(\overrightarrow{x}, x) = 0 \; then \; x \; else \; g(\overrightarrow{x}, x+1)
+\end{equation}
+
+$\mu ^{n} f$ can be expressed in terms of a fixed point equation: $\mu^{n} f(\vec{x}) \equiv g(\vec{x}, 0)$ where $g=\Psi_{f}(g)$ with $\Psi_{f} \in\left(\mathbb{N}^{n+1} \rightharpoonup \mathbb{N}\right) \rightarrow\left(\mathbb{N}^{n+1} \rightharpoonup \mathbb{N}\right)$ defined by:
+
+\begin{equation}
+    \Psi_{f}(g)(\vec{x}, x) \equiv \text { if } f(\vec{x}, x)=0 \text { then } x \text { else } g(\vec{x}, x+1)
+\end{equation}
+
+If a function f has a totally defined $\mu ^{n}f$, $\forall \overrightarrow{a} \in \mathbb{N}^{n}, \mu ^{n} f(\overrightarrow{a}) = g(\overrightarrow{a}, 0),$ with $g = \Psi _{f}(g)$ and $\Psi _{f}(g)(\overrightarrow{a}, a) = \;  if(f(\overrightarrow{a}, a) = 0) \; then \; a \; else \; g(\overrightarrow{a}, a+1)$.
+
+Hence, if f is represented by $\lambda$-term F, then $\mu ^{n}f$ =
+\begin{equation}
+    \lambda \vec{x} . Y\left(\lambda z \vec{x} x . \operatorname{lf}\left(E q_{0}(F \vec{x} x)\right) x(z \vec{x}(\operatorname{Succ} x)) \vec{x} \underline{0}\right.
+\end{equation}
+
+Hence, every recursive function is $\lambda$-definable as they can be expressed in standard form as: $f=g \circ\left(\mu^{n} h\right)$ for some $g, h \in \text { PRIM. }$
+
+
+\subsection{Computability}
+\textbf{Theorem}: A partial function is computable iff it is $\lambda$-definable. Prove this by showing we can:
+\begin{enumerate}
+    \item Code $\lambda$-terms as numbers - ensuring that operations for constructing and deconstructing terms are RM computable
+    \begin{enumerate}
+        \item Fix an enumeration $x_{0}, x_{1}, ...$ of the set of variables
+        \item $\ulcorner x_{i} \urcorner = \ulcorner [0, i] \urcorner$
+        \item $\ulcorner \lambda x_{i} M \urcorner = \ulcorner [1, i, \ulcorner M \urcorner ] \urcorner$
+        \item $\ulcorner MN \urcorner = \ulcorner [2, \ulcorner M \urcorner , \ulcorner N \urcorner ] \urcorner$
+    \end{enumerate}
+    \item Write a RM interpreter for $\beta$-reduction
+\end{enumerate}
+
+
+\end{document}

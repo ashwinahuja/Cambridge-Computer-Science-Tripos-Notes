@@ -1,0 +1,803 @@
+\documentclass{article}
+\title{Logic and Proof}
+\author{Ashwin Ahuja}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tabto}
+\usepackage{amssymb}
+\usepackage{amsmath}
+
+\providecommand{\dotdiv}{% Don't redefine it if available
+  \mathbin{% We want a binary operation
+    \vphantom{+}% The same height as a plus or minus
+    \text{% Change size in sub/superscripts
+      \mathsurround=0pt % To be on the safe side
+      \ooalign{% Superimpose the two symbols
+        \noalign{\kern-.35ex}% but the dot is raised a bit
+        \hidewidth$\smash{\cdot}$\hidewidth\cr % Dot
+        \noalign{\kern.35ex}% Backup for vertical alignment
+        $-$\cr % Minus
+      }%
+    }%
+  }%
+}
+
+\usepackage[T1]{fontenc}
+\newenvironment{definition}{\par\color{blue}}{\par}
+\newenvironment{pros}{\par\color[rgb]{0.066, 0.4, 0.129}}{\par}
+\newenvironment{cons}{\par\color{red}}{\par}
+\newenvironment{example}{\par\color{brown}}{\par}
+\usepackage{fancyhdr}
+%% Margins
+\usepackage{geometry}
+\geometry{a4paper, hmargin={2cm,2cm},vmargin={2cm,2cm}}
+
+%% Header/Footer
+\pagestyle{fancy} 
+\lhead{Ashwin Ahuja}
+\chead{Logic and Proof}
+\rhead{Part IB, Paper 6}
+\lfoot{}
+\cfoot{\thepage}
+\rfoot{}
+\renewcommand{\headrulewidth}{1.0pt}
+\renewcommand{\footrulewidth}{1.0pt}
+
+\usepackage[export]{adjustbox}
+\usepackage{caption}
+\captionsetup{justification   = raggedright,
+	singlelinecheck = false}
+
+\lstset{
+	basicstyle=\ttfamily,
+	columns=fullflexible,
+	breaklines=true,
+	postbreak=\raisebox{0ex}[0ex][0ex]{\color{red}$\hookrightarrow$\space}
+}
+\usepackage{listings}
+\lstset{
+	escapeinside={(*}{*)}
+}
+
+
+
+\begin{document}
+
+\makeatletter
+\renewcommand{\l@subsection}{\@dottedtocline{2}{1.6em}{2.6em}}
+\makeatother
+
+\begin{titlepage}
+\begin{center}
+			\vspace*{1cm}
+			
+			\Huge
+			\textbf{Logic and Proof}
+			
+			\vspace{0.5cm}
+			\LARGE
+			University of Cambridge
+			
+			\vspace{1.5cm}
+			
+			\textbf{Ashwin Ahuja}
+			
+			\vfill
+			
+			Computer Science Tripos Part IB\\
+			Paper 6
+			
+			\vspace{5cm}
+			
+			April 2019
+			
+\end{center}
+\end{titlepage}
+
+\tableofcontents
+\pagebreak
+
+\section{Propositional Logic}
+\begin{definition}
+\textbf{Logic} concerns relationships statement (which can be true, false or meaningless)in some language, whether that be natural language or formal. Logical proofs model human reasoning.
+
+\bigskip
+\noindent
+\textbf{Statements} are declarative assertions.
+
+\bigskip
+\noindent
+\textbf{Interpretation} maps variables onto real objects. A statement is valid if all interpretations satisfy the statement.
+
+Interpretation I satisfies a formula A if it evaluates to 1 (true), written as $\vDash _{I}A$. Tautology if every interpretation satisfies A, written as $\vDash A$. Satisfiable if some interpretation satisfies every formula in S
+
+$$A \rightarrow B \; means \; \neg A \vee B$$
+$$A \vDash B \; means \; \; if \vDash _{I} A \; then \; \vDash _{I} B \; \forall \; interpretations \; I $$
+$$A \vDash B \; iff \; \vDash A \rightarrow B$$
+
+\bigskip
+\noindent
+A set of statements is consistent (\textbf{satisfiable}) if some interpretation satisfies all elements of the set at the same time - otherwise the set is inconsistent. 
+
+A set of statements entails A if every interpretation that satisfies all elements of S also satisfies A - written as $S \vDash A$
+
+$S \vDash A iff \{ \neg A \} \sup S$ is inconsistent. If S is inconsistent then $S \vDash A \forall A$. $\vDash A$ iff A is valid, iff $\{ \neg A \}$
+\end{definition}
+
+\textbf{Inference}: Proving a statement that says A is valid, but we can't test infinitely many cases.
+
+\bigskip
+$\left\{A_{1}, \dots, A_{n}\right\} \vDash B$. If $A_{1}, \dots, A_{n}$ are true then B must be true - this is written as:
+\begin{equation}
+    \frac{A_{1} ... A_{n}}{B}
+\end{equation}
+
+\bigskip
+\textbf{Schematic Inference Rules}
+\begin{equation}
+    \frac{X \; part \; of \; Y \; \; \; Y \; part \; of \; Z}{X \; part \; of \; Z}
+\end{equation}
+
+\subsection{Formal Language}
+\textbf{Why}: Formal language prevents ambiguity
+
+\bigskip
+\noindent
+\textbf{Formal Logics}
+\begin{enumerate}
+    \item \textbf{Propositional Logic}: Traditional boolean algebra
+    \item \textbf{First-Order Logic}: Can say $\forall$ and $\exists$
+    
+    \item \textbf{Higher-Order Logic}: Reasons about sets and functions
+    
+    \item \textbf{Modal / Temporal Logic}: Reason about what must, or may, happen
+    
+    \item \textbf{Type Theories}: Support constructive mathematics
+\end{enumerate}
+
+\subsection{Syntax of Propositional Logic}
+\begin{itemize}
+    \item $P, Q, R$: propositional letter
+    \item \textbf{t}: true
+    \item \textbf{f}: false
+    \item \textbf{$\neg$A}: not A
+    \item \textbf{$A \wedge B$}: A and B
+    \item \textbf{$A \vee B$}: A or B
+    \item \textbf{$A \rightarrow B$}: if A then B
+    \item \textbf{$A \leftrightarrow B$} A iff B
+\end{itemize}
+
+\begin{table}[ht]
+\begin{tabular}{|cc|ccccc|}
+\hline
+A & B & \multicolumn{1}{l|}{$\neg$ A} & \multicolumn{1}{l|}{A $\wedge$ B} & \multicolumn{1}{l|}{A $\vee$ B} & \multicolumn{1}{l|}{A $\rightarrow$ B} & \multicolumn{1}{l|}{A $\leftrightarrow$ B} \\ \hline
+1 & 1 & 0                          & 1                            & 1                           & 1                                      & 1                                                 \\ \cline{1-2}
+1 & 0 & 0                          & 0                            & 1                           & 0                                      & 0                                                 \\ \cline{1-2}
+0 & 1 & 1                          & 0                            & 1                           & 1                                      & 0                                                 \\ \cline{1-2}
+0 & 0 & 1                          & 0                            & 0                           & 1                                      & 1                                                 \\ \cline{1-2}
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Equivalences}
+\begin{enumerate}
+    \item $A \simeq B \text { means } A \vDash B \text { and } B \vDash A$
+    \item $\mathrm{A} \simeq \mathrm{B} \text { iff } \mathrm{A} \leftrightarrow \mathrm{B}$
+    \item $A \wedge A \simeq A$
+    \item $A \wedge B \simeq B \wedge A$
+    \item $(A \wedge B) \wedge C \simeq A \wedge(B \wedge C)$
+    \item $A \vee(B \wedge C) \simeq(A \vee B) \wedge(A \vee C)$
+    \item $A \wedge \mathbf{f} \simeq \mathbf{f}$
+    \item $A \wedge \mathbf{t} \simeq A$
+    \item $A \wedge \neg A \simeq \mathbf{f}$
+\end{enumerate}
+
+\subsection{Normal Forms}
+\textbf{Negation Normal Form}
+\begin{enumerate}
+    \item Negation Normal Form
+    \begin{enumerate}
+        \item Get rid of $\leftrightarrow$ and $\rightarrow$, leaving just $\wedge , \vee , \neg$
+        $$
+        \begin{array}{l}{A \leftrightarrow B \simeq(A \rightarrow B) \wedge(B \rightarrow A)} \\ {A \rightarrow B \simeq \neg A \vee B}\end{array}
+        $$
+        \item Push negations in, using de Morgan's laws
+        
+        $$
+        \begin{aligned} \neg \neg A & \simeq A \\ \neg(A \wedge B) & \simeq \neg A \vee \neg B \\ \neg(A \vee B) & \simeq \neg A \wedge \neg B \end{aligned}
+        $$
+    \end{enumerate}
+    \item Getting it into Conjunctive Normal Form
+    \begin{enumerate}
+        \item Push disjunctions in, using distributive laws
+        
+        $$
+        \begin{array}{l}{A \vee(B \wedge C) \simeq(A \vee B) \wedge(A \vee C)} \\ {(B \wedge C) \vee A \simeq(B \vee A) \wedge(C \vee A)}\end{array}
+        $$
+        
+        \item Simplify
+        \begin{itemize}
+            \item Delete any disjunction containing $\mathrm{P} \text { and } \neg \mathrm{P}$
+            \item Delete any disjunction that includes another: in $(\mathrm{P} \vee \mathrm{Q}) \wedge \mathrm{P}, \text { delete } \mathrm{P} \vee \mathrm{Q}$
+            
+            \item Replace $(P \vee A) \wedge(\neg P \vee A) \text { by } A$
+        \end{itemize}
+        \item If you get to a specific result, you can find out it if the statement is a tautology
+        
+    \end{enumerate}
+\end{enumerate}
+
+\bigskip
+\noindent
+\textbf{Deducibility}: A is deducible from the set S if there is a finite proof of A starting from elements of S, can be written as $S \vdash A$
+\begin{enumerate}
+    \item \textbf{Soundness Theorem}: If $S \vdash A$, then $S \vDash A$
+    \item \textbf{Completeness Theorem}: If $S \vDash A$ then $S \vdash A$
+    \item \textbf{Deduction Theorem}: If $S \sup \{ A \} \vdash B$ then $S \vdash A \rightarrow B$
+\end{enumerate}
+
+\subsection{Gentzen's Natural Deduction Systems}
+\textbf{Introduction Rule for $\wedge$}: 
+$$\frac{A \; \; \; B}{A \wedge B}$$
+
+\noindent
+\textbf{Elimination Rule for $\wedge$}: 
+
+$$\frac{A \wedge B}{A}, \frac{A \wedge B}{B}$$
+
+\subsection{Sequent Calculus}
+$A_{1}, \dots, A_{m} \Rightarrow B_{1}, \dots, B_{n}$ means that if $A_{1} \wedge \ldots \wedge A_{m} \text { then } B_{1} \vee \ldots \vee B_{n}$
+\begin{itemize}
+    \item \textbf{Assumptions}: $A_{1}, \ldots, A_{m}$
+    \item \textbf{Goals}: $\mathrm{B}_{1}, \ldots, \mathrm{B}_{\mathrm{n}}$
+    \item $\Gamma \text { and } \Delta \text { are sets in } \Gamma \Rightarrow \Delta$
+    \item \textbf{Basic Sequent}: $A, \Gamma \Rightarrow A, \Delta$ is trivially true
+\end{itemize}
+
+\subsubsection{Rules}
+\begin{enumerate}
+    \item \textbf{Cut}
+
+    $$\frac{\Gamma \Rightarrow \Delta, A \; \; \; \; A, \Gamma \Rightarrow \Delta}{\Gamma \Rightarrow \Delta}$$
+    
+    \item \textbf{$\neg l$}
+    
+    $$\frac{\Gamma \Rightarrow \Delta, A}{\neg A, \Gamma \Rightarrow \Delta}$$
+    
+    \item \textbf{$\neg r$}
+    
+    $$\frac{A, \Gamma \Rightarrow \Delta}{\Gamma \Rightarrow \Delta, \neg A}$$
+    
+    \item \textbf{$\wedge l$}
+    
+    $$\frac{A, B, \Gamma \Rightarrow \Delta}{A \wedge B, \Gamma \Rightarrow \Delta}$$
+    
+    \item \textbf{$\wedge r$}
+    
+    $$\frac{\Gamma \Rightarrow \Delta, A \; \; \; \Gamma \Rightarrow \Delta, \mathrm{B}}{\Gamma \Rightarrow \Delta, A \wedge \mathrm{B}}$$
+    
+    \item \textbf{$\vee l$}
+    
+    $$\frac{A, \Gamma \Rightarrow \Delta \; \; \; \mathrm{B}, \Gamma \Rightarrow \Delta}{A \vee B, \Gamma \Rightarrow \Delta}$$
+    
+    \item \textbf{$\vee r$}
+    
+    $$\frac{\Gamma \Rightarrow \Delta, A, \mathrm{B}}{\Gamma \Rightarrow \Delta, A \vee \mathrm{B}}$$
+    
+    \item \textbf{$\rightarrow l$}
+    
+    $$\frac{\Gamma \Rightarrow \Delta, A \; \; \; \mathrm{B}, \Gamma \Rightarrow \Delta}{A \rightarrow B, \Gamma \Rightarrow \Delta}$$
+    
+    \item \textbf{$\rightarrow r$}
+    
+    $$\frac{A, \Gamma \Rightarrow \Delta, B}{\Gamma \Rightarrow \Delta, A \rightarrow B}$$
+\end{enumerate}
+
+\section{First-Order Logic}
+\textbf{Function Symbol} stands for an n-place function, \textbf{Constant Symbol} is a 0-place function symbol, a \textbf{variable} ranges over all individuals, \textbf{term} is a variable, constant or a function application. Considered as f($t_{1}, ..., t_{n}$) where f is an n-place function symbol and $t_{1}, ..., t_{n}$ are terms
+
+\bigskip
+\noindent
+\textbf{Relation Symbol} stands for an n-place relation, \textbf{Equality} is the 2-place relation symbol '=', \textbf{atomic formula} has the form R($t_{1}, ..., t_{n})$ where R is an n-place relation symbol and the ts are terms. A \textbf{formula} is built from atomic formulae using negation, OR, AND, quantifiers, etc.
+
+\subsection{Semantics}
+Allows different interpretations of symbols depending on the circumstances. An interpretation $\mathcal{I}=(\mathrm{D}, \mathrm{I})$ defines the semantics of a first-order language where:
+\begin{itemize}
+    \item D is domain - non-empty set
+    \item I maps symbols to real elements, functions and relations
+    
+    c is constant: I[c] $\in D$
+    
+    f is an n-place function symbol: I[f] $\in D^{n} \rightarrow D$
+    
+    P is an n-place relation symbol: I[P] $\in D^{n} \rightarrow \{ 1, 0 \}$
+\end{itemize}
+
+\bigskip
+\noindent
+\textbf{Valuation}: V : Var $\rightarrow$ D supplies values of free variables. V and $\mathcal{I}$ determines the value of any term t, by recursion. This value is written as $I_{V}[t]$ with the following recursion rules:
+\begin{enumerate}
+    \item $I_{V}[x] \stackrel{\mathrm{def}}{=} V(x) $ if x is a variable
+    \item $I_{V}[c] \stackrel{\mathrm{def}}{=} I[c]$
+    \item $I_{V}[f(t_{1}, ..., t_{n})] \stackrel{\mathrm{def}}{=} I[f](I_{V}[t_{1}], ..., I_{V}[t_{n}])$
+\end{enumerate}
+\subsection{Truth}
+\textbf{Tarski Truth-Definition}: Interpretation $\mathcal{I}$ and valuation function V specify the truth value (1 or 0) of any formula A. The only issue with this is quantifiers as they bind variables. V[a/x] is the valuation that maps x to a and is otherwise like V.
+
+Define $\vDash_{\mathcal{I}, V}$ by recursion:
+\begin{enumerate}
+    \item $\vDash_{\mathcal{I}, V} P(t)$ - if I[P]($\mathcal{I}_{V}[t]$) equals 1 (is true) 
+    
+    \item $\vDash_{\mathcal{I}, V} t = u$ - if $\mathcal{I}_{V}[t] = \mathcal{I}_{V}[u]$
+    
+    \item $\vDash_{\mathcal{I}, V} A \wedge B$ - if $\vDash_{\mathcal{I}, V} A$ and $\vDash_{\mathcal{I}, V} B$
+    
+    \item $\vDash_{\mathcal{I}, V} \exists x A$ - if $\vDash_{\mathcal{I}, V \{ m / x \}}$ A holds for some m $\in D$
+    
+    \item $\vDash_{\mathcal{I}} A$ - if $\vDash_{\mathcal{I}, V} A$ holds for all V
+\end{enumerate}
+
+Closed formula A is satisfiable if $\vDash_{\mathcal{I}}A$ for some $\mathcal{I}$
+
+\subsubsection{Free vs Bound Variables}
+\begin{itemize}
+    \item Occurrences of x in $\forall x A \; and \; \exists x A$ are bound - can rename bound variables without affecting the meaning
+    \item x is free if it not bound
+    \item A[t/x] means substitute t for x in A. When substituting A[t/x], no variable of t may be bound in A
+\end{itemize}
+
+\subsubsection{Equivalences involving quantifiers}
+\begin{enumerate}
+    \item $\neg(\forall x A) \simeq \exists x \neg A$
+    \item $\forall x A \simeq \forall x A \wedge A[t / x]$
+    \item $(\forall x A) \wedge(\forall x B) \simeq \forall x(A \wedge B)$
+    
+    \bigskip
+    \textbf{If x is not free in B}
+    \item $(\forall x A) \wedge \mathrm{B} \simeq \forall \chi(A \wedge \mathrm{B})$
+    \item $(\forall x A) \vee \mathrm{B} \simeq \forall x(A \vee \mathrm{B})$
+    \item $(\forall x A) \rightarrow \mathrm{B} \simeq \exists x(A \rightarrow \mathrm{B})$
+\end{enumerate}
+
+\subsubsection{Sequent Rules for Quantifiers}
+\begin{enumerate}
+    \item \textbf{$\forall l$}: can create many instances of $\forall x A$
+    
+    $$\frac{\mathrm{A}[\mathrm{t} / \mathrm{x}], \Gamma \Rightarrow \Delta}{\forall x A, \Gamma \Rightarrow \Delta}$$
+    
+    \item \textbf{$\forall r$}: holds, provided x is not free in the conclusion
+    
+    $$\frac{\Gamma \Rightarrow \Delta, A}{\Gamma \Rightarrow \Delta, \forall x A}$$
+    
+    \item \textbf{$\exists l$}: holds provided x is not free in the conclusion
+    
+    $$\frac{A, \Gamma \Rightarrow \Delta}{\exists x A, \Gamma \Rightarrow \Delta}$$
+    
+    \item \textbf{$\exists r$}: can create many instances of $\exists x A$
+    
+    $$\frac{\Gamma \Rightarrow \Delta, A[\mathrm{t} / x]}{\Gamma \Rightarrow \Delta, \exists x A}$$
+\end{enumerate}
+
+
+\section{Clause Methods for Propositional Logic}
+A clause is a disjunction of literals: $\neg \mathrm{K}_{1} \vee \cdots \vee \neg \mathrm{K}_{\mathrm{m}} \vee \mathrm{L}_{1} \vee \cdots \vee \mathrm{L}_{\mathrm{n}}$
+\begin{enumerate}
+    \item \textbf{Set Notation}: $\left\{\neg \mathrm{K}_{1}, \ldots, \neg \mathrm{K}_{\mathrm{m}}, \mathrm{L}_{1}, \ldots, \mathrm{L}_{\mathrm{n}}\right\}$
+    
+    \item \textbf{Kowalski Notation}: 
+    
+    $\begin{array}{l}{\mathrm{K}_{1}, \cdots, \mathrm{K}_{\mathrm{m}} \rightarrow \mathrm{L}_{1}, \cdots, \mathrm{L}_{\mathrm{n}}} \\ {\mathrm{L}_{1}, \cdots, \mathrm{L}_{\mathrm{n}} \leftarrow \mathrm{K}_{1}, \cdots, \mathrm{K}_{\mathrm{m}}}\end{array}$
+    
+    \item Empty Clause: $\{ \}$ or $\square$
+\end{enumerate}
+
+\noindent
+\textbf{Proving A}: Obtain contradiction from $\neg$ A
+\begin{enumerate}
+    \item Translate $\neg$ A into CNF as $A_{1} \wedge \cdots \wedge A_{m}$ = clauses $A_{1}, \dots, A_{m}$
+    \item Transform clause set, preserving consistency
+    \item An empty clause set means $\neg$ A is satisfiable - otherwise, obtain contradiction
+\end{enumerate}
+
+\subsection{DPLL Method}: Decision procedure, either finds a contradiction or a model
+\begin{enumerate}
+    \item Delete tautological clauses: {P, $\neg$ P}
+    \item For each unit clause: (1) delete all clauses containing L, (2) delete $\neg$ L from all clauses
+    \item Delete all clauses containing pure literals
+    \item Perform case split on some literal and stop if a model is found
+\end{enumerate}
+
+\subsection{Resolution Rule}
+Allows us to say $B \vee A \wedge \neg B \vee C \implies A \vee C$
+\begin{enumerate}
+    \item 
+    $$\frac{\left\{\mathrm{B}, \mathrm{A}_{1}, \ldots, \mathrm{A}_{\mathrm{m}}\right\} \; \; \; \left\{\neg \mathrm{B}, \mathrm{C}_{1}, \ldots, \mathrm{C}_{\mathfrak{n}}\right\}}{\left\{A_{1}, \dots, A_{m}, C_{1}, \ldots, C_{n}\right\}} 
+    $$
+    \item 
+    $$
+    \frac{\{\mathrm{B}\} \quad\left\{\neg \mathrm{B}, \mathrm{C}_{1}, \ldots, \mathrm{C}_{\mathrm{n}}\right\}}{\left\{\mathrm{C}_{1}, \ldots, \mathrm{C}_{\mathrm{n}}\right\}}
+    $$
+    \item
+    $$
+    \frac{\{\mathrm{B}\} \quad\{\neg \mathrm{B}\}}{\square}
+    $$
+\end{enumerate}
+
+\subsection{Saturation Algorithm}
+\begin{itemize}
+    \item At the start, all clauses are passive
+    
+    \begin{enumerate}
+        \item Transfer a clause (current) from passive to active
+        \item Form all resolvents between current and active clause
+        \item Use new clauses to simplify both passive and active
+        \item Put the new clauses into passive
+    \end{enumerate}
+    
+    \item Repeat until a contradiction is found or if the passive becomes empty
+\end{itemize}
+
+\bigskip
+\noindent
+\textbf{Heuristics}
+\begin{enumerate}
+    \item \textbf{Orderings} to focus search on specific literals
+    \item \textbf{Subsumption}: deleting redundant clauses
+    \item \textbf{Indexing}: elaborate data structures for speed
+    \item \textbf{Preprocessing}: removing tautologies and symmetries
+    \item \textbf{Weighting}: Giving priority to good clauses over those containing unwanted constants
+\end{enumerate}
+
+\section{Skolem Functions, Herbrand Theorem and Unification}
+\subsection{FOL to Propositional Logic}
+\begin{definition}
+
+\noindent
+\textbf{NNF}: Eliminate all connectives except $\vee$, $\wedge$ and $\neg$
+
+\noindent
+\textbf{Skolemize}: Remove quantifiers, preserving consistency
+
+\noindent
+\textbf{Herbrand Models}: Reduce the class of interpretations
+
+\noindent
+\textbf{Herbrand's THM}: Contradictions have finite, ground proofs
+
+\noindent
+\textbf{Unification}: Automatically find the correct instantiations
+\end{definition}
+
+\subsection{Skolemisation}
+\begin{enumerate}
+    \item Start with formula in NNF, with quantifiers nested
+    \item Choose fresh k-place function symbol, say f
+    \item Delete $\exists$y and replace y with f($x_{1}, x_{2}, ..., x_{k})$
+    \item Repeat until no $\exists$ quantifiers remain
+\end{enumerate}
+
+\noindent
+\textbf{Correctness}:
+\begin{itemize}
+    \item Formula $\forall x \exists y A$ is consistent
+    \item Holds in some interpretation: $\mathcal{I}=(\mathrm{D}, \mathrm{I})$
+    \item $\forall x \in D \exists y \in D \; st \; A \; holds$
+    
+    \item Some function $\hat{f} \text { in } \mathrm{D} \rightarrow \mathrm{D}$ yields suitable values of y
+    
+    \item $\mathrm{A}[\mathrm{f}(\mathrm{x}) / \mathrm{y}] \text { holds in some } \mathcal{I}^{\prime} \text { extending } \mathcal{I} \text { so that } \mathrm{f} \text { denotes } \hat{\mathrm{f}}$
+    
+    \item Formula $\forall x A[f(x) / y]$ is consistent
+\end{itemize}
+
+\subsection{Herbrand Interpretations}
+\subsubsection{Herbrand Universe for a Set of Clauses S}
+$$H_{0} \stackrel{\mathrm{def}}{=} \text{ set of constants in S} $$ 
+$$\mathrm{H}_{\mathfrak{i}+1} \stackrel{\mathrm{def}}{=} \mathrm{H}_{\mathfrak{i}} \cup\left\{\mathfrak{f}\left(\mathfrak{t}_{1}, \ldots, \mathfrak{t}_{\mathfrak{n}}\right) | \mathfrak{t}_{1}, \ldots, \mathfrak{t}_{\mathfrak{n}} \in \mathrm{H}_{\mathfrak{i}}\right. \text{ and f is an n-place function symbol in S \}} $$
+
+$$Herbrand Universe (H) \stackrel{\text { def }}{=} \bigcup_{\mathfrak{i} \geq 0} \mathrm{H}_{\mathfrak{i}} $$
+
+H consists of the terms in S that contains no variables (ground terms). H$_{i}$ contains the terms with at most i nested function applications
+
+\subsubsection{Herbrand Semantics of Predicates}
+Herbrand interpretation defines an n-place predicate P to denote the truth-valued function in $H^{n} \rightarrow \{ 1, 0 \}$ making P($t_{1}, ..., t_{n}$) true iff formula $\mathrm{P}\left(\mathrm{t}_{1}, \ldots, \mathrm{t}_{\mathrm{n}}\right)$ holds in desired interpretation of the clauses. Hence, Herbrand interpretation can imitate any other interpretation.
+
+\subsubsection{Herbrand's Theorem}
+S is a set of clauses, S is unsatisfiable $\iff$ there is a finite unsatisfiable set S' of ground instances of clauses of S
+\begin{itemize}
+    \item \textbf{Finite}: can be computed
+    \item \textbf{Instance}: result of substituting for variables
+    \item \textbf{Ground}: no variables remain - it is propositional
+\end{itemize}
+
+\subsection{Unification}
+Finding a common instance of two terms - generalisation of pattern-matching, used for:
+\begin{enumerate}
+    \item Prolog and other logic programming languages
+    \item Theorem proving
+    \item Tools for reasoning with equations or satisfying constraints
+    \item Polymorphic type-checking
+\end{enumerate}
+
+Output of a unification is a substitution, mapping variables to terms - where the other occurrences of the variables must also be updated - in general it yields the most general solution
+
+\section{First-Order Resolution and Prolog}
+\subsection{Binary Resolution Rule}
+Where $\sigma$ is a most general unifier of B and D st B$\sigma$ = D$\sigma$: requires us to first rename variables apart in the clauses
+$$\frac{\{ B, A_{1}, ..., A_{m} \} \; \; \; \{ \neg D, C_{1}, ..., C_{n} \}}{\{ A_{1}, ..., A_{m}, C_{1}, ..., C_{n} \} \sigma}$$
+
+
+\subsection{Factoring Rule}
+Inference collapses unifiable literals in one clause. Provided $B_{1} \sigma = ... = B_{k} \sigma$
+
+$$\frac{\{ B_{1}, ..., B_{k}, A_{1}, ..., A_{m} \}}{\{ B_{1}, A_{1}, ..., A_{m} \} \sigma}$$
+
+\subsection{Equality}
+\textbf{Equality Axioms}: these work in theory
+\begin{enumerate}
+    \item Reflexive
+    \item Symmetric
+    \item Transitive
+    \item Substitution laws for each f st $\{ x \neq y, f(x) = f(y) \}$
+    \item Substitution laws for each P st $\{ x \neq y, \neg P(x), P(y) \}$
+\end{enumerate}
+
+But in practise, need something special - \textbf{paramodulation rule}:
+$$\frac{\left\{\mathrm{B}\left[\mathfrak{t}^{\prime}\right], A_{1}, \dots, A_{\mathrm{m}}\right\} \; \; \; \left\{\mathbf{t}=\mathfrak{u}, \mathrm{C}_{1}, \ldots, \mathrm{C}_{\mathfrak{n}}\right\}}{\left\{\mathrm{B}[\mathfrak{u}], A_{1}, \ldots, A_{\mathrm{m}}, \mathrm{C}_{1}, \ldots, \mathrm{C}_{\mathrm{n}}\right\} \sigma}$$
+
+where t$\sigma$ = t'$\sigma$
+
+\subsection{Prolog}
+\textbf{Clauses}
+\begin{itemize}
+    \item Prolog clauses have a restricted form, with at most one positive literal
+    \item Definite clauses form the program - ie procedure B with body $A_{1}, ..., A_{m}$ is: B $\leftarrow A_{1}, ..., A_{m}$
+    \item Single goal clauses is like the execution stack, with tasks to be done: $\leftarrow A_{1}, ..., A_{m}$
+\end{itemize}
+
+\bigskip
+\noindent
+\textbf{Execution}
+\begin{itemize}
+    \item \textbf{Linear Resolution}: Always resolves some program clause with the goal clause, and the result becomes the new goal clause
+    \item Program clauses done in left-to-right order
+    \item Left-to-right order used to solve the goal clause's literals
+    \item Use depth-first search (performs backtracking using choice points)
+    \item Does a unification without occurs check
+\end{itemize}
+
+\bigskip
+\noindent
+\textbf{Model Elimination}: Prolog-like method to do FOL Proof that runs on fast Prolog architectures using Contrapositives where you treat the clause {$A_{1}, ..., A_{m}$} like the m clauses:
+\begin{itemize}
+    \item $A_{1} \leftarrow \neg A_{2}, ..., \neg A_{m}$
+    \item $A_{2} \leftarrow \neg A_{3}, ..., \neg A_{m}, \neg A_{1}$
+    \item ...
+    \item $A_{m} \leftarrow \neg A_{1}, ..., \neg A_{m-1}$
+\end{itemize}
+When trying to prove the goal P, we assume $\neg P$
+
+\subsection{Automatic Theorem Provers}
+\begin{enumerate}
+    \item \textbf{First-Order Resolution}: E, SPASS, Vampire
+    \item \textbf{Higher-Order Logic}: TPS, LEO and LEO-II, Satallax
+    \item \textbf{Model Elimination}: Prolog, SETHEO
+    \item \textbf{Parallel ME}: PARTHENON, PARTEO
+    \item \textbf{Tableau (Sequent) Based}: LeanTAP, 3TAP
+\end{enumerate}
+
+\section{Decision Procedures and SMT Solvers}
+\subsection{Decision procedures and Problems}
+Decision problems are any formally-stated problems:
+\begin{enumerate}
+    \item Propositional Formulas are decidable using the DPLL algorithm
+    \item Linear Arithmetic Formulas are decidable
+    \item Polynomial Arithmetic is decidable, as is Euclidean geometry
+\end{enumerate}
+
+\subsection{Fourier-Motzkin Variable Elimination}
+Decides conjunctions of liner constraints over reals and rationals. It works by eliminating variables one-by-one until there is one to remain, or reaches a contradiction - resembles Gaussian elimination. It has a worst case complexity with $O(m^{2^{n}})$
+
+$$\bigwedge_{\mathfrak{i}=1}^{\mathfrak{m}} \sum_{\mathfrak{j}=1}^{\mathrm{n}} \mathfrak{a}_{\mathfrak{i j}} x_{\mathfrak{j}} \leq \mathrm{b}_{\mathfrak{i}}$$
+
+\bigskip
+\noindent
+\textbf{Process}
+\begin{enumerate}
+    \item To eliminate variable $x_{n}$, consider constraint i, for i = 1, ..., m
+    \item Define $\beta _{i}$ = $b_{i}$ - $\sum_{\mathfrak{j}=1}^{\mathfrak{n}-1} \mathfrak{a}_{\mathfrak{i} \mathfrak{j}} \mathfrak{x}_{\mathfrak{j}}$ Rewrite the constraint i:
+    \begin{enumerate}
+        \item If $a_{in}$ > 0 then $x_{n} \leq \frac{\beta _{i}}{a_{in}}$
+        
+        \item If $a_{in} < 0$ then $-x_{n} \leq -\frac{\beta _{i}}{a_{in}}$
+        
+        \item Hence, $0 \leq \frac{\beta_{i}}{a_{i n}}-\frac{\beta_{i} \prime}{a_{i} \prime_{n}}$
+    \end{enumerate}
+    
+    \item Do this for all combinations with opposite signs
+    
+    \item Then delete the original constraints (except where $a_{in} = 0$)
+\end{enumerate}
+
+\subsection{Quantifier Elimination}
+Transforms a formula to a quantifier-free but equivalent formula - since skolemization eliminates quantifiers but only preserves consistency - can use Quantifier Elimination to do this and allows us to reach true or false - however, this yields a long formula - taking a long amount of time - hyper-exponential time complexity.
+
+\subsection{Other Decidable Theories}
+\textbf{Linear Integer Arithmetic}: use Omega test or Cooper's algorithm, but any decision algorithm has a worst case runtime of at least $2^{2^{cn}}$
+
+\bigskip
+\noindent
+QE for quadratic equations:
+$$\exists x\left[a x^{2}+b x+c=0\right] \Longleftrightarrow \mathrm{b}^{2} \geq 4 \mathrm{ac} \wedge\left(\mathrm{c}=0 \vee \mathrm{a} \neq 0 \vee \mathrm{b}^{2}>4 \mathrm{ac}\right) $$
+
+You can have have decidable procedures that cooperate to decide combinations of theories - however, these procedures expect existentially quantified conjunctions. Formulas have to be converted to disjunctive normal form - therefore have to eliminate universal quantifier
+
+\subsection{Satisfiability Modulo Theories}
+The idea is that we can use DPLL for logical reasoning, using a decision procedure for theories. The clauses can have literals which are used as names. If DPLL finds a contradiction, then the clauses are unsatisfiable. Checking asserted literals:
+\begin{enumerate}
+    \item Unsatisfiable conjunctions of literals are noted as new clauses
+    \item Case splitting is interleaved with decision procedure calls
+\end{enumerate}
+
+\section{Binary Decision Diagrams}
+A canonical form for boolean expressions - decision trees with sharing consisting of:
+\begin{enumerate}
+    \item Ordered propositional symbols (variables)
+    \item Sharing of identical subtrees
+    \item Hashing and other optimisations
+    \item Dashed line is false and non-dashed line is true
+\end{enumerate}
+
+Shows, (1) satisfiability (existence of models) - path to 1, (2) tautologous, (3) inconsistency.
+
+\bigskip
+\noindent
+\textbf{Building BDDs Efficiently}
+\begin{enumerate}
+    \item Don't expand connectives
+    \item Recursively convert operands to BDDs
+    \item Combine operand BDDs respecting ordering and sharing
+    \item Delete redundant variable tests
+\end{enumerate}
+
+\subsection{Examples}
+\begin{enumerate}
+    \item $P \vee Q$
+    
+    \begin{figure}[H] \includegraphics[width=.3\textwidth, left] {./images/1.png} \end{figure}
+    
+    \item $P \vee Q \rightarrow Q \vee R$
+    \begin{figure}[H] \includegraphics[width=.4\textwidth, left] {./images/2.png} \end{figure}
+\end{enumerate}
+
+\subsection{Optimisations}
+\begin{enumerate}
+    \item Never build the same BDD twice, but share pointers, allows us to (1) check if(P, X, Y) is redundant by checking if X = Y and (2) quickly simplify special cases like X $\wedge$ X
+    
+    \item Never convert X $\wedge$ Y twice, but keep a hash table of known canonical forms - preventing redundant computations
+\end{enumerate}
+
+\section{Modal Logics}
+\begin{itemize}
+    \item W: set of possible worlds (machine states, future times, ...)
+    \item R: Accessibility Relation between worlds
+    
+    \item (W, R) is a modal frame
+    
+    \item $
+\left.\begin{array}{l}{\square A \text{ means A is} \text { necessarily true }} \\ {\diamond \text {A means A is possibly true }}\end{array}  \right\} \text{in all worlds accessible from here}
+$
+
+    \item $
+\neg \diamond A \simeq \square \neg A
+$
+\end{itemize}
+
+\subsection{Semantics}
+For a particular frame (W, R), an interpretation I maps the propositional letters to subsets of W:
+
+\bigskip
+\noindent
+$w \; ||\! - A$ means that A is true in world w:
+\begin{itemize}
+    \item $w \; ||\! - P \iff  w \in I(P)$
+    \item $w \; ||\! - A \wedge B \iff w \; ||\! - A and w \; ||\! - B$
+    \item $w \; ||\! -  \square A \iff v \; ||\! - A \forall v st R(w, v)$
+    \item $w \; ||\! - \diamond A \iff \exists v  v \; ||\! - A st R(w, v)$
+\end{itemize}
+
+\bigskip
+\noindent
+\textbf{Truth and Validity}: For frame (W, R) and interpretation I:
+\begin{itemize}
+    \item $w \; ||\! - A$ means A is true in world w
+    \item $\vDash_{W, R, I}A$ means $w \; ||\! - A \; \forall w \in W$
+    \item $\vDash_{W, R}A$ means $w \; ||\! - A \; \; \forall w \; \forall I$
+    \item $\vDash A$ means $\vDash_{W, R} A \; \; \forall frames$ that is to say, A is universally valid but generally constrain R to be transitive
+\end{itemize}
+
+\subsection{Hilbert-Style Modal Proof Systems}
+\begin{enumerate}
+    \item \textbf{Dist}: $\square(A \rightarrow \mathrm{B}) \rightarrow(\square A \rightarrow \square \mathrm{B})$
+    \item \textbf{Inference Rule - necessitation}: $\frac{A}{\square A}$
+    \item \textbf{Definition} - treat $\diamond$ as a definition: $\diamond A \stackrel{\text { def }}{=} \neg \square \neg A$
+    
+    \bigskip
+    \textbf{We can add axioms to pure modal logic (K) to constrain the accessibility relation}
+    \item \textbf{Reflexive}: $\square A \rightarrow A$ \textit{(T)}
+    \item \textbf{Transitive}: $\square A \rightarrow \square \square A$ \textit{(S4)}
+    \item \textbf{Symmetric}: $A \rightarrow \square \diamond A$ \textit{(S5)}
+\end{enumerate}
+
+\subsection{S4 Sequent Calculus Rules}
+\begin{enumerate}
+    \item \textbf{$\square l$}
+    $$\frac{A, \Gamma \Rightarrow \Delta}{\square A, \Gamma \Rightarrow \Delta}$$
+    
+    \item \textbf{$\square r$}
+    $$\frac{\Gamma^{*} \Rightarrow \Delta^{*}, A}{\Gamma \Rightarrow \Delta, \square A}$$
+    
+    \item \textbf{$\diamond l$}
+    $$\frac{A, \Gamma^{*} \Rightarrow \Delta^{*}}{\diamond A, \Gamma \Rightarrow \Delta}$$
+    
+    \item \textbf{$\diamond r$}
+    $$\frac{\Gamma \Rightarrow \Delta, A}{\Gamma \Rightarrow \Delta, \diamond A}$$
+    
+    \item $\Gamma^{*} \stackrel{\mathrm{def}}{=}\{\square \mathrm{B} | \square \mathrm{B} \in \Gamma\}$
+    \subitem \textit{Erase all non-$\square$ assumptions}
+    
+    \item $\Delta^{*} \stackrel{\text { def }}{=}\{\diamond \mathrm{B} | \diamond \mathrm{B} \in \Delta\}$
+    \subitem \textit{Erase all non-$\diamond$ goals}
+\end{enumerate}
+
+\section{Tableaux-Based Methods}
+\subsection{Simplifying the Sequent Calculus}
+Can simplify sequent calculus by working in Negation Normal Form which reduces required connectives from: $\neg$, $\wedge$, $\vee$, $\rightarrow$, $\leftrightarrow$, $\forall$, $\exists$, $\square$, $\diamond$ \textbf{to}: $\wedge$, $\vee$, $\forall$, $\exists$, $\square$, $\diamond$. This means that the sequents need only one side.
+
+\subsection{Rules}
+Left-side only system uses proof by contradiction while right-side only system is an exact dual
+\begin{enumerate}
+    \item \textbf{Basic}
+    $$\overline{\neg A, A, \Gamma \Rightarrow}$$
+    
+    \item \textbf{Cut}
+    $$\frac{\neg A, \Gamma \Rightarrow \quad A, \Gamma \Rightarrow}{\Gamma \Rightarrow}$$
+    
+    \item \textbf{$\wedge l$}
+    $$\frac{A, B, \Gamma \Rightarrow}{A \wedge B, \Gamma \Rightarrow}$$
+    
+    \item \textbf{$\vee l$}
+    $$\frac{A, \Gamma \Rightarrow \quad B, \Gamma \Rightarrow}{A \vee B, \Gamma \Rightarrow}$$
+    
+    \item \textbf{$\forall l$}
+    $$\frac{A[t / x], \Gamma \Rightarrow}{\forall x A, \Gamma \Rightarrow}$$
+    
+    \item \textbf{$\exists l$}: provided x is not free in the conclusion
+    $$\frac{A, \Gamma \Rightarrow}{\exists x A, \Gamma \Rightarrow}$$
+    
+    \item \textbf{$\square l$}
+    $$ \frac{A, \Gamma \Rightarrow}{\square A, \Gamma \Rightarrow}$$
+    
+    \item \textbf{$\diamond l$}
+    $$\frac{A, \Gamma^{*} \Rightarrow}{\diamond A, \Gamma \Rightarrow}$$
+    
+    \item $\Gamma^{*} \stackrel{\mathrm{def}}{=}\{\square \mathrm{B} | \square \mathrm{B} \in \Gamma\}$ - erase non-$\square$ assumptions
+\end{enumerate}
+
+\subsection{Free-Variable Tableau Calculus}
+\textbf{$\forall l$}: inserts a new free variable
+$$\frac{A[z / x], \Gamma \Rightarrow}{\forall x A, \Gamma \Rightarrow}$$
+\begin{itemize}
+    \item Lets unification instantiate any free variable
+    \item In $\neg$A, B, $\Gamma \implies$, try unifying A with B to make a basic sequent
+    \item Better not to use the rule $\exists$l instead skolemising
+\end{itemize}
+
+\bigskip
+\noindent
+\textbf{Theorem Prover}
+\begin{figure}[H] \includegraphics[width=.7\textwidth, left] {./images/3.png} \end{figure}
+
+\end{document}

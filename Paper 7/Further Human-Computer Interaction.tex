@@ -1,0 +1,658 @@
+\documentclass{article}
+\title{Further Human-Computer Interaction}
+\author{Ashwin Ahuja}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tabto}
+\usepackage{amssymb}
+\usepackage{amsmath}
+
+\providecommand{\dotdiv}{% Don't redefine it if available
+  \mathbin{% We want a binary operation
+    \vphantom{+}% The same height as a plus or minus
+    \text{% Change size in sub/superscripts
+      \mathsurround=0pt % To be on the safe side
+      \ooalign{% Superimpose the two symbols
+        \noalign{\kern-.35ex}% but the dot is raised a bit
+        \hidewidth$\smash{\cdot}$\hidewidth\cr % Dot
+        \noalign{\kern.35ex}% Backup for vertical alignment
+        $-$\cr % Minus
+      }%
+    }%
+  }%
+}
+
+\usepackage[T1]{fontenc}
+\newenvironment{definition}{\par\color{blue}}{\par}
+\newenvironment{pros}{\par\color[rgb]{0.066, 0.4, 0.129}}{\par}
+\newenvironment{cons}{\par\color{red}}{\par}
+\newenvironment{example}{\par\color{brown}}{\par}
+\usepackage{fancyhdr}
+%% Margins
+\usepackage{geometry}
+\geometry{a4paper,hmargin={2cm,2cm},vmargin={2cm,2cm}}
+
+%% Header/Footer
+\pagestyle{fancy} 
+\lhead{Ashwin Ahuja}
+\chead{Further Human-Computer Interaction}
+\rhead{Part IB, Paper 7}
+\lfoot{}
+\cfoot{\thepage}
+\rfoot{}
+\renewcommand{\headrulewidth}{1.0pt}
+\renewcommand{\footrulewidth}{1.0pt}
+
+\usepackage[export]{adjustbox}
+\usepackage{caption}
+\captionsetup{justification   = raggedright,
+	singlelinecheck = false}
+
+\lstset{
+	basicstyle=\ttfamily,
+	columns=fullflexible,
+	breaklines=true,
+	postbreak=\raisebox{0ex}[0ex][0ex]{\color{red}$\hookrightarrow$\space}
+}
+\usepackage{listings}
+\lstset{
+	escapeinside={(*}{*)}
+}
+
+
+
+\begin{document}
+
+\makeatletter
+\renewcommand{\l@subsection}{\@dottedtocline{2}{1.6em}{2.6em}}
+\makeatother
+
+\begin{titlepage}
+\begin{center}
+			\vspace*{1cm}
+			
+			\Huge
+			\textbf{Further Human-Computer Interaction}
+			
+			\vspace{0.5cm}
+			\LARGE
+			University of Cambridge
+			
+			\vspace{1.5cm}
+			
+			\textbf{Ashwin Ahuja}
+			
+			\vfill
+			
+			Computer Science Tripos Part IB\\
+			Paper 7
+			
+			\vspace{5cm}
+			
+			April 2019
+			
+\end{center}
+\end{titlepage}
+
+\tableofcontents
+\pagebreak
+
+\section{Theory Driven HCI}
+\textbf{Goal of HCI}: to make interactions with computers faster, more productive, more creative, more social, more fun etc. Should ask the following questions about a design:
+\begin{enumerate}
+    \item How to go about designing user interface?
+    \item Is it good or bad?
+    \item How do we know if it is good or bad? Can this be related to scientific evidence or established theories of human behaviour?
+    \item How could this be improved?
+    \item Who designed it and why did they do it this way?
+\end{enumerate}
+
+Theories can be used to give a critical perspective, which gives us a way of systematically comparing cases to each other.
+
+\subsection{Using Theory in Design Process}
+\textbf{Gestalt Theory of Perceptual Organisation Application}
+\begin{enumerate}
+    \item Figure-ground relationship: group elements as either figure or ground - this affects legibility
+    \item Proximity: group by distance or location
+    \item Similarity: group by type
+    \item Symmetry: group by meaning
+    \item Continuity: group by alignment
+    \item Closure: perceive shapes that are not there
+\end{enumerate}
+
+This can be used to predict how some design choices may be superior to others. The principles can be applied within a design principles which is iterative with phases of
+\begin{enumerate}
+    \item \textbf{divergent}: creative exploration: Theories can provide a basis for invention, recognising new alternatives or gaps in the range of options that have been considered
+    
+    \begin{example}
+    Generate new designs from existing one, using creative techniques or exploring metaphors
+    \end{example}
+    
+    \item \textbf{convergent}: selection and evaluation: Theories give us a basis for critique to compare the relative benefits of possible designs.
+    
+    \begin{example}
+    Merge features from two candidate designs to produce a better one and discard ideas that poorly fit the desired outcome
+    \end{example}
+\end{enumerate}
+ 
+
+\subsubsection{Three Waves of HCI}
+\subsubsection{First Wave (1980s)}
+\begin{itemize}
+    \item Took in theories from (1) Human Factors Engineering, (2) Ergonomics and (3) Cognitive Science
+    \item At this time, the user interface (man-machine interface) was often a separate module, designed independently of the main system
+    \item Main design goal is efficiency (speed and accuracy) for a human operator to achieve \textbf{well-defined} tasks
+    \item Researchers use methods to model users' perception, decision and action processes and predict usability
+    
+    \begin{example}
+    \item Control panel with fixed switches, dials and lamps - group related information together and using the inherent structure of operator sequences of operations can be facilitated
+    \end{example}
+\end{itemize}
+
+\subsubsection{Second Wave (1990s)}
+\begin{itemize}
+    \item Theories from social science fields - Anthropology, Sociology and Work Psychology - understanding that computer is one part of social system and design of systems is socio-technical experiment.
+    \item Design takes into account other sources and channels of information including conversations, paper and physical environment
+    \item Focus on studying context where people work and using Ethnography and Contextual Inquiry to understand the other ways of seeing the world
+    
+    \begin{definition}
+    \textbf{Ethnography}: systematic study of peoples and their cultures
+    
+    \textbf{Contextual Inquiry}: semi-structured interview method to obtain information about the context of use, where users are first asked a set of standard questions and then observed and questioned while they work in their own environments
+    \end{definition}
+    
+    \item Diverse stakeholders are often integrated using prototyping and participator design workshops in order to observe and acknowledge other value systems
+    
+    \begin{definition}
+    \textbf{Value Systems}: A hierarchy of values that all moral beings have, reflected in their choices
+    
+    \textbf{Participatory Design}: Participatory design is an approach to design attempting to actively involve all stakeholders in the design process to help ensure the result meets their needs and is usable.
+    \end{definition}
+    
+    \item Social science can be used to observe, analyse and understand the design process itself
+    
+    \begin{example}
+    Large Open Office space: many devices that have been used to facilitate and coordinate collaborative work
+    \end{example}
+\end{itemize}
+
+\subsubsection{Third Wave (2000s)}
+\begin{itemize}
+    \item Theories from Art, Philosophy and Design (emotional and theories of aesthetics) - HCI as a culture and experience
+    \item Idea is that outside of the workplace, efficiency is not a priority, instead the User Experience is important - the usage of the product is discretionary.
+    
+    \begin{definition}
+    \textbf{Speculative Design}: Created to provoke and question how interesting or thoughtful the interaction will be
+    \end{definition}
+    
+\end{itemize}
+\subsubsection{Further Waves}
+\begin{itemize}
+    \item New places for new idea - alt.chi venue as a place specifically created for controversial research that has been rejected from the CHI conference
+    \item Ideas include focuses on:
+    \begin{enumerate}
+        \item Wellbeing
+        \item Flow
+        \item Empathy
+        \item Mindfullness
+        \item Altruism \textit{(Calvo and Peters)}
+        \item Inclusion and Accessibility
+        \item Ageing
+        \item Low income
+        \item Human rights
+        \item Bardzell's Feminist Utopianism - design critique directly attacks the mechanisms of institutional privilege using practises that are designed to amplify marginalised voices when thinking about the future.
+    \end{enumerate}
+\end{itemize}
+
+\section{Design of Visual Displays}
+\textbf{Fundamental Principle}: necessary to work out a correspondence between the information structure (Consists of some number and variety of individual elements and relationships between them) and the visual marks that the user can see. Each element or relationship may correspond to a visible mark or arrangement of marks on a display surface. Display design involves choosing the correspondences, marks and arrangements of marks in ways such that the overall result makes sense to the user.
+
+\bigskip
+Many possible design choices are influenced primarily by the historical conventions of how other visual displays have been created in the past. 
+
+\subsection{Typography and Text}
+\begin{itemize}
+    \item Originally, computer displays represented paper documents - structured using tabulated columns, alignment, indentation and emphasis, borders and shading - restricted to operations of the typewriter (and now the keyboard interaction with text is limited and frustrating in comparison with writing on paper)
+    \subitem Locations constrained to a specific set of places on the screen - grid system
+    
+    \item Human readers therefore benefit from centuries of refinement in text document design - multiple refined writing systems (for example for maths)
+    
+    \item Therefore, can follow conventions of magazine design, poster advertising, form design, textbooks, etc, when combining media and text
+\end{itemize}
+
+\subsection{Maps and Graphs}
+Cathode Ray Tube displays came before actual displays and could be interpreted easily as being similar to previous paper conventions. Diagrams used quantitative correspondence between direction on surface and continuous quantity (time / distance)
+
+\begin{example}
+Radar screen shows direction and distance of objects according to a single central reference point, just as Hereford Mappa Mundi of 1300 organised places according to approximate distance from Jerusalem
+\end{example}
+
+\subsection{Schematic Drawings}
+\textbf{Ivan Sutherland}: Introduced sophisticated alternative input systems - pen - therefore allows you to properly emulate engineering drawings (as on pen). White space indicated an interpretive break, so independent representations can share the same divided surface
+
+\subsection{Pictures}
+As with the examples above, pictorial representations, including paintings, etc rely upon being similar to 'real' physical artwork. They can be used for bringing out emotions in the person who is looking at the image. However, people need to be aware that the way the item is framed (in this case, being on a computer screen), can change the meaning of the art. 
+
+\subsection{Node-and-link Diagrams}
+Node-and-link diagram appears to be effectively considered like a graph - in that we consider the connectivity. These connectivity diagrams appear to come out of circuit schematics - where the designer has complete freedom to place items wherever they want in the diagram itself as the only relevant factor is the connections. Additionally, addition of text (\textbf{secondary notation}) can be used to carry more information. 
+
+\subsection{Icons and Symbols}
+Types of symbols:
+\begin{enumerate}
+    \item Pictorial
+    \item Arbitrary - for example the sign for a train station - these are generally just conventions and are the norm over time. As computer resolutions increase, can reduce the number of these as we have more specific icons which can be made out. Need to just ensure the meaning is clear - \textbf{semiontics} offers a sophisticated way of analysing the basis on which marks correspond to meanings.
+    \item Icons - small pictures symbolising different kinds of system object - these are generally pictorial
+    \item Brand Logos - are generally combination of an icon and might have some text. In practise the icons generally simply add decoration to text labels and are designed to be self-explanatory without the text
+    \item Symbolic - make use of symbols, whether they be letters (foreign or otherwise), or other characters
+\end{enumerate}
+
+\subsection{Visual Metaphor}
+\textbf{Desktop}: First visual interfaces of computers were designed to look like a desktop - even though they did not act in anyway like a desk top. Therefore, it's important to note that the strict correspondence to physical objects is more obstructive than instructive. 
+
+Desktop is particularly effective as it allows \textbf{secondary notation} - allowing the user to create their own meaning by arranging items as desired. The icons use a large number of conventions to indicate symbolic correspondence to software operations or company brands
+
+\subsection{Unified Theories of Visual Representation}
+Important to note that most of these items of screen design have derived heavily from fields of professional study where the designs have been worked out over time. However, it is sometimes necessary to invent new visual representations.
+
+\bigskip
+An approach for doing this is using a holistic perspective on visual language, information design, notations or diagrams.
+\begin{itemize}
+    \item Addresses relevant factors from low level visual perception to critique of visual culture - including that is necessary to ignore technical and marketing claims and remember all visual representations are marks on a surface intended to correspond to things understood by the reader
+    \item Two dimensions of the surface correspond to: (1) Physical space, (2) dimensions of an object, (3) pictorial perspective, (4) continuous abstract scales.
+    \item Surface can also be partitioned into regions that should be interpreted differently - elements can be aligned, grouped, connected or contained in order to express their relationships. This relationship should be understood by convention or explained
+    \item Individual elements assigned meaning according to semiotic principles of correspondence
+    
+\end{itemize} 
+\begin{figure}[H] \includegraphics[width=1\textwidth, left] {./images/1.png} \end{figure}
+
+\section{Goal-oriented Interaction}
+Idea is to find out how to use cognitive theories to understand user behaviour and what they find hard - the idea is that the user interaction can be modelled as a search. General purpose search algorithms are familiar in computer science, where an objective function can be combined with a state space and dependency graph to recursively search for optimal solutions use BFS or DFS. 
+
+Can model interaction with a user interface as a search process if we clearly define the \textbf{goal}. This is effectively a Cognitive Walkthrough:
+\begin{enumerate}
+    \item Analyse the user interface by identifying the next user goal
+    \item Determine whether the necessary actions are available
+    \item Ensuring that they are labelled in the way that the user will recognise them
+    \item Confirm that the system will give appropriate feedback of progression towards the goal
+\end{enumerate}
+
+\subsection{Models of Human Decision Making}
+\begin{itemize}
+    \item Challenge is where it is tough for the designer to correctly anticipate the user's goal in more complex situations
+    \textbf{Bounded Rationality}: Even if there is an optimal solution, amount of time necessary to find it may be too long. Therefore, bounded rationality is where a model takes into account the cost of computation - the user can follow a plan that is satisfactory, within constraints
+    \item \textbf{Prospect Theory (Kahneman and Tversky)}: Describes human behaviour in terms of a utility model that considers the outcome of possible actions, with weighting of estimated benefits by likelihood - does not assume complete knowledge of the state space
+    \item Heuristics and Biases: External considerations that account that for observed patterns in human decision making that cannot be explained by optimising 
+    \begin{enumerate}
+        \item Availability Heuristic: reasoning based on examples close at hand
+        \item Affect Heuristic: decisions based on emotion rather than calculating cost to benefit
+        \item Representative Heuristic: Probability is judged based based on resemblance to a class of similar situations.
+    \end{enumerate}
+    
+    Biases are used to ensure that the consequences of estimation error are within tolerable bounds
+    \begin{enumerate}
+        \item Loss aversion: losses hurt more than gains feel good
+        \item Expectation Bias: People observe results that they expect
+        \item Bandwagon Effect: Prefer actions taken by other people
+    \end{enumerate}
+    
+    Can use these theories to affect people's behaviours, for example by the UK government in nudge theory.
+\end{itemize}
+
+\subsection{Behavioural Economics in HCI}
+\textbf{Attention Investment} theory of abstraction use is a model of end-user programming which explains why users without prior experiences of programming take decisions that favour repeated manual actions rather than automated shortcuts - this is some sort of loss aversion where bugs and other issues might mean there might be more time taken to fix the mess. In this case bounded rationality will then take place. 
+
+Important to consider that much of the routine computer usage is done through memorised patterns of interaction with no clear mental model or goal.
+
+\subsection{Limitations of Goal-based HCI}
+\begin{cons}
+\begin{itemize}
+    \item Rational models assume user doesn't make mistakes - completely unrealistic
+    \item We need to find where errors are happening and why and then create a \textbf{cognitive model of this}: decision process that is not consistent with the identified goals, constraints and search space, including information loss due to (1) cognitive limitations, (2) incorrect mental models and (3) misleading designs
+    \item Anticipating all the factors needs a description of a user journey that accounts for (1) problem identification, (2) diagnosis, (3) debugging, (3) testing, (4) iteration and procedures that \textit{characterise the user's own activities as a kind of design process}
+    \item \textbf{Persuasive Design}: field of HCI that considers how users choose alternative goals or otherwise modify their goals - useful where trying to change user behaviour - applies nudge methods to modify biases.
+    
+    Need to ensure the design isn't patronising to the user
+\end{itemize}
+\end{cons}
+
+
+\subsection{Wicked Problems (Rittel and Webber)}
+Class of problems that cannot be addresses with classical goal based problem solving methods - have the following \textbf{characteristics:}
+\begin{enumerate}
+    \item No definitive formulation
+    \item No stopping rule
+    \item Solutions aren't true or false, but good or bad
+    \item No immediate and no ultimate test of a solution
+    \item Do not have an enumerable set of potential solutions, nor a well-defined set of permissible operations
+    \item Unique
+    \item Can be considered to be a symptom of another problem
+    \item Existence of a discrepancy representing a problem can be explained in numerous ways - this choice determines the nature of the problem's resolution
+    \item Planner has no right to be wrong
+\end{enumerate}
+
+\section{Designing Smart Systems}
+\begin{itemize}
+    \item Probabilistic model of the user's model can be used to create more efficient user interfaces
+    \item An example of this is through the use of predictive text entry which is particularly important for things like smartphones and smartwatches, etc where you can't have a full size keyboard
+    \begin{cons}
+    \item Issue is that people are reluctant to adopt a radically different text-entry method that takes more than few minutes of training
+    \end{cons}
+    \item However, improvement of sensors (in quality and reduced cost) has led to probabilistic text-entry methods - eg touch-screen error-correction, calculates the posterior word probabilities by combining likelihoods from a touch model with prior probabilities from a statistical language model
+    \begin{itemize}
+        \item However, hypothesis space is absolutely enormous 
+        \item Exploit the hypothesis space by converting it into a word-confusion network - time-ordered series of connected word confusion clusters. Each cluster contains a set of word hypotheses and the probabilities of these hypotheses sum to one
+        \item Can use this as a user interface to reduce error correction by letting users access the next-best word candidates in the hypothesis space
+        \item Also provides flexibility in the use of multiple modalities
+    \end{itemize}
+    \item Speech recognition: assigns posterior probabilities to word sequences by combining likelihoods from an acoustic model with prior probabilities from a statistical language model
+    \item In general, this probabilistic model methodology has been used to provide high performance, single-modality inputs, but can be used to provide multiple text-entry methods with lots of flexibility offering higher-performance without forcing user to learn new text entry methods.
+
+\end{itemize}
+
+Text entry methods: all successful ones share good performance AND high similarity to other mainstream methods
+\begin{enumerate}
+    \item Single-stroke letter alphabets
+    \item Multitap and predictive text entry on keypad
+    \item Touchscreen keyboard
+    \item Physical thumb keyboard
+    \item Gesture keyboard
+    \item Handwriting recognition
+    \item Speech recognition
+\end{enumerate}
+
+Therefore, when creating a new solution, it must be similar to a familiar one - \textbf{path dependency}. Therefore, in learning this method, while the user's initial speed of usage is slow, over time, it will become superior and become better than the familiar method at the \textit{crossover point}. 
+
+\subsection{Smarter Error Correction}
+\begin{itemize}
+    \item When correcting a text-entry error, users must tap backspace or select the error's location - however, can use rich hypothesis space to design more \textbf{flexible} user interfaces
+    \item Can develop an algorithm to allow users to say a correction without explicit reference to the error location, or can say with more context
+    \begin{itemize}
+        \item Works by merging word-confusion networks from different probabilistic text-entry modalities - taking two networks as inputs and using some of the probability mass in each cluster, softens the networks by adding epsilon (no word) and wildcard (can either stay in same cluster and generate any word, or move to next cluster and generate wildcard word that matches any word) transitions
+        \item Then algorithm searches for the highest joint probability path through both networks using a token passing model
+    \end{itemize}
+\end{itemize}
+\subsection{Combining typing, speech and gesturing}
+\begin{itemize}
+    \item By merging speech and gesture keyboard text entry, you can reduce the word error rate 53 percent and using only the gesture keyboard to correct spoken words can reduce the word error rates by 44 percent
+    \item Also, allowing users to seamlessly switch between methods of inputs is useful because different methods have different performance envelopes for different sentences
+\end{itemize}
+
+\section{Designing Efficient Systems}
+Idea is that we can optimise systems using probabilistic models to predict human actions, with the models being updated in real time. Additionally, allow efficiency of the user interface to be predicted and also measured at design time. 
+
+\subsection{Constraints on Speed and Accuracy}
+There is generally a speed vs accuracy trade-off that can be characterised as an information channel - fast and inaccurate actions result in more channel noise, meaning that the information gain per unit of time does not increase as quickly as the number of movements made - this can be described by \textbf{Fitt's Law}: time taken to point at something is proportional to Distance to the target, while inversely proportional to Width of target. The ratio of width to distance is the index of difficulty (k) and can be understood as the potential amount of information gained by the system when the user points
+
+\begin{equation}
+    Time = k log (\frac{2D}{W})
+\end{equation}
+
+Can use Fitts' Law to design more efficient user interfaces if we have a prior expectation for the actions that a user is likely to take. \textbf{Semantic Pointing} modifies the mapping of mouse motion to screen pixels so that the effective width of more likely targets is increased and the effective distance between them is decreased.
+
+\subsection{Keystroke Level Model}
+Mouse movements and key strokes (of an expert) are modelled using KLM:
+\begin{itemize}
+    \item Time taken to press key or mouse = 200ms
+    \item Time taken to home that hands on mouse or keyboard = 400ms
+    \item Mental preparation time = 1500ms
+\end{itemize}
+
+Can use more sophisticated model like GOMS (Goal / Operator / Method / Selection) in order to predict mental preparation time.
+
+\subsection{Hypothesis-Testing User Studies}
+\textbf{A/B Test}: Randomised controlled trials giving different users different versions of the interface and seeing which version is more likely to have desired behaviour. (1) Measure the completion times for a task and then (2) Carry out a significance test to see whether the difference is statistically significant.
+\begin{itemize}
+    \item \textbf{t-test compares the effect size} (difference between sample means) to the variation in experimental data.
+    \item Most straightforward tests for comparing sample distributions rely on data following a normal or Gaussian distribution - if this is not true - should use a sign test to compare sets of matches samples - \textbf{within-subject comparison}: get a subject to do task on both old and new interface - note whether sign is positive (improved version faster) or negative (original version faster) and compare proportion of each sign
+\end{itemize}
+
+Successful user studies rely on controlled experiments to minimise the variation in the data from factors unrelated to the effect of the design change. 
+\begin{enumerate}
+    \item Individual differences between subjects
+    \item Distractions during the trial
+    \item Motivation of the participant
+    \item Accidental intervention by experimenter
+    \item Other random factors
+\end{enumerate}
+
+Difference in means always reports with confidence intervals or error bars - significant is not always interesting - very small effects can be shown to be reliable if the variance is small or the sample size is very large. Instead better to have large effect sizes.
+
+\begin{cons}
+\bigskip
+\noindent
+\textbf{Drawbacks}
+\begin{itemize}
+    \item Statistical comparison not always viewed favourably in commercial applications
+    \item \textbf{Hawthorne Effect (1920s)}: measuring effect of factory lighting levels on productivity. Showed that productivity improved if lighting was increased and that productivity improved if lighting was decreased. Turned out that worker motivation, and therefore productivity, improved any time that an experiment was carried out.
+    \item This happens with user interface modifications - an interesting design change may result in apparent efficiency improvements in experimental context but has no long-term benefits
+    \item \textbf{Taylorism}: Optimisation of human efficiency in an industrial context. He came up with techniques to measure worker efficiency in comparison to machines to it was possible to measure and manage workers. In second-wave HCI, start to consider social aspects and work with trade unions to understand rights and point of view of the workers
+    \item Also, sometimes efficiency is not sufficient measure of system design - in discretionary use systems, where the person using the system is not an employee but has their own goals, thus can decide whether to be efficient or not. Therefore, brings in third wave HCI to bring in culture. 
+\end{itemize}
+\end{cons}
+
+\section{Designing Meaningful Systems}
+\begin{itemize}
+    \item \textbf{Design Ethnography}: Offers a holistic, in-context understanding of how life works so it can be supported, enhanced and changed.
+    
+    \item \textbf{Ethnographic Study}: Attempts to observe people in their normal environment, over a substantial period of time. During the observation, the experiences of people are documented in a variety of ways, paying attention to both peoples' activities and the artefacts that they interact with. The outputs of an ethnographic study are diverse, including: (1) task flow diagrams, (2) Journey maps, (3) Concept generation maps, (4) Timeline of people's activities, (5) Written reports and (6) Thick descriptions
+    
+    \item This can be integrated within typical processes of design in implementation - eg combined with design workshops, in order to: (1) Understand the experiences that people were currently having and how those experienced could be supported or changed by a new product and (2) to understand how people relate to the novel scenarios produced by the design team and then to evaluate early product designs in a real-world context.
+    
+    \item Helps teams understand:
+    \begin{enumerate}
+        \item What things happen - (1) what the everyday life of the users look like, (2) what kinds of experiences with the technology they have, (3) what are people's strategies for working with products, services and devices to get things done
+        \item How things matter - (1) how products help people be social and how they integrate in the social life of people, (2) how products help people make meaning and sense of their life, (3) how products help people be in control of their life
+    \end{enumerate}
+    
+    Then understanding included in the product development process to build technology that better fits people's needs.
+    
+    \item \textbf{Quantitative Research} and ethnographic research can be combined into \textbf{mixed methods} which can result in a better understanding than would be achievable with a single method along
+\end{itemize}
+
+\section{Evaluating Interactive System Designs}
+\begin{definition}
+\textbf{Formative Evaluation}: Used in early stages to compare, assess and refine design ideas. Often involves open research questions, in which researcher is interested in learning further information that can inform the design.
+
+\bigskip
+\noindent
+\textbf{Summative Evaluation}: More likely to be used in the later stages of a project and to involve closed research questions, with purposes of testing and evaluating systems according to predefined criteria.
+
+\bigskip
+\noindent
+
+\begin{enumerate}
+    \item \textbf{Empirical Methods}: Making observations and measurement of users, in order to learn new information relevant to system design or use - associated with open research questions
+    \begin{enumerate}
+        \item \textbf{Qualitative}: (1) Think-aloud, (2) Interviews, (3) Field observation
+        \item \textbf{Quantitative}: Generally require a working system, so are mostly summative - for example (1) Use of analytics and metrics in A/B experiments and (2) Controlled laboratory trials
+    \end{enumerate}
+    \item \textbf{Analytical Methods}: Based on applying a theory to analysis and discussion of the design. Generally very useful to formative evaluation, as it may be difficult to observe how a design is used if system design has not yet been completed. 
+    \begin{enumerate}
+        \item \textbf{Qualitative}: (1) Cognitive Walkthrough, (2) Cognitive Dimensions of Notations
+        \item \textbf{Quantitative }: Methods including Keystroke Level Model, which can be used to create numerical comparisons of closed research questions
+    \end{enumerate}
+\end{enumerate}
+\end{definition}
+
+\subsection{Randomised Controlled Trials}
+Requirements:
+\begin{enumerate}
+    \item Performance Measure
+    \item Representative sample of consenting target population
+    \item Experimental task that can be used to collect performance data
+\end{enumerate}
+
+\noindent
+Analysis of results:
+\begin{itemize}
+    \item Results measured in terms of effect size, including correlation with other factors and reporting significance measures to check whether the observed effects might have resulted from random variation or other factors.
+    \begin{cons}
+    \item Overcoming natural variation needs large samples
+    \item Does not provide understanding of why change occurred - hard to know whether the effect will generalise
+    \item If relevant variables that are orthogonal to each other, many separate experiments might be needed to distinguish between their effects and interactions
+    \end{cons}
+    \item \textbf{Proxy Measures}: use measures such as number of days customers actively use the product instead of desired outcome (profit maximisation) as that has a large latency.
+    \item All controlled experiments assessed according to Internal Validity and External Validity
+    \begin{itemize}
+        \item \textbf{Internal Validity}: was the study done right - (1) reproducibility, (2) scientific integrity, (3) refutability
+        \item \textbf{External Validity}: does the study tell us useful things - focusing on whether the results are generalisable to real world situations such as ensuring (1) representativeness of sample population, (2) experimental task, (3) application context
+    \end{itemize}
+\end{itemize}
+
+\subsection{Analysing Qualitative Data}
+\begin{enumerate}
+    \item \textbf{Categorical Coding}: qualitative data analysis method that can be used to answer closed questions, for example comparing different groups of people or users of different products.
+    \begin{enumerate}
+        \item Create coding frame of expected categories of interest
+        \item Text data then segmented (for example on phrase boundaries)
+        \item Each segment assigned to one category
+        \item Frequency and correspondence can then be compared
+    \end{enumerate}
+    
+    \begin{itemize}
+        \item Should incorporate some assessment of inter-rater reliability, where two or more people make the coding decisions independently to avoid systematic bias
+        \item Then compare how many decisions agree, relative to chance, using a statistic metric (Cohen's Kappa - for two people, Fleiss' Kappa for more people where 0.6 to 0.8 is considered substantial agreement)
+        \item Can also take into account how many decisions still disagreed after the discussion, involving refining and iterating the coding frame to resolve decision criteria
+    \end{itemize}
+    
+    \item \textbf{Grounded Theory}: Can be used to explore open questions where no expectation or theoretical assumption of the insights that the researcher is looking for. 
+    \begin{enumerate}
+        \item First, read data closely, looking for interesting categories (\textbf{open coding})
+        \item Then collect fragments, writing memos to capture insights as they occur
+        \item Emerging themes are organised using axial coding across different sources of evidence - and constantly compare memos, themes and findings to the original data in order to ensure that these can be justified.
+        \item Process ends when the theoretical description has reached saturation in relation to original data, with the main themes complete and accounted for
+    \end{enumerate}
+\end{enumerate}
+
+\subsection{Summary of Analytic Options (Analysing Design)}
+\begin{enumerate}
+    \item \textbf{Cognitive Walkthrough}: normally use in formative contexts - generally a time-saving precaution before user studies, to find and fix blatant usability bugs
+    
+    \item \textbf{KLM / GOMS}: These require alternative detailed UI designs, in order to compare them for efficiency
+    
+    \item \textbf{Cognitive Dimensions}: Better stuited to less structured tasks than the first two, which rely on having a set goal and task structure
+\end{enumerate}
+
+\subsection{Summary of Empirical Options (Collecting Data)}
+\begin{enumerate}
+    \item \textbf{Interviews / Ethnography: }Useful in formative / preparation phase - to develop design ideas / to capture user requirements
+    
+    \item \textbf{Think-aloud / Wizard of Oz: }Useful for both paper prototypes and working systems - highly effective at uncovering usability bugs, as long as verbal protocol is analysed rigorously using qualitative methods.
+    
+    \item \textbf{Controlled Experiments: }Can help establish engineering aspects of work - however, important to ensure you can (1) measure the important attributes in a meaningful way with both internal and external validity, (2) test significance, (3) Report confidence interval of observed means and effect sizes
+    
+    \item \textbf{Surveys and Informal Questionnaires:} Important to be clear about what is being measured - use mix of open questions (more qualitative information) and closed questions (easier to aggregate and test hypotheses).
+    
+    Open questions require a coding frame to structure and compare data, or grounded theory methods. Also, must do a pilot study with a small number of people.
+    
+    \begin{pros}
+    Faster to collect data from large sample size than interviews
+    \end{pros}
+    
+    \begin{cons}
+    Give less insight than interviews now
+    \end{cons}
+    
+    
+    \item \textbf{Field Testing:} If created a working product, possible to make a controlled release and collect data on how it is used. 
+    
+    \item \textbf{Standardised Survey Instruments:} Standard psychometric instruments to evaluate mental states such as (1) fatigue, (2) stress, (3) confusion and (4) emotional state. Also approaches to assess individual differences - and then can results compared to existing scientific literature
+    
+    \begin{cons}
+    \item \textbf{Purely Affective Reports} appear empirical or quantitive but are incredibly biased
+    
+    \item \textbf{Introspective Reports} made by a single subject - highly biased and subjective - this is known as the \textbf{Highest-Paid Person's Opinion}
+    \end{cons}
+\end{enumerate}
+
+\subsection{Evaluating Non-HCI Projects}
+Important to say that principles can also be applied to things which do not include human interactive aspects. Can always define goals and hypotheses and understand boundaries and performance limits by exploring them. Can still use analytic and empirical evaluation techniques, combining both formative and summative evaluation.
+
+\section{Designing Complex Systems}
+\begin{cons}
+\textbf{Issue:} may not necessarily have a well-defined goal, instead need to design interaction spaces rather than well defined systems. 
+\end{cons}
+\bigskip
+In order to do this, need to use a broad brush analysis technique, because attempts to describe individual tasks and specific actions would result in a death by detail, resulting from a combinatorial explosion of possible and potentially relevant details. Necessary to find an analytical frame that structures the description of an interaction, so it can be compared to an ideal characterisation of the application domain in terms of desirable interaction patterns offering a critical perspective.
+
+\subsection{Cognitive Dimensions of Notations}
+Canonical example of a broad brush analysis technique which is used in designing programming languages and APIs is the Cognitive Dimensions of Notations framework.
+
+\bigskip
+\textbf{Physics of Notations - inspired by CDs}: tries to establish basic principles of visual perception that might be relevant and \textbf{Patterns of User Experience}: which attempts to focus on the subjective experience of the user rather than purely observable behaviour
+
+\bigskip
+\textbf{Cognitive Dimensions} are presented as a vocabulary for design discussion - these reflect common usability factors that experienced designers might have noticed, but did not have a name for. 
+\begin{itemize}
+    \item Based on the observation that there is no perfect user interface
+    \item Any user interface design reflects a set of design trade-offs that the designers have had to make
+    \item Cognitive Dimensions give designers a vocabulary to describe these trade-offs
+    \item Impossible to create a design that has perfect characteristics in every dimensions
+\end{itemize}
+
+\subsection{Representative Cognitive Dimensions}
+\begin{enumerate}
+    \item \textbf{Premature Commitment}: constraints on the order of doing things based on dependencies.
+    
+    \item \textbf{Hidden Dependencies}: important links between entities are not visible. If you change parts of the structure of the product, will changes affect other parts.
+    
+    \item \textbf{Secondary Notation}: extra information in means other than formal syntax - possible to make notes to yourself or express information that is not recognised as part of the notation
+    
+    \item \textbf{Viscosity}: resistance to change. How easy would it be to change parts of the product.
+    
+    \item \textbf{Visibility}: ability to view components easily. 
+    \begin{enumerate}
+        \item How easy is it to see or find the various parts of the notation while it is being created or changed
+        \item What kind of things are difficult to see or find
+        \item If you need to compare or combine different parts, can you see them at the same time and if not, why not
+    \end{enumerate}
+    
+    \item \textbf{Closeness of Mapping}: closeness of representation to the domain - how closely related is the notation to the result that is being described
+    
+    \item \textbf{Consistency}: similar semantics are expressed in similar syntactic forms - when to things are similar (in notation), is the similarity clear from the way they appear
+    
+    \item \textbf{Diffuseness}: verbosity of the language
+    
+    \item \textbf{Error-proneness}: the notation invites mistakes
+    
+    \item \textbf{Hard mental operations}: high demand on cognitive resources
+    
+    \item \textbf{Progressive Evaluation}: work-to-date can be checked at any time
+    
+    \item \textbf{Provisionality}: degree of commitment to actions or marks
+    
+    \item \textbf{Role-expressiveness}: purpose of a component is readily inferred
+    
+    \item \textbf{Abstraction}: type and availability of abstraction mechanisms. Can you define new abstractions, do you operate on abstracted elements, etc. 
+\end{enumerate}
+
+\subsection{Notational Activities}
+When users interact with content, there are limited numbers of activities that they can engage in when considered with the respect to the way the structure of the content might change. A CDs evaluation must consider which classes of activity will be the primary type of interaction for all representative system users. If the needs of different users have different priorities, those activities can be emphasised when design trade-offs are selected as a CDs profile. 
+
+Activities include:
+\begin{enumerate}
+    \item \textbf{Search}: Finding information by navigating through the content structure using facilities provided by the environment. In general notation will not vary though parts of it that the users sees will vary
+    
+    \item \textbf{Incrementation}: Adding further content without altering the structure in any way
+    
+    \item \textbf{Modification}: Changing existing structure, perhaps without adding new content
+    
+    \item \textbf{Transcription}: Copying content from one structure or notation to another notation
+    
+    \item \textbf{Exploratory Design}: Combining incrementation and modification, with added characteristic that the end state is not known in advance. Any kind of viscosity can make this much harder. This is why good languages for hacking may not be strictly types, as maintaining type declarations causes greater viscosity. Loosely types languages are more likely to suffer from hidden dependencies (a trade off with viscosity), but this is not a problem for exploratory design, where the programmer can often hold this information in his head during the short development timescale.
+    
+    \item \textbf{Collaboration}: If the main purpose of the notation is to be shared or discussed with other people, design considerations can be different to those necessary for working by yourself
+\end{enumerate}
+
+\subsection{Beyond Cognition and Interaction}
+\begin{itemize}
+    \item Issues like ethics and accountability come up when dealing with automating and/or justifying bias and prejudice
+    \item \textbf{Digital Humanities}: treating text and images as meaningful and sophisticated, rather than simple categorical judgements
+    \item Ethical questions about who does the intellectual work of data labelling - who pays for them and where do profits go
+    \item Systems are being designed and shaped by knowledge infrastructure - need to be aware that their biases are being built into the system then
+\end{itemize}
+
+
+\end{document}

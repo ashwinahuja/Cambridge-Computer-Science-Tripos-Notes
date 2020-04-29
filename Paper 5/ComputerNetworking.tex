@@ -1,0 +1,113 @@
+\documentclass{article}
+\title{Bioinformatis}
+\author{Ashwin Ahuja}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tabto}
+\usepackage{amssymb}
+\usepackage[T1]{fontenc}
+\newenvironment{definition}{\par\color{blue}}{\par}
+\newenvironment{pros}{\par\color[rgb]{0.066, 0.4, 0.129}}{\par}
+\newenvironment{cons}{\par\color{red}}{\par}
+\newenvironment{example}{\par\color{brown}}{\par}
+\usepackage{fancyhdr}
+%% Margins
+\usepackage{geometry}
+\geometry{a4paper, hmargin={2cm,2cm},vmargin={2cm,2cm}}
+
+%% Header/Footer
+\pagestyle{fancy} 
+\lhead{Ashwin Ahuja}
+\chead{Bioinformatics}
+\rhead{Part II}
+\lfoot{}
+\cfoot{\thepage}
+\rfoot{}
+\renewcommand{\headrulewidth}{1.0pt}
+\renewcommand{\footrulewidth}{1.0pt}
+
+\usepackage[export]{adjustbox}
+\usepackage{caption}
+\captionsetup{justification   = raggedright,
+	singlelinecheck = false}
+
+\lstset{
+	basicstyle=\ttfamily,
+	columns=fullflexible,
+	breaklines=true,
+	postbreak=\raisebox{0ex}[0ex][0ex]{\color{red}$\hookrightarrow$\space}
+}
+\usepackage{listings}
+\lstset{
+	escapeinside={(*}{*)}
+}
+
+
+
+\begin{document}
+\begin{titlepage}
+\begin{center}
+			\vspace*{1cm}
+			
+			\Huge
+			\textbf{Bioinformatics}
+			
+			\vspace{0.5cm}
+			\LARGE
+			University of Cambridge
+			
+			\vspace{1.5cm}
+			
+			\textbf{Ashwin Ahuja}
+			
+			\vfill
+			
+			Computer Science Tripos \\
+			Part II
+			
+			\vspace{5cm}
+			
+			January 2020
+			
+\end{center}
+\end{titlepage}
+
+\tableofcontents
+\pagebreak
+
+\section{Purpose}
+Main purpose is to help doctors and help to understand the biology and computing with DNA and other biological molecules. Can use DNA as storage information. Today, through \textit{Oxford Nanopore} and \textit{Bento Lab} sequencing has got much cheaper and quicker. Idea of \textbf{Garage Genomics} where it often only takes an hour to get a portion of the DNA.
+
+\subsection{Definitions}
+\begin{definition}
+\begin{itemize}
+\item DNA made of four-letter alphabet: Adenine, Thymine, Cytosine and Guanine
+\item RNA is the same with Uracil instead of Thymine. 
+\item \textbf{Amino Acid}: Made of three base pairs of DNA
+\item Genome: organism's genetic material - for humans = 46 strings (chromosomes) with length 3 x 10e9
+\end{itemize}
+\end{definition} 
+
+
+
+\section{Alignment}
+
+\section{Folding}
+
+\section{Trees and Phylogeny}
+
+\section{Parsimony}
+
+\section{Neighbour Joining}
+
+\section{Genome Sequencing}
+
+\section{Clustering}
+
+\section{Genome Assembly and Pattern Matching}
+
+\section{Hidden Markov Models}
+
+\end{document}

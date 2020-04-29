@@ -1,0 +1,954 @@
+\documentclass{article}
+\title{Bioinformatics}
+\author{Ashwin Ahuja}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{mathtools}
+
+
+\usepackage[subtle]{savetrees}
+\usepackage{tabto}
+\usepackage{amssymb}
+\usepackage[T1]{fontenc}
+\newenvironment{definition}{\par\color{blue}}{\par}
+\newenvironment{pros}{\par\color[rgb]{0.066, 0.4, 0.129}}{\par}
+\newenvironment{cons}{\par\color{red}}{\par}
+
+\newenvironment{example}{\par\color{brown}}{\par}
+\usepackage{fancyhdr}
+%% Margins
+\usepackage{geometry}
+\geometry{a4paper, hmargin={2cm,2cm},vmargin={2cm,2cm}}
+
+%% Header/Footer
+\pagestyle{fancy} 
+\lhead{Ashwin Ahuja}
+\chead{Bioinformatics}
+\rhead{Part II}
+\lfoot{}
+\cfoot{\thepage}
+\rfoot{}
+\renewcommand{\headrulewidth}{1.0pt}
+\renewcommand{\footrulewidth}{1.0pt}
+
+\usepackage[export]{adjustbox}
+\usepackage{caption}
+\captionsetup{justification   = raggedright,
+	singlelinecheck = false}
+
+\lstset{
+	basicstyle=\ttfamily,
+	columns=fullflexible,
+	breaklines=true,
+	postbreak=\raisebox{0ex}[0ex][0ex]{\color{red}$\hookrightarrow$\space}
+}
+\usepackage{listings}
+\lstset{
+	escapeinside={(*}{*)}
+}
+
+
+
+\begin{document}
+
+
+\begin{titlepage}
+\begin{center}
+			\vspace*{1cm}
+			
+			\Huge
+			\textbf{Bioinformatics}
+			
+			\vspace{0.5cm}
+			\LARGE
+			University of Cambridge
+			
+			\vspace{1.5cm}
+			
+			\textbf{Ashwin Ahuja}
+			
+			\vfill
+			
+			Computer Science Tripos \\
+			Part II
+			
+			\vspace{5cm}
+			
+			January 2020
+			
+\end{center}
+\end{titlepage}
+
+\tableofcontents
+\pagebreak
+
+\section{Purpose}
+Main purpose is to help doctors and help to understand the biology and computing with DNA and other biological molecules. Can use DNA as storage information. Today, through \textit{Oxford Nanopore} and \textit{Bento Lab} sequencing has got much cheaper and quicker. Idea of \textbf{Garage Genomics} where it often only takes an hour to get a portion of the DNA.
+
+\begin{definition}
+\begin{itemize}
+\item DNA made of four-letter alphabet: Adenine, Thymine, Cytosine and Guanine - NB. it contains information for it's self-assembly
+\item RNA is the same with Uracil instead of Thymine. 
+\item \textbf{Amino Acid}: Made of three letters (codon) of DNA - can be represented as a 3D labelled graph. 20 types - some combinations of three are repeated in defining the amino acids
+\begin{itemize}
+    \item DNA $\xrightarrow[]{\text{transcription}}$ RNA $\xrightarrow[]{\text{translation}}$ Protein
+\end{itemize}
+\item Protein: composed of multiple amino acids
+\item Genome: organism's genetic material - for humans = 46 strings (chromosomes) with length 3 x 10e9
+\item Gene: hereditary information located on the chromosomes and consisting of DNA. These are activated or repressed by regulatory proteins which bind to gene flanking sequences (promoter) and are coded by the same or other genes. We can track expression levels using chips.
+
+\begin{figure}[H] \includegraphics[width=.7\textwidth, left] {./images/1.png} \end{figure}
+
+DNA can be used for a number of tasks - with DNA based techniques being used by Adleman for simple tasks. In particular, can use it for:
+\begin{enumerate}
+    \item Nanocommunications
+    \item To make circuits and new injectable devices
+\end{enumerate}
+\end{itemize}
+\end{definition} 
+
+\subsection{Adleman Travelling Sales Problem}
+\begin{enumerate}
+    \item Generate all possible routes
+    \item Select itineraries that start with the proper city and end with the final city
+    \item Select itineraries with the correct number of cities
+    \item Select itineraries that contain each city only once
+\end{enumerate}
+
+Idea is to sort DNA by length and select DNA whose length corresponds to 7 cities. Use gel made of polymer with meshwork - DNA forced to thread way through tiny spaces between strands. Speeds and slows DNA at different rates depending on length - end up running gel with each band corresponding to a certain length. Then cut out band of interest. Amplify this using Polymerase Chain Reaction. Then use complementary primers to start and stop cities, which all encode different itineraries. To isolate a single specific sequence, we use a technique called affinity purification - by attaching compliment of a sequence to a substrate
+
+\begin{itemize}
+    \begin{pros}
+    \item Memory is much easier to get lots of in DNA
+    \item Parallel operations
+    \end{pros}
+    \begin{cons}
+    \item Would require too much DNA still
+    \item Expensive
+    \end{cons}
+\end{itemize}
+
+\subsection{DNA as Information Storage}
+Read write speed is still rather low but has a very high data density. Can also use Synthetic DNA instead of actual DNA. Principles of DNA Information Storage:
+\begin{enumerate}
+    \item Two files stored by encoding each file in a set of different DNA sequences. Redundant information added to enable error recovery at retrieval and distanct primer s appended to each set of sequences.
+    \item Specific file is retrieved by amplifying molecules with ePCR
+\end{enumerate}
+
+Organick et al. designed a clustering and consensus algorithm that aligns and filters reads before error correction. Also takes into account reads that differ from the correct length. It described large-scale random access, low redundancy and robust encoding and decoding of information. Allows 200MB data. 
+\begin{enumerate}
+    \item \textbf{Encoding}: Break into large set of 150-nucleotide DNA sequences. Uses Reed-Solomon code redundancy to overcome errors in synthesis and sequencing. Resulting collection synthesized. Random access starts by amplifying subset using PCR which are then sequenced. Finally sequencing reads are decoded using clustering, consensus and error correction algorithms
+    \item Starts by randomising data to reduce chances of secondary structures, primer-payload non-specific binding and improved properties during encoding. Breaks into fixed-length payloads, adds addressing information and applies outer coding. Reed-Solomon to increase robustness to missing sequences and errors. Next applies inner coding 
+    \item Decoding process starts by clustering reads based on similarity and finding consensus between the sequences in each cluster to reconstruct the original sequences, which then decoded back to digital data
+    
+\end{enumerate}
+
+
+\section{Alignment}
+Alignment is a problem for both DNA and Protein Sequences. Input is DNA or protein sequences and the output is a set of aligned positions that makes it easy to identify patterns. Following things can happen to DNA:
+\begin{enumerate}
+    \item Matches
+    \item Insertions
+    \item Deletions
+    \item Mismatches - mutations
+\end{enumerate}
+
+\subsection{Longest Common Subsequence}
+Allows only insertions and deletions (no mismatches). Idea is that every common subsequence is a path in a 2D grid, path with maximum number of diagonal edges is the Least Common Subsequence.
+
+\begin{definition}
+\textbf{Edit Distance}: Minimum number of operations to transform a string into another
+\end{definition}
+
+$$
+s_{i, j}=\operatorname{max} \quad\left\{\begin{array}{l}{s_{i-1, j}+0} \\ {s_{i, j-1}+0} \\ {s_{i-1, j-1}+1, \quad \text { if } v_{i}=w_{j}}\end{array}\right.
+$$
+
+\begin{figure}[H] \includegraphics[width=.7\textwidth, left] {./images/2.png} \end{figure}
+
+Adding in costs:
+$$
+s_{i, j}=\max \left\{\begin{array}{l}{s_{i-1, j}-\sigma} \\ {s_{i, j-1}-\sigma} \\ {s_{i-1, j-1}+1, \text { if } v_{i}=w_{j}} \\ {s_{i-1, j-1}-\mu, \text { if } v_{i} \neq w_{j}}\end{array}\right.
+$$
+
+However, as length of sequences go up, finding this alignment is very time intensive
+\subsection{Needleman-Wunsch}
+Idea is that we have a penalty such that we are pushed towards using the match case rather than insertion and deletion cases, where there are three possible cases:
+\begin{enumerate}
+    \item $x_{i}$ aligns to $y_{j}$ - match => F(i, j) = F(i-1, j-1) + m if $x_{i} == y_{j}$ else F(i, j) = F(i-1, j-1) - s
+    \item $x_{i}$ aligns to a gap => F(i, j) = F(i-1, j) - d
+    \item $y_{j}$ aligns to a gap => F(i, j) = F(i, j-1) - d
+\end{enumerate}
+
+In order to decide which of the cases is correct, we use induction:
+
+\textbf{Inductive Assumption}: F(i, j-1), F(i-1, j), F(i-1, j-1) are optimal, then:
+
+$$
+F(i, j)=\max \left\{\begin{array}{l}{F(i-1, j-1)+s\left(x_{i}, y_{j}\right)} \\ {F(i-1, j)-d} \\ {F(i, j-1)-d}\end{array}\right.
+$$
+
+Where:
+
+$$
+s(x_{i}, y_{j}) = if x_{i} = y_{j}: m, else: -s
+$$
+
+\subsubsection{Global Alignment Problem}
+Find the longest path between vertices (0,) and (n, m) in edit graph OR find highest-scorind alignment between two strings using a scoring matrix. Needleman-Wunsch algorithm used to solve Global Alignment is as follows:
+
+\begin{figure}[H] \includegraphics[width=.7\textwidth, left] {./images/3.png} \end{figure}
+
+It has complexities:
+\begin{itemize}
+    \item Space = O(mn)
+    \item Time = O(mn)
+    \subitem Filling matrix = O(mn)
+    \subitem Backtrace = O(m+n)
+\end{itemize}
+
+\textbf{Overlap Detection Variant}: When it's acceptable to have an unlimited number of gaps in the beginning and end, changes:
+\begin{itemize}
+    \item \textbf{Initialisation} to: $\forall i, j: F(i,0)=0, F(0,j)=0$
+    \item \textbf{Termination} to: $
+\mathrm{F}_{\mathrm{OPT}}=\max \left\{\begin{array}{l}{\max _{\mathrm{i}} \mathrm{F}(\mathrm{i}, \mathrm{N})} \\ {\max _{\mathrm{j}} \mathrm{F}(\mathrm{M}, \mathrm{j})}\end{array}\right.
+$
+\end{itemize}
+\subsection{Smith-Waterman}
+\subsubsection{Local Alignment Problem}
+Find the longest path (or path with max or a certain matrix score) among paths between arbitrary vertices in the edit graph - effectively is global alignment in a subrectangle.
+
+\begin{itemize}
+    \item \textbf{Initialisation}: $F(0, 0) = F(0, j) = F(i, 0) = 0$
+    \item \textbf{Iteration}: $
+F(i, j)=\max \left\{\begin{array}{l}{0} \\ {F(i-1, j)-d} \\ {F(i, j-1)-d} \\ {F(i-1, j-1)+s\left(x_{i}, y_{j}\right)}\end{array}\right.
+$
+
+    \item \textbf{Termination}
+    \begin{itemize}
+        \item If we want best local alignment\\
+        $F_{OPT} = max_{i, j}F(i, j)$
+        
+        \item If we want all local alignments scoring > t \\
+        $\forall i, j$ find F(i, j) > t and trace back
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Scoring Gaps}
+Change the penalty and the gain based on the challenge in certain mutations, eg, can use the likelihood of mutation from one protein to another.\\
+
+\noindent \textbf{Affine Gap Penalty} for gap of length k: $\sigma + \epsilon \dot (k-1)$ where:
+\begin{itemize}
+    \item $\sigma$ = Gap Opening Penalty
+    \item $\epsilon$ = Gap Extension Penalty - $\sigma > \epsilon$
+\end{itemize}
+
+\textbf{Alignment with Gaps}
+\begin{itemize}
+    \item \textbf{Initialisation}: same
+    \item \textbf{Iteration}: $$
+F(i, j)=\max \left\{\begin{array}{l}{F(i-1, j-1)+s\left(x_{i}, y_{j}\right)} \\ {\max _{k=0 \ldots i-1} F(k, j)-\gamma(i-k)} \\ {\max _{k=0 \ldots j-1} F(i, k)-\gamma(j-k)}\end{array}\right.
+$$
+
+    
+    \subitem $$\gamma (n) = d + (n-1) \times e$$
+    \item \textbf{Termination}: same
+    \item \textbf{Running Time}: O($N^{2}M$)
+    \item \textbf{Space}: O(NM)
+    
+\end{itemize}
+\subsection{Affine Gap}
+\begin{itemize}
+    \item $\gamma (n) = d+(n-1) \times e$
+    \item $F(i, j)$ is the score of the alignment $x_{1}, ..., x_{i}$ to $y_{1}, ..., y_{j}$ if $x_{i}$ aligns to $y_{j}$
+    
+    \item $G(i,j)$ is the score if $x_{i}$ or $y_{j}$ aligns to a gap
+    \item \textbf{Initialisation}: F(i, 0) = d + e(n-1), F(0, j) = d + e(j-1)
+    \item \textbf{Iteration}
+    $$F(i, j) = max
+\left\{\begin{array}{l}{F(i-1, j-1)+s\left(x_{i}, y_{j}\right)} \\ {G(i-1, j-1)+s\left(x_{i}, y_{j}\right)} \\ {F(i-1, j)-d} \\ {F(i, j-1)-d}\end{array}\right.
+$$
+
+$$G(i, j) = max
+\left\{\begin{array}{l}{\mathrm{G}(\mathrm{i}, \mathrm{j}-1)-\mathrm{e}} \\ {\mathrm{G}(\mathrm{i}-1, \mathrm{j})-\mathrm{e}}\end{array}\right.
+$$
+
+    
+\end{itemize}
+
+\subsection{Banded Dynamic Programming}
+If x and y are similar - path of alignment close to diagonal if few gaps: Assuming gaps(x, y) < k(N) - Time, Space = O(N $\times$ k(N)) << O($N^{2}$)
+
+
+\textbf{Initialisation}: F(i, 0), F(0, j) undefined for i, j > k
+
+
+\textbf{Iteration}: For i = 1, ..., M and j = max(1, i-k), ..., min(i+k)
+ $$
+F(i, j)=\max \left\{\begin{array}{l}{F(i-1, j-1)+s\left(x_{i}, y_{j}\right)} \\ {F(i, j-1)-d, \text { if  } j>i-k(N)} \\ {F(i-1, j)-d, if  j<i+k(N)}\end{array}\right.
+$$
+
+
+\noindent Space complexity of computing just the score itself is O(n) - only need previous column to calculate current column and can then throw away that previous column once we're done using it.
+
+\subsubsection{Prefix}
+Prefix(i) is the length of the longest path from (0, 0) to (i, m/2) - simply done by doing dynamic programming in the left half of the matrix
+
+\subsubsection{Suffix}
+Suffix(i) is the length of longest path from (i, m/2) to (n, m). Dynamic Programming in right half of reversed matrix is the main way of doing this. N.B. for both this and prefix, only need to store two columns of scores at any one point.
+
+
+Can combine the two prefix and suffix to therefore have a middle vertex. Length(i) is the length of the longest path from (0, 0) to (n, m) that passes through vertex (i, m/2)
+
+Can use a \textbf{divide and conquer approach to sequence alignment} by:
+\begin{enumerate}
+    \item find MiddleNode - node where optimal alignment path crosses the middle column = $max_{0\leq i \leq n}length(i)$
+    \item Recurse on first and second half
+\end{enumerate}
+
+
+NB: finding longest path in alignment graph requires storing all backtracking pointers - O(mn) memory. But, finding length of longest path in the alignment graph is O(n) memory, hence the entire solution can be done in linear space.
+
+
+\textbf{Linear Space Alignment}
+\begin{figure}[H] \includegraphics[width=.7\textwidth, left] {./images/4.png} \end{figure}
+
+N.B. We can compute the edit distance faster than O(nm) - O($\frac{n^{2}}{log n}$)
+
+\subsection{Nussinov RNA Folding}
+Secondary Structure is the topology of local segments. It is represented as a set of paired positions, telling us which bases are paired. Four possibilities:
+\begin{enumerate}
+    \item i and j are a pair
+    \item i is unpaired
+    \item j is unpaired
+    \item bifurcation - they belong to two different loops
+\end{enumerate}
+
+\textbf{Assumption} is that there are no pseudo-knots
+
+\subsubsection{Algorithm}
+\begin{enumerate}
+    \item \textbf{Initialisation}: 
+    \begin{enumerate}
+        \item $\gamma (i, i-1)=0$ for i = 2 to n
+        \item $\gamma (i, i)=0$ for i = 1 to n
+    \end{enumerate}
+    \item 
+    $$ \gamma (i, j) = 
+\max \left\{\begin{array}{c}{\gamma(\mathrm{i}+1, \mathrm{j})} \\ {\gamma(\mathrm{i}, \mathrm{j}-1)} \\ {\gamma(\mathrm{i}+1, \mathrm{j}-1)+\delta(\mathrm{i}, \mathrm{j})} \\ {\max _{\mathrm{i}<\mathrm{k}<\mathrm{j}}[\gamma(\mathrm{i}, \mathrm{k})+\gamma(\mathrm{k}+1, \mathrm{j})]}\end{array}\right.
+$$
+
+d(i, j) = 1 if $x_{i}$ and $x_{j}$ are a complementary base pair and d(i, j) = 0 otherwise
+
+\item Take highest value and then traceback
+\begin{figure}[H] \includegraphics[width=.5\textwidth, left] {./images/5.png} \end{figure}
+\end{enumerate}
+
+N.B. There can be multiple optimal substructures\\
+
+
+\noindent \textbf{Complexities}
+\begin{itemize}
+    \item O($n^{3}$) in time
+    \item O($n^{2}$) in space
+\end{itemize}
+
+\section{Trees and Phylogeny}
+\subsection{Distance Matrices to Evolutionary Trees}
+Phylogeny is comparison of sequences to determine the hierarchical structure. Distance matrix if the number of differing symbols of a multiple alignment.
+
+
+Idea for trees is that the leaves (degree = 1) are the present-day species and internal nodes (degree $\geq$ 1) are the ancestral species. Most recent common ancestor is the root of the tree. \textbf{Simple Tree}: tree with no nodes of degree 2 - every simple tree with at least two nodes has at least one pair of neighbouring leaves
+
+\textbf{Distance-Based Phylogeny}: Construct evolutionary tree from distance matrix. There is a unique simple tree fitting an additive matrix (distance matrix st there exists an unrooted tree fitting it) 
+
+\noindent
+\begin{cons}
+However, distance-based algorithms for evolutionary tree reconstruction says nothing about ancestral states - we lost information when we converted a multiple alignment to a distance matrix.
+\end{cons}
+
+\begin{figure}[H] \includegraphics[width=.4\textwidth, left] {./images/6.png} \end{figure}
+
+$$d_{i, m} = \frac{1}{2} (D_{i, k} + D_{i, j} - D_{j, k})$$
+
+BUT, this does not always work when we don't select nodes which are actually neighbours! Hence, switch to considering limbs
+
+\subsection{Additive Phylogeny}
+\textbf{Limb Length Theorem}: LimbLength(i) = 1/2 min($D_{i, k} + D_{i, j} - D_{j, k}$) over all leaves j and k. Additive Phylogeny done with a four point condition. Aim is to find two things that aren't neighbours with i
+
+\subsubsection{Algorithm}
+\begin{enumerate}
+    \item Pick arbitrary leaf j
+    \item Compute its limb length
+    \item Subtract LimbLength(j) from each row and column
+    \item Remove that leaf from matrix
+    \item Recurse on this and attach j in the correct place with length LimbLength(j)
+\end{enumerate}
+
+\subsection{Least Squares Distance Based Phylogeny}
+\textbf{Sum of Squares Error}
+$$
+\text { Discrepancy( }T, D)=\Sigma_{1 \leq i<j \leq n}\left(d_{i j}(T)-D_{i j}\right)^{2}
+$$
+
+\textbf{Aim}: Given distance matrix find the tree that minimises the sum of squared errors - NP-Complete Problem!
+
+\subsection{Ultrametric Evolutionary Trees}
+\textbf{Ultrametric Tree}: distance from root to any leaf is the same. This plays well with the idea that the distance to the most recent common ancestor is the same for each current species.
+
+\subsubsection{UPGMA}
+UPGMA produces an approximation - but creates a rooted ultrametric tree
+\begin{enumerate}
+    \item Form cluster for each present species containing a single leaf
+    \item Find two closest clusters according to (|C| is the number of elements in C):
+    $$
+D_{\mathrm{avg}}\left(C_{1}, C_{2}\right)=\Sigma_{i \mathrm{in} C 1, j \text { in } C 2} D_{i j} /\left|C_{1}\right| \cdot\left|C_{2}\right|
+$$
+
+    \item Merge $C_{1}$ and $C_{2}$ into one cluster C
+    \item Form new node for C and connect to $C_{1}$ and $C_{2}$ by an edge. Age of C is $0.5 D_{avg}(C_{1}, C_{2})$
+    \item Update distance matrix by computing the average distance between each pair of clusters
+    \item Iterate until a single cluster contains all species
+\end{enumerate}
+
+\textbf{Complexities}
+\begin{itemize}
+    \item Space: O($n^{2}$)
+    \item Time: O($n^{2}log(n))$ as we need to the sorting of the distances of the clusters
+\end{itemize}
+
+\subsection{Neighbour Joining}
+Given n x n distance matrix D, neighbour-joining matrix is:
+$$
+D_{i, j}^{*}=(n-2) \cdot D_{i, j}-\text {TotalDistance}_{D}(i)-\text {TotalDistance}_{D}(j)
+$$
+
+Given $TotalDistance_{D}(i)$ is the sum of distances from i to all other leaves. This gives the property that the if D is additive then the smallest element of D* corresponds to neighboring leaves in Tree(D)
+
+\subsubsection{Algorithm}
+\begin{enumerate}
+    \item Construct neighbour-joining matrix D* from D
+    \item Find minimum element $D*_{i, j}$ of D*
+    \item Compute:
+    $$\Delta_{i, j}=(\text {TotalDistance}_{D}(i)- \text {TotalDistance}_{D}(j)) /(n-2)$$
+    \item LimbLength(i) = $0.5 (D_{i, j} + \Delta _{i, j})$ and LimbLength(j) = $0.5 (D_{i, j} - \Delta _{i, j})$
+    \item Form D' by removing i, j row / column and adding row and column m, st $\forall k, D_{k, m} = 0.5 (D_{i, k} + D){j, k} - D_{i, j})$
+    \item Recurse to produce Tree(D')
+    \item Reattach limbs of i and j
+\end{enumerate}
+
+Works precisely with additive matrices, producing an approximation (as expected) for non-additive matrices.
+
+\subsubsection{Complexities}
+\textbf{Space}: O($n^{2}$)
+
+\noindent
+\textbf{Time}: O($n^{3}$)
+
+
+\subsection{Character-Based Tree Reconstruction}
+Evolves from the realisation of loss of information from conversion of multiple alignment to a distance matrix. This time we produce a tree of the exact character changes every level we move up.
+
+\textbf{Parsimony Score}: Sum of Hamming Distances as we go along each edge
+
+\subsection{Small Parsimony Problem}
+Hence, \textbf{Small Parsimony Problem}: Find most parsimonious labelling of the internal nodes of a rooted tree. Simplify by considering for each symbol in turn.
+
+\textbf{Dynamic Programming Algorithm}
+\begin{enumerate}
+    \item Let $T_{v}$ denote sub-tree of T whose root is v
+    \item $s_{k}(v)$ as minimum parsimony score of $T_{v}$ over all labelling of $T_{v}$ assuming that v is labelled by k
+    \item Minimum Parsimony Score for the tree is equal to minimum value of $s_{k}(root)$ over all symbols k
+\end{enumerate}
+
+$\delta_{i, j} = 0$ if i = j, else: $\delta_{i, j} = 1$
+
+$$
+s_{k}(v)=\min _{\text {all symbols } i}\left\{s_{i}(\operatorname{Daughter}(v))+\delta_{i, k}\right\}+\min _{\text {all symbols } i}\left\{s_{i}(\operatorname{Son}(v))+\delta_{j, k}\right\}
+$$
+
+Complexity if O(mn$k^{2})$ where m species, n characters and k states
+
+\subsection{Large Parsimony Problem}
+Given set of strings, find tree having minimum parsimony score - this is an NP-Complete problem.
+
+\subsubsection{Greedy Heuristic}
+By removing an internal edge, an edge connecting two internal nodes produces four subtrees - rearranging these subtrees is called nearest neighbour interchange\\
+
+\noindent
+\textbf{Algorithm}
+\begin{enumerate}
+    \item Set current tree equal to arbitrary binary rooted tree structure
+    \item Go through internal edges and perform all possible nearest neighbours interchanges
+    \item Solve Small Parsimony Problem on each tree
+    \item If any tree has parsimony score improving over optimal tree, set equal to current tree else return current tree
+\end{enumerate}
+
+\subsubsection{Tree Validation: Bootstrap Algorithm}
+\begin{figure}[H] \includegraphics[width=.7\textwidth, left] {./images/7.png} \end{figure}
+
+We can generalise pairwise alignment to multiple alignment, changing a 2-row matrix into an n-row matrix. The scoring function should score alignments with conserved functions higher.
+
+$$
+s_{i, j, k}=\max \left\{\begin{array}{l}{s_{i-1, j-1, k-1}+\delta\left(v_{i}, w_{j}, u_{k}\right)} \\ {s_{i-1, j-1, k}+\delta\left(v_{i}, w_{j},-\right)} \\ {s_{i-1, j-1, k-1}+\delta\left(v_{i},-, u_{k}\right)} \\ {s_{i, j-1, k-1}+\delta\left(-, w_{j}, u_{k}\right)} \\ {s_{i-1, j, k}+\delta\left(v_{i},-,-\right)} \\ {s_{i, j-1, k}+\delta\left(-, w_{j},-\right)} \\ {s_{i, j, k-1}+\delta\left(-,-, u_{k}\right)}\end{array}\right.
+$$
+
+where $\delta (x, y, z)$ is an entry in the 3D scoring matrix. For a k-way alignment, we build a k-dimensional Manhattan Graph with $n^{k}$ nodes where most nodes have $2^{k} - 1$ incoming edges. It has a runtime of O($2^{k}n^{k}$)
+
+\subsection{Progressive Alignment}
+Idea is that given a set of arbitrary pairwise alignments, we can construct a multiple alignment that induces them. The methods are heuristics in nature - most used algorithm is \textbf{CLUSTALW}:
+\begin{enumerate}
+    \item Given N sequences, align each sequence to each other
+    \item Use score of the pairwise alignments to compute a distance matrix
+    \item Build guide tree (shows the best order of progressive alignment)
+    \item Progressive Alignment guided by the tree
+    \begin{figure}[H] \includegraphics[width=.5\textwidth, left] {./images/8.png} \end{figure}
+    
+\end{enumerate}
+
+\begin{cons}
+Not all pairwise alignments build well into a multiple sequence alignment
+\end{cons}
+
+
+
+\section{Genome Sequencing}
+Sequencing has got much cheaper and easier in the last ten years - useful to be able to detect and start to correct for genetic conditions. However, can only shred genome and generate short reads, hence need to reconstruct the genome.\\
+
+\subsection{Assumptions - largely untrue}
+\begin{enumerate}
+    \item Perfect coverage of genome by reads
+    \item Error-free reads - errors lead to bubbles in de Bruijn Graph
+    \item Multiplicities of k-mers are known
+    \item Distance between reads in read-pairs is contant
+\end{enumerate}
+\noindent
+\textbf{String Reconstruction Problem}: Reconstruct string from its kmer composition.
+First step is to connect all possible coinciding nodes and convert it into a graph of some kind. Then, need to find the Hamiltonian path (path which visits each node in a graph exactly once) - this is a hard problem though (NP-Complete). Example problem is 3-mers, in this case (when the genome is known):
+\begin{itemize}
+    \item Use 3-mers as edges of the graph and 2-mers as nodes. We then connect identically labelled nodes recursively to produce the De Bruijn Graph. This is O(n) To find the genome from this, we find the Eulerian Path - the path that visits each edge exactly once - there exists an efficient solution to this
+    \item Why Eulerian?
+    \begin{itemize}
+        \item Node from left end is semi-balanced with one more outgoing node than incoming, node at right is one more incoming than outgoing. Others are balanced.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Compute de Bruijn Graph given unknown genome}
+\begin{itemize}
+    \item Represent composition as a graph of isolated edges
+    \item Make two nodes from each 3-mer and add edge
+    \item Attach identically labelled nodes over and over again firstly to make a chain
+    \item Then attach identically labelled nodes, producing de Bruijn graph
+\end{itemize}
+    
+\begin{verbatim}
+    DeBruijn(k-mers):
+        Form node for each (k-1)-mer from k-mers
+        for each k-mer in k-mers:
+            Connect prefix node with its suffix node by an edge
+\end{verbatim}
+
+\subsection{Eulerian Graph Problem}
+\begin{verbatim}
+    EulerianCycle(BalancedGraph)
+        form a Cycle by randomly walking in BalancedGraph (avoiding already visited edges)
+        while Cycle is not Eulerian
+            select a node newStart in Cycle with still unexplored outgoing edges
+            form a Cycle’ by traversing Cycle from newStart and rando-
+            ml walking afterwards Cycle <- Cycle’
+        return Cycle
+\end{verbatim}
+
+Hence have broken the genome into contigs - or these sections of cycles
+
+\subsection{DNA Sequencing with Read-pairs}
+Sequence read by two readers at set distance from one another (fixed) along a fragment of DNA. \textbf{Paired K-mer} is a pair of k-mers at a fixed distance d apart in the genome.\\
+
+\noindent
+\textbf{String Reconstruction from Read-Pairs Problem}: Reconstruct string from paired k-mers.
+
+To construct the de Bruijn graph, first do as before, just with two sequences per node and per edge and then attach identical nodes as before
+
+\begin{cons}
+\subsection{Errors}
+\begin{enumerate}
+    \item Errors at end of read - trim off dead-end tips
+    \item Errors in middle of reads - pop bubbles
+    \item Chimeric Edges - clip short, low coverage nodes
+\end{enumerate}
+
+\end{cons}
+
+\section{Clustering}
+\textbf{Good Clustering Principle}: Elements within the same cluster are closer to each other than the elements in different clusters.
+
+Can use the idea of finding center points of each of the cluster to then cluster the data:
+$$d(DataPoint, Centers) = min_{all-points-x-from-Centers}d(DataPoint, x)$$\\
+
+\textbf{k-Center Clustering Problem}: Given set of points Data, find k centers minimizing MaxDistance(Data, Centers). FarthestFirstTraversal is a method that minimises the MaxDistance from the data to the centers, however, this includes outliers, hence instead want to minimise the squared error distortion between data and centers
+
+\subsection{Lloyd Algorithm}
+\textbf{Centre of Gravity Theorem}: centre of gravity of points Data is the only point solving the 1-Means Clustering Problem
+$$\text{Center of Gravity} = \Sigma_{\text{all points DataPoint in Data}} DataPoint / number(pointsInData) $$
+
+
+\begin{enumerate}
+    \item Select k arbitrary data points as centers
+    \item Assign each data point to its nearest center (\textbf{Centers to Clusters})
+    \item Set new centers as each clusters' center of gravity (\textbf{Clusters to Centers})
+    \item Repeat until convergence (which always happens)
+    \begin{itemize}
+        \item If data point assigned to new center during centers to clusters, distortion is reduced as center must be closer to the point than previous center was
+        \item If center moved during clusters to centers, since center of gravity is the only point minimising the distortion.
+    \end{itemize}
+    
+\end{enumerate}
+\subsection{Soft Clustering}
+When we can label the midpoint between two clusters as half of each cluster - hence, each point receives a proportion of each of the 
+
+Can use Probability Theory to go from Data and Parameters to HiddenVector (assignments of data points to k centers) given it is in the middle of two clusters
+$$\theta_{A} = \text{ fraction of heads generated in all flips with coin A }$$
+$$\theta_{B} = \text{ fraction of heads generated in all flips with coin B } $$
+
+Given choice of H:
+$$Pr(sequence | \theta_{A}) = \theta_{A}^{H}(1-\theta_{A})^{H}$$
+$$Pr(sequence | \theta_{B}) = \theta_{B}^{H}(1-\theta_{B})^{H}$$
+
+See notes for rest of discussion on this topic.
+
+\begin{example}
+Responsibility of star i for a planet j is proportional to the pull (Newtonian Law of Gravitation)
+
+$$Force_{i, j} = 1/distance (Data_{j}, Center_{i})^{2}$$
+
+$$HiddenMatrix_{ij} = Force_{i, j} / \Sigma_{\text{all centers j}} Force_{i, j} $$
+\end{example}
+
+
+\subsection{Hierarchical Clustering}
+Firstly means creating a similarity matrix or distance matrix.
+
+\begin{enumerate}
+    \item Identify two closes clusters and merge them
+    \item Recompute distances
+    \item Repeat
+\end{enumerate}
+
+Choice of distance measure is important, can be:
+\begin{enumerate}
+    \item Average Distance between points of clusters
+    \item Minimum Distance between clusters
+\end{enumerate}
+
+\subsection{Markov Clustering Algorithm}
+Take random walk on graph described by similarity matrix, but after each step we weaken the links between distant nodes and strengthen links between nearby nodes. Random walk has higher probability to stay inside cluster than to leave it soon. Crucial point lies in boosting this effect by an iterative alternation of expansion and inflation. Inflation parameter responsible for both strengthening and weakening of current.
+
+\begin{figure}[H] \includegraphics[width=.7\textwidth, left] {./images/9.png} \end{figure}
+
+This is experimentally shown to converge after 10 to 100 steps.\\
+
+\noindent
+\textbf{Complexity}:
+\begin{itemize}
+    \item Expansion = O($n^3$)
+    \item Inflation = O($n^2$)
+    \item But since matrices are sparse, can improve the speed of the algorithm a lot
+\end{itemize}
+
+\begin{figure}[H] \includegraphics[width=.7\textwidth, left] {./images/10.png} \end{figure}
+
+\subsection{Stochastic Neighbour Embedding}
+Creates 2D maps from data with hundreds or thousands of dimensions. Algorithm is non-linear and adapts to the underlying data, performing different transformations on different regions of the data. Tuned by changing the \textbf{perplexity} - which defines how to balance attention between local and global aspects of the data (ie a guess about the number of close neighbours each point has).\\
+
+\noindent
+\textbf{Key Points}
+\begin{enumerate}
+    \item Convert each high-dimensional similarity into probability that one data point will pick the other data point as a neighbour
+    \item Evaluate the map:
+    \begin{enumerate}
+        \item Use pairwise distances in low-dimensional map to define prob that a map point will pick another map point as its neighbour
+        \item Compute Kullback-Leibler divergence between probabilities in the high-dimensional and low-dimensional spaces
+        \item Each point in high-dimension has conditional probability of picking each other point as its neighbour
+        \item Distribution over neighbours is based on high-dimension pairwise distances
+    \end{enumerate}
+\end{enumerate}
+
+SNE is the process of constructing conditional probabilities representing the similarity between high dimensional data points using their Euclidean distances - defined by (for points $x_j$ and $x_i$:
+$$
+p_{j | i}=\frac{\exp \left(\frac{-\left\|x_{i}-x_{j}\right\|^{2}}{2 \sigma_{i}^{2}}\right)}{\sum_{k \neq i} \exp \left(\frac{-\left\|x_{i}-x_{j}\right\|^{2}}{2 \sigma_{i}^{2}}\right)}
+$$
+
+Large $p_{j|i}$ is indicative of similar data points.
+
+\subsubsection{t-SNE Algorithm}
+Improves on original SNE by implementing cost function with simpler gradient that uses Kullback-Leibler divergence between high-dimensional join probability distribution P and low-dimensional student-t based joint probability distribution Q:
+$$
+q_{i j}=\frac{\left(1+\left\|x_{i}-x_{j}\right\|^{2}\right)^{-1}}{\sum_{k \neq l}\left(1+\left\|y_{k}-y_{l}\right\|^{2}\right)^{-1}}
+$$
+
+Explicitly is explicitly defined hence:
+$$
+\frac{\delta C}{\delta Y}=4 \sum_{j}\left(p_{i j}-q_{i j}\right)\left(y_{i}-y_{j}\right)\left(1+\left\|y_{i}-y_{j}\right\|^{2}\right)^{-1}
+$$
+
+Increases distances such that can definitely map dissimilarities between points that is not otherwise possible to show.
+
+\begin{figure}[H] \includegraphics[width=.7\textwidth, left] {./images/11.png} \end{figure}
+
+\subsection{Burrows Wheeler Transform}
+\begin{enumerate}
+    \item Form N*N matrix (Burrows-Wheeler Matrix) by cyclically rotating the given text to form the rows of the matrix\\
+    \textbf{Sentinel}: lexicographically greatest character in the alphabet and occurs exactly once in text
+    
+    \item Sort matrix according to alphabetical order
+    
+    \item Last column of matrix is BWT(T) and also need to knwo the row number where the original string ends up
+\end{enumerate}
+
+It is reversible as the ith occurence of a character in the last column is the same text occurence as the ith occurence in the first column.
+\begin{figure}[H] \includegraphics[width=.8\textwidth, left] {./images/12.png} \end{figure}
+
+\section{Genome Assembly and Pattern Matching}
+\begin{itemize}
+    \item \textbf{Reference Genome}: Database genome used for comparison
+    \item Assembly has the issue of constructing the de Bruijn graph - this takes a lot of memory
+    \item \textbf{Read Mapping}: Determine where each read has high similarity to the reference genome
+    \item Why not Alignment?
+    \begin{cons}
+    \begin{itemize}
+        \item \textbf{Fitting Alignment}: Align each read Pattern to the best substring of Genome
+        \item Runtime O(|Pattern| * |Genome|) for each Pattern
+        \item Runtime O(|Patterns| * |Genome|) for a collection of Patterns
+    \end{itemize}
+    \end{cons}
+    \item \textbf{Single Pattern Matching Problem}: Find all positions in Genome where Pattern appears as a substring
+    \item \textbf{Multiple Pattern Matching Problem}: Given collection of strings Patterns, find all positions where a string from Patterns appears as a substring
+    \begin{itemize}
+        \item Can brute force this, but it's far too slow
+        \item \textbf{Process Patterns into a Trie}: Combine reads into a graph. Each substring of genome can match at most one read. So each read will correspond to a unique path through this graph (the resulting graph is called a trie)
+        \item \textbf{TrieMatching}: slide the trie down the genome. At each position, walk down the trie and see if we can reach a leaf by matching symbols
+        \subitem \textbf{Runtime of Trie Construction}: O(|Patterns|) and \textbf{Runtime of Pattern Matching}: O(|Genome| * |LongestPattern|). Space Complexity = O(|Patterns|)
+    \end{itemize}
+\end{itemize}
+
+In order to preprocess the genome, we split the genome into all its suffixes. Can combine suffixes into a data structure using a trie. For each Pattern, we see if Pattern can be spelled out from the root downward in the suffix trie. Memory runtime = O(|Suffixes|). However, can reduce memory by compressing each nonbranching path of the tree into an edge\\
+
+\textbf{Runtimes}
+\begin{itemize}
+    \item \textbf{Time}: O(|Genome|) to construct the suffix tree directly and O(|Genome| + |Patterns|) to find the pattern matches. \textbf{}
+    \item \textbf{Memory}: O(|Genome|) to construct suffix tree directly and O(|Genome|) to store the suffix tree
+    \item However, constants are high - hence, it takes a reasonably long time
+\end{itemize}
+
+\subsection{Genome Compression}
+\begin{enumerate}
+    \item Run-Length Encoding
+    \begin{itemize}
+        \item \begin{cons}
+        Genomes don't have a lot of runs
+        \end{cons}
+        \item But can convert repeats into runs using the Burrows-Wheeler Transform. We showed the Burrows-Wheeler Transform is reversible so this works quite well but old method requires us to store |Genome| copies of |Genome| to find BWT(Genome). Can however be sped up:
+        \item \textbf{First-Last Property}: k-th occurence of symbol in FirstColumn and k-th occurence of symbol in LastColumn correspond to the same position of symbol in Genome - hence memory = O(|Genome|)
+        \item Can use BWT as the data structure for Suffix Pattern Matching by adding a suffix array (holds the starting position of each suffix beginning a row). Memory of suffix array is 4 x |Genome|. But can store part of the suffix array by adding checkpointing (though this increases the runtime by a constant factor)
+    \end{itemize}
+    
+\end{enumerate}
+
+\textbf{Approx Pattern Matching Problem}: all positions in Genome where a string from Patterns appears as a substring with at most d mismatches. Methods are:
+\begin{enumerate}
+    \item \textbf{Seeding}: If Pattern occurs in Genome with d mismatches, then we can divide Pattern into d+1 equal pieces (seeds) and find at least one exact match
+    \subitem Check if each Pattern has a seed that matches Genome exactly.
+    \subitem If so, check entire Pattern against Genome
+    \item \textbf{BWT}: Use BWT instead - this is much more efficient
+\end{enumerate}
+
+
+\section{Hidden Markov Models}
+\subsection{Genomic Sequencing}
+\textit{From 1990-2003: Human Genome Project provides a complete and accurate sequence of all DNA base pairs of human genome}
+
+\subsubsection{Genome Analysis}
+\begin{enumerate}
+    \item Sequencing
+    \item Read Mapping - this is the bottleneck: Sequencer can sequence 300 million bases/minute, can only do read mapping at 2 million bases / minute
+    \item Variant Calling
+    \item Scientific Discovery
+\end{enumerate}
+
+Identifying Genes and Gene Parts:
+\begin{enumerate}
+    \item Information starts with promoter followed by a transcribed but non-coding region called the 5' untranslated region.
+    \item Initial exon contains start codon
+    \item Then alternating series of introns and extrons followed by terminating exon which contains stop codon
+    \item Followed by another non-coding region - 3' UTR - end has a polyA signal.
+    \item intron/exon and exon/intron boundaries are conserved short sequences and called acceptor and donor sites
+\end{enumerate}
+
+Identifying protein structural parts: want to predict the position in the amino acids with respect to the membrane.
+
+\subsection{HMM Definition}
+\begin{itemize}
+    \item Alphabet - $\Sigma = {b_1, b_2, ..., b_M}$
+    \item Set of States - $Q = {1, ..., K}$
+    \item Transition Probabilities: $a_{ij}$ = transition prob from state i to state j
+    \item Start probabilities: $a_{0i}$
+    \item Emission Probabilities within each state: $e_i(b) = P(x_i = b | \pi_i = k)$
+\end{itemize}
+
+Notes:
+\begin{itemize}
+    \item Parse of a sequence is a sequence of states that has passed through
+    
+    Likelihood of a parse is:
+    $$P(x, \pi) = P(x_1, ..., x_N, \pi_1, ..., \pi_N) = P(x_N, \pi_N | \pi_{N-1})P(x_{N-1}, \pi_{N-1} | \pi_{N-2})...P(x_2, \pi_2 | \pi_1)$$
+    \item HMM is memory less
+\end{itemize}
+
+Main questions are:
+\begin{enumerate}
+    \item \textbf{Evaluation}: Given HMM and sequence, find its prob
+    
+    \textbf{Forward Algorithm}
+    \begin{itemize}
+        \item $$
+P(x)=\sum_{\pi} P(x, \pi)=\sum_{\pi} P(x | \pi) P(\pi)
+$$
+
+        \item Forward Probability: $$
+f_{k}(i)=P\left(x_{1} \ldots x_{i}, \pi_{i}=k\right)
+$$
+
+        \item \textbf{Initialisation}: $$
+\begin{aligned}
+&f_{0}(0)=1\\
+&f_{k}(0)=0, \text { for all } k>0
+\end{aligned}
+$$
+
+        \item \textbf{Iteration}:
+        $$
+\mathrm{f}_{\mathrm{l}}(\mathrm{i})=\mathrm{e}_{\mathrm{l}}\left(\mathrm{x}_{\mathrm{i}}\right) \sum_{\mathrm{k}} \mathrm{f}_{\mathrm{k}}(\mathrm{i}-1) \mathrm{a}_{\mathrm{k}l}
+$$
+
+        \item \textbf{Termination}:
+        $$
+P(x)=\sum_{k} f_{k}(N) a_{k 0}
+$$
+    \end{itemize}
+    
+    where $a_{k0}$ is the probability that the terminating state is k
+    \item \textbf{Decoding}: Given HMM and sequence, find sequence of states that maximises prob
+    \begin{itemize}
+        \item Solve using dynamic programming - Viterbi Algorithm (time: O($K^2N$), space: O(KN))
+        \begin{enumerate}
+            \item \textbf{Initialisation}: $V_0(0) = 1$, $V_k(0) = 0 \forall k > 0$
+            \item \textbf{Iteration}:
+            $$
+\mathrm{V}_{\mathrm{j}}(\mathrm{i})=\mathrm{e}_{\mathrm{j}}\left(\mathrm{x}_{\mathrm{i}}\right) \max _{\mathrm{k}} \mathrm{V}_{\mathrm{k}}(\mathrm{i}-1) \mathrm{a}_{\mathrm{k}}
+$$
+
+$$
+\operatorname{Ptr}_{\mathrm{j}}(\mathrm{i}) \quad=\operatorname{argmax}_{\mathrm{k}} \mathrm{a}_{\mathrm{kj}} \mathrm{V}_{\mathrm{k}}(\mathrm{i}-1)
+$$
+            \item \textbf{Termination}:
+            $$
+\mathrm{P}\left(\mathrm{x}, \pi^{*}\right)=\max _{\mathrm{k}} \mathrm{V}_{\mathrm{k}}(\mathrm{N})
+$$
+            \item \textbf{Traceback}:
+            $$
+\begin{aligned}
+&\pi_{\mathrm{N}}^{*}=\operatorname{argmax}_{\mathrm{k}} \mathrm{V}_{\mathrm{k}}(\mathrm{N})\\
+&\pi_{i-1}^{*}=P t r_{\pi i}(i)
+\end{aligned}
+$$
+
+
+        \end{enumerate}
+    \end{itemize}
+    
+    \textbf{Algorithm}: Given HMM, generate sequence of length n as follows
+    \begin{enumerate}
+        \item Start at state $\pi_1$ according to prob $a_{0\pi 1}$
+        \item Emit letter $x_1$ according to prob $e_{\pi 1}(x_1)$
+        \item Go to state $\pi_2$ according to prob $a_{\pi 1 \pi 2}$
+        \item Repeat until emitting $x_n$
+    \end{enumerate}
+    
+    
+    \item \textbf{Learning}: Given HMM, unspecified transition / emission probs and sequence x, find maximising parameters that maximises the prob of sequence
+\end{enumerate}
+
+\textbf{Backward Algorithm}: Compute $P(\pi_i = k | x)$, start by computing:
+$$
+P(\pi_{i}=k, x) = P\left(x_{1} \ldots x_{i}, \pi_{i}, \pi_{i}=k\right)  P(x_{i+1} \ldots x_{N} | \pi_{i}=k)
+$$
+$$ = \text{FORWARD x BACKWARD}$$
+
+Backward Prob:
+$$\mathrm{b}_{\mathrm{k}}(\mathrm{i})=\mathrm{P}(\mathrm{x}_{\mathrm{i}+1} \ldots \mathrm{x}_{\mathrm{N}} | \pi_{\mathrm{i}}=\mathrm{k}) = \sum_{l} \mathrm{e}_{l}(\mathrm{x}_{\mathrm{i}+1}) \mathrm{a}_{\mathrm{k} l} \mathrm{b}_{1}(\mathrm{i}+1)$$
+
+\textbf{Initialisation}: $\mathrm{b}_{\mathrm{k}}(\mathrm{N})=\mathrm{a}_{\mathrm{k} 0}, \text { for all } \mathrm{k}$
+
+\textbf{Iteration}: $\mathrm{b}_{\mathrm{k}}(\mathrm{i})=\sum_{l} \mathrm{e}_{l}\left(\mathrm{x}_{\mathrm{i}+1}\right) \mathrm{a}_{\mathrm{k} l} \mathrm{b}_{1}(\mathrm{i}+1)$
+
+\textbf{Termination}: $P(x)=\Sigma_{l} a_{0l} e_{l}\left(x_{1}\right) b_{l}(1)$
+
+\textbf{Complexities}: Time: O($K^2 N$), Space: O(KN)
+
+\subsection{GeneScan}
+For given sequence, parse is an assignment of gene structure to that sequence. In a parse, every base is labelled, corresponding to the content it belongs to. In simple model, parse contains only I (intergenic) and G (gene). More complete model contains '-' for intergenic, 'E' for exon and 'I' for intron
+
+\begin{enumerate}
+    \item \textbf{Duration of states}
+    \begin{itemize}
+        \item Exons - coding
+        \item Introns - non coding
+    \end{itemize}
+    \item \textbf{Signals at state transitions}
+    \begin{itemize}
+        \item ATG
+        \item Stop Codon
+        \item Exon/Intron and Intron/Exon Splice Sites
+    \end{itemize}
+    \item \textbf{Emissions}
+    \begin{itemize}
+        \item Coding potential and frame and exons
+        \item Intron emissions
+    \end{itemize}
+\end{enumerate}
+
+\subsubsection{Features}
+\begin{enumerate}
+    \item Model both strands at once
+    \item Each state may output a string of symbols
+    \item Explicit intron / exon length modeling
+    \item Advanced splice site modeling
+    \item Complete intron / exon annotation for sequence
+    \item Able to predict multiple genes and partial / whole genes
+    \item Parameters learned from annotated genes
+    \item Separate parameter training for different CpG content groups
+\end{enumerate}
+
+\subsection{Transmembrane HMM}
+Model consists of submodels for:
+\begin{itemize}
+    \item Helix core and cap regions
+    \item Cytoplasmic and extracellular loop regions
+    \item Globular domain regions
+\end{itemize}
+
+\textbf{Sensitivity}: fraction of known genes correctly predicted Sn = $N_{true-positives} / N_{all-true}$
+
+\textbf{Specificity}: fraction of predicted genes that correspond to true genes: Sp = $N_{true-positives} / N_{all-positives}$
+
+\textbf{Correlation Coefficient}
+$$
+\begin{aligned}
+&C C=\frac{[(T P)(T N)-(F P)(F N)]}{\sqrt{(A N)(P P)(A P)(P N)}}\\
+&A N=T N+F P ; A P=T P+F N\\
+&P P=T P+F P ; P N=T N+F N
+\end{aligned}
+$$
+\end{document}
